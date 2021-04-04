@@ -1,0 +1,40 @@
+#svg-container {
+   padding-left: 10%;
+}
+
+/* .line {
+    fill: none;
+    stroke: steelblue;
+    stroke-width: 2px;
+  } */
+
+.bar {
+    fill: rgb(70, 130, 180);
+    
+}
+
+.myCircle:hover {
+  stroke: black;
+}
+
+
+.tooltip {
+  font-weight: bolder;
+  fill: white;
+  stroke: #000;
+}
+
+
+path { 
+    stroke: steelblue;
+    stroke-width: 2;
+    fill: none;
+}
+
+
+
+
+
+
+
+
