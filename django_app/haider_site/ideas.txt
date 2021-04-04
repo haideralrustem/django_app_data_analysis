@@ -1,0 +1,14 @@
+
+use the GDRIVE Edition
+
+MAIN PROJECTS:
+
+- Healthcare (profit related?)
+
+- Youtube analytics
+
+- CSV Updater
+
+- Chrome Extension
+
+
