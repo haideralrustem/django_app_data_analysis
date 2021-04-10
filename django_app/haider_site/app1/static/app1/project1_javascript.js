@@ -83,9 +83,13 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
                     line_mouseover_animation=false, 
                     bar_tooltip=false,
                     line_tooltip=false,
-                    mousein_tuple={key:'', value:''}, mouseout_tuple={key:'', value:''},
+                    mousein_tuple=[{key:'', value:''}], 
+                    mouseout_tuple=[{key:'', value:''}],
+
                     line_mousein_tuple=[{key:'', value:''}] , 
                     line_mouseout_tuple=[{key:'', value:''}],
+
+                    filtering=true
                     ) 
     {
 
@@ -222,23 +226,20 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
 
     
 
-
-
-    
-
     if (trend_line === true) {
         var valueline = d3.line()
 
         .x( function(d) { return xScale(d[data_fields[0]]); })
         .y( function(d) { return yScale(d[data_fields[1]]); });
         
-        svg.append("path")
-        .data([data])
+        var line= svg.append("path")
+        .datum(data)
         .attr("class", "line")
-        .attr("d", valueline);
+        .attr("d", valueline)
+        ;
 
 
-        svg.selectAll("myCircles")
+        var circles = svg.selectAll("myCircles")
         .data(data)
         .enter()
         .append("circle")
@@ -257,22 +258,23 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
         .on("mouseover", function (d , i) {
 
             //-> Coloring
-            
-            
+            //mousein_tuple
+            og =  this;
+            mousein_tuple.forEach(function(item) {
+                d3.select(og).style(item.key , function(d) { 
+                    return item.value });
+            });
 
-            d3.select(this).style(mousein_tuple.key , function(d) { 
-                return mousein_tuple.value });
+           
             d3.select(this)
             .transition()     // adds animation
             .duration(400)
             .attr('width', xScale.bandwidth() );
             
-
             //-> Tooltip
             if ( bar_tooltip===true ) {
                 return  tooltip.style("visibility", "visible");
                 }
-            
             
         })
         .on("mousemove", function(event, d) {
@@ -288,8 +290,11 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
 
         //Add listener for the mouseout event
         .on("mouseout", function (d, i) { 
-            d3.select(this).style(mouseout_tuple.key, function(d) { 
-                return mouseout_tuple.value });
+            og =  this;
+            mouseout_tuple.forEach(function(item) {
+                d3.select(og).style(item.key , function(d) { 
+                    return item.value });
+            });
 
             d3.select(this)
             .transition()     // adds animation
@@ -392,7 +397,7 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
             
             og =  this;
 
-            line_mousein_tuple.forEach(function(item) {
+            line_mouseout_tuple.forEach(function(item) {
                 d3.select(og).style(item.key , function(d) { 
                     return item.value });
             });
@@ -405,14 +410,113 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
             return tooltip.style("visibility", "hidden"); 
         }) 
     
-    } 
+    }
+    
+    // A function that update the chart
+    function update(selectedGroup) {
+
+        // Create new data with the selection?
+        var dataFilter = selectedGroup.map(function(d){return {x_value: d[data_fields[0]], y_value:d[data_fields[1]]} })
+  
+        // Give these new data to update line
+        line
+            .data([dataFilter])
+            .transition()
+            .duration(600)
+            .attr("d", d3.line()
+              .x(function(d) { return xScale(d.x_value) })
+              .y(function(d) { return yScale(d.y_value) })
+            )
+            // .attr("stroke", function(d){ return myColor(selectedGroup) })
+
+            console.log(dataFilter);
+            var e = svg.selectAll("circle")
+            .data([dataFilter])
+            .exit().remove();
+            console.log(e);
+
+            svg.selectAll("myCircles")
+            .data(dataFilter)
+            .enter().append("circle")
+                 .attr("fill", "#74b9ff")
+                .attr("stroke", "none")
+                .attr("r", 7)
+                .attr("cx", function(d) { return xScale(d.x_value) })
+                .attr("cy", function(d) { return yScale(d.y_value) })
+            ;
+
+            if ( line_mouseover_animation === true ) {
+                svg.selectAll("circle")
+                .on("mouseover", function (d , i) {
+                    og =  this;
+                    line_mousein_tuple.forEach(function(item) {
+                        d3.select(og).style(item.key , function(d) { 
+                            return item.value });
+                    });        
+                    d3.select(this)
+                    .transition()     // adds animation
+                    .duration(400)
+                    .attr('width', xScale.bandwidth() );
+        
+                    return  tooltip.style("visibility", "visible");            
+                })
+        
+        
+                .on("mousemove", function(event, d) {                                                        
+                                var x_pos = d3.pointer(event)[0];
+                                var y_pos = d3.pointer(event)[1];
+                                var domain = xScale.domain(); 
+                                var range = xScale.range();
+        
+                                var rangePoints = d3.range(range[0], range[1], xScale.step())
+                                
+                                var y_value = yScale.invert(y_pos);
+                                var x_value = domain[d3.bisect(rangePoints, x_pos) -1];
+
+                                tooltip.html("" 
+                                            + x_value + ' : ' + y_value);
+                               
+                                return tooltip.style("top", (event.pageY-50)+"px")
+                                              .style("left",(event.pageX-40)+"px")
+                                              .style("opacity", "0.8");
+                                        
+                                    })
+        
+                //Add listener for the mouseout event
+                .on("mouseout", function (d, i) {                     
+                    og =  this;
+                    line_mouseout_tuple.forEach(function(item) {
+                        d3.select(og).style(item.key , function(d) { 
+                            return item.value });
+                    });
+                    d3.select(this)
+                    .transition()     // adds animation
+                    .duration(400)
+                    .attr('width', xScale.bandwidth());
+                    return tooltip.style("visibility", "hidden"); 
+                }) 
+            
+            }
+           
+           
+    }
 
 
+    if (filtering) {
+        d3.select("#update-button").on("click", function(d) {
+            // recover the option that has been chosen
 
+            // var selectedGroup = d3.select(this).property("value")
+            var selectedGroup = data.filter( function(d) {
+                filter_boolean = (d[data_fields[0]] > 2006 && 
+                                  d[data_fields[0]] < 2017)
+                return filter_boolean
+            });
 
-   
-
-
+            // run the updateChart function with this selected option
+            update(selectedGroup)
+        })
+    }
   
 
 }
@@ -796,11 +900,11 @@ bar_graph (data1,   //data
           true, //line_mouseover_animation
           true, //bar_tooltip : boolean
           true, // line_tooltip : boolean
-          {key: 'fill', value: 'orange'},  //mousein_tuple
-          {key: 'fill', value: 'rgb(70, 130, 180)'},  //mouseout_tuple
+          [{key: 'fill', value: 'orange'}],  //mousein_tuple
+          [{key: 'fill', value: 'rgb(70, 130, 180)'}],  //mouseout_tuple
           [{key: 'stroke', value: 'blue'}], // line_mousein_tuple
           [{key: 'stroke', value: '#74b9ff'}], // line_mouseout_tuple
-          
+          filtering=true
           )
 
 
