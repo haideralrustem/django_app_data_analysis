@@ -78,6 +78,11 @@ function line_graph(data){
 //..................................................
 
 
+
+
+
+//...................................................
+
 function bar_graph (data, graph_title='default_title', x_title='x-label', 
                     y_title='y_label', trend_line=false, bar_mouseover_animation=false,
                     line_mouseover_animation=false, 
@@ -92,7 +97,7 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
                     filtering=true
                     ) 
     {
-
+    
     var data_fields = [];
     
     for (var field in data[0]) {
@@ -102,12 +107,15 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
         }
     }
 
+    // a method placed here must determine what type of data we are dealing with
+    // so that we load the right filters
+
     margins = {top: 20, right: 20, bottom: 20, left: 50}
 
     width = 400 - margins.left - margins.right
     height = 400 - margins.top - margins.bottom
     
-
+    
 
     var svg = d3.select("#svg-container").append("svg")
     .attr("width", width + margins.left + margins.right + 60)
@@ -335,24 +343,7 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
 
         .on("mousemove", function(event, d) {
 
-                        // use code below to bisect values of 
-
-                        // var i = bisect(data, x0, 0);
-
-                        // console.log('i -> ', i);
-                    
-                        // var selectedData = data[i]
-                        // focus
-                        // .attr("cx", xScale(selectedData[data_fields[0]]))
-                        // .attr("cy", yScale(selectedData[data_fields[1]]))
-                        // focusText
-                        // .html("x:" + selectedData[data_fields[0]] + "  ,  " + "y:" 
-                        //            + selectedData[data_fields[1]])
-
-                        // .attr("x", xScale(selectedData[data_fields[0]]-1))
-                        // .attr("y", yScale(selectedData[data_fields[1]])-35)
-
-                                                
+                                                                        
                         var x_pos = d3.pointer(event)[0];
                         var y_pos = d3.pointer(event)[1];
                         var domain = xScale.domain(); 
@@ -363,25 +354,7 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
                         var y_value = yScale.invert(y_pos);
                         var x_value = domain[d3.bisect(rangePoints, x_pos) -1];
 
-                        //......................
-
-                        // var i = d3.bisect(rangePoints, x_pos)-1;
-                        // var selectedData = data[i]
-                        // focus
-                        // .attr("cx", xScale(selectedData[data_fields[0]]))
-                        // .attr("cy", yScale(selectedData[data_fields[1]]))
-                        // focusText
-                        // .html("x:" + selectedData[data_fields[0]] + "  ,  " + "y:" 
-                        //            + selectedData[data_fields[1]])
-
-                        // .attr("x", xScale(selectedData[data_fields[0]]-1))
-                        // .attr("y", yScale(selectedData[data_fields[1]]))
-
-
-                        //..........................
-
-                        //console.log('x_value -> ', x_value, '- y_value-> ',y_value);
-
+                        
                         tooltip.html("" 
                                     + x_value + ' : ' + y_value);
                        
@@ -411,6 +384,57 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
         }) 
     
     }
+
+
+    function line_mousein_animation (d , i) {
+        og =  this;
+        line_mousein_tuple.forEach(function(item) {
+            d3.select(og).style(item.key , function(d) { 
+                return item.value });
+        });
+
+        d3.select(this)
+        .transition()     // adds animation
+        .duration(400)
+        .attr('width', xScale.bandwidth() );
+
+        return  tooltip.style("visibility", "visible");            
+    }
+
+    function  line_mousemove_animation (event, d) {                                                        
+        var x_pos = d3.pointer(event)[0];
+        var y_pos = d3.pointer(event)[1];
+        var domain = xScale.domain(); 
+        var range = xScale.range();
+
+        var rangePoints = d3.range(range[0], range[1], xScale.step())
+        
+        var y_value = yScale.invert(y_pos);
+        var x_value = domain[d3.bisect(rangePoints, x_pos) -1];
+
+        tooltip.html("" 
+                    + x_value + ' : ' + y_value);
+       
+        return tooltip.style("top", (event.pageY-50)+"px")
+                      .style("left",(event.pageX-40)+"px")
+                      .style("opacity", "0.8");
+                
+            }
+
+    function line_mouseout_animation(d, i) {                     
+        og =  this;
+        line_mouseout_tuple.forEach(function(item) {
+            d3.select(og).style(item.key , function(d) { 
+                return item.value });
+        });
+        d3.select(this)
+        .transition()     // adds animation
+        .duration(400)
+        .attr('width', xScale.bandwidth());
+        return tooltip.style("visibility", "hidden"); 
+    }
+
+
     
     // A function that update the chart
     function update(selectedGroup) {
@@ -497,8 +521,6 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
                 }) 
             
             }
-           
-           
     }
 
 
@@ -507,6 +529,8 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
             // recover the option that has been chosen
 
             // var selectedGroup = d3.select(this).property("value")
+
+            // this filter should be based on the view
             var selectedGroup = data.filter( function(d) {
                 filter_boolean = (d[data_fields[0]] > 2006 && 
                                   d[data_fields[0]] < 2017)
