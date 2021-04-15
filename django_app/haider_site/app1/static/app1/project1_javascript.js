@@ -94,7 +94,8 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
                     line_mousein_tuple=[{key:'', value:''}] , 
                     line_mouseout_tuple=[{key:'', value:''}],
 
-                    filtering=true
+                    filtering=true,
+
                     ) 
     {
     
@@ -116,7 +117,6 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
     height = 400 - margins.top - margins.bottom
     
     
-
     var svg = d3.select("#svg-container").append("svg")
     .attr("width", width + margins.left + margins.right + 60)
     .attr("height", height + margins.top + margins.bottom + 60)
@@ -124,17 +124,13 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
         
         .attr("transform",
               "translate(" + margins.left + "," + (margins.top) + ")");
-   
+
 
     // range is output
     var xScale = d3.scaleBand().range ([0, width]).padding(0.4);
     var x2Scale =  d3.scaleLinear().range ([0, width]);
 
     var yScale = d3.scaleLinear().range ([height, 0]);
-    
-
-    // var g = svg.append("g")
-    //            .attr("transform", "translate(" + 150 + "," + 50 + ")");
     
 
     // we  provide our domain values to the x and y scales    
@@ -175,6 +171,8 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
     .attr("transform", 'rotate(-90)translate(-120, ' + -30 +')')
     .attr("stroke", "black")
     .text(y_title);
+
+
     
 
     // adding the bar
@@ -259,22 +257,16 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
     }
 
         
- 
-    
-    if ( bar_mouseover_animation === true ) {
-        svg.selectAll(".bar")
-        .on("mouseover", function (d , i) {
-
-            //-> Coloring
+    // bar mouse animation functions.......
+    function bar_mousein_animation(d, i, element) {
+        //-> Coloring
             //mousein_tuple
-            og =  this;
             mousein_tuple.forEach(function(item) {
-                d3.select(og).style(item.key , function(d) { 
+                d3.select(element).style(item.key , function(d) { 
                     return item.value });
             });
-
            
-            d3.select(this)
+            d3.select(element)
             .transition()     // adds animation
             .duration(400)
             .attr('width', xScale.bandwidth() );
@@ -282,118 +274,71 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
             //-> Tooltip
             if ( bar_tooltip===true ) {
                 return  tooltip.style("visibility", "visible");
-                }
+            }
+    }
+
+    function bar_mousemove_animation(event, d, element) {
+        if ( bar_tooltip===true ) {
+            tooltip.html("value: " 
+                        + d[data_fields[1]]);
+           
+            return tooltip.style("top", (event.pageY-50)+"px")
+                          .style("left",(event.pageX-40)+"px")
+                          .style("opacity", "0.8");
+                        }
+    }
+
+    function bar_mouseout_animation(d, i, element=this) {
+        
+        mouseout_tuple.forEach(function(item) {
+            d3.select(element).style(item.key , function(d) { 
+                return item.value });
+        });
+
+        d3.select(element)
+        .transition()     // adds animation
+        .duration(400)
+        .attr('width', xScale.bandwidth())
+        
+        // d3.selectAll('.highlight')
+        // .remove()
+        if ( bar_tooltip===true ) {
+            return tooltip.style("visibility", "hidden"); 
+            }
+    }
+
+
+    // ..........
+    
+    if ( bar_mouseover_animation === true ) {
+        svg.selectAll(".bar")
+        .on("mouseover", function (d , i) {
+
+            bar_mousein_animation(d, i, element=this)
             
         })
+
         .on("mousemove", function(event, d) {
-            if ( bar_tooltip===true ) {
-                        tooltip.html("value: " 
-                                    + d[data_fields[1]]);
-                       
-                        return tooltip.style("top", (event.pageY-50)+"px")
-                                      .style("left",(event.pageX-40)+"px")
-                                      .style("opacity", "0.8");
-                                    }
-                                })
+            bar_mousemove_animation(event, d, element=this)
+        })
 
         //Add listener for the mouseout event
         .on("mouseout", function (d, i) { 
-            og =  this;
-            mouseout_tuple.forEach(function(item) {
-                d3.select(og).style(item.key , function(d) { 
-                    return item.value });
-            });
-
-            d3.select(this)
-            .transition()     // adds animation
-            .duration(400)
-            .attr('width', xScale.bandwidth())
-            
-            // d3.selectAll('.highlight')
-            // .remove()
-            if ( bar_tooltip===true ) {
-                return tooltip.style("visibility", "hidden"); 
-                }
+           bar_mouseout_animation(d, i, element=this)
         }) 
     
     } 
 
-
    
-
-    if ( line_mouseover_animation === true ) {
-        svg.selectAll("circle")
-        .on("mouseover", function (d , i) {
-            og =  this;
-            line_mousein_tuple.forEach(function(item) {
-                d3.select(og).style(item.key , function(d) { 
-                    return item.value });
-            });
-
-           
-
-            d3.select(this)
-            .transition()     // adds animation
-            .duration(400)
-            .attr('width', xScale.bandwidth() );
-
-            return  tooltip.style("visibility", "visible");            
-        })
-
-
-        .on("mousemove", function(event, d) {
-
-                                                                        
-                        var x_pos = d3.pointer(event)[0];
-                        var y_pos = d3.pointer(event)[1];
-                        var domain = xScale.domain(); 
-                        var range = xScale.range();
-
-                        var rangePoints = d3.range(range[0], range[1], xScale.step())
-                        
-                        var y_value = yScale.invert(y_pos);
-                        var x_value = domain[d3.bisect(rangePoints, x_pos) -1];
-
-                        
-                        tooltip.html("" 
-                                    + x_value + ' : ' + y_value);
-                       
-                        return tooltip.style("top", (event.pageY-50)+"px")
-                                      .style("left",(event.pageX-40)+"px")
-                                      .style("opacity", "0.8");
-                                
-                            })
-
-        //Add listener for the mouseout event
-        .on("mouseout", function (d, i) { 
-
-            
-            og =  this;
-
-            line_mouseout_tuple.forEach(function(item) {
-                d3.select(og).style(item.key , function(d) { 
-                    return item.value });
-            });
-
-
-            d3.select(this)
-            .transition()     // adds animation
-            .duration(400)
-            .attr('width', xScale.bandwidth());
-            return tooltip.style("visibility", "hidden"); 
-        }) 
-    
-    }
-
-
-    function line_mousein_animation (d , i) {
-        og =  this;
+    function line_mousein_animation (d , i, element) {
+       
+       
         line_mousein_tuple.forEach(function(item) {
-            d3.select(og).style(item.key , function(d) { 
+            d3.select(element).style(item.key , function(d) { 
                 return item.value });
         });
 
-        d3.select(this)
+        d3.select(element)
         .transition()     // adds animation
         .duration(400)
         .attr('width', xScale.bandwidth() );
@@ -401,7 +346,7 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
         return  tooltip.style("visibility", "visible");            
     }
 
-    function  line_mousemove_animation (event, d) {                                                        
+    function  line_mousemove_animation (event, d, element) {                                                        
         var x_pos = d3.pointer(event)[0];
         var y_pos = d3.pointer(event)[1];
         var domain = xScale.domain(); 
@@ -421,13 +366,13 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
                 
             }
 
-    function line_mouseout_animation(d, i) {                     
-        og =  this;
+    function line_mouseout_animation(d, i) {                      
+        
         line_mouseout_tuple.forEach(function(item) {
-            d3.select(og).style(item.key , function(d) { 
+            d3.select(element).style(item.key , function(d) { 
                 return item.value });
         });
-        d3.select(this)
+        d3.select(element)
         .transition()     // adds animation
         .duration(400)
         .attr('width', xScale.bandwidth());
@@ -435,6 +380,27 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
     }
 
 
+    if ( line_mouseover_animation === true ) {
+        svg.selectAll("circle")
+        .on("mouseover", function (d , i) { 
+            line_mousein_animation(d, i, element=this)        
+        })
+
+        .on("mousemove", function(event, d) {
+            line_mousemove_animation(event, d, element=this)
+                                
+        })
+
+        //Add listener for the mouseout event
+        .on("mouseout", function (d, i) { 
+            line_mouseout_animation(d, i)
+        }) 
+    
+    }
+
+    //............
+
+    
     
     // A function that update the chart
     function update(selectedGroup) {
@@ -472,52 +438,17 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
             if ( line_mouseover_animation === true ) {
                 svg.selectAll("circle")
                 .on("mouseover", function (d , i) {
-                    og =  this;
-                    line_mousein_tuple.forEach(function(item) {
-                        d3.select(og).style(item.key , function(d) { 
-                            return item.value });
-                    });        
-                    d3.select(this)
-                    .transition()     // adds animation
-                    .duration(400)
-                    .attr('width', xScale.bandwidth() );
-        
-                    return  tooltip.style("visibility", "visible");            
+                    line_mousein_animation(d, i, element=this); 
                 })
         
         
                 .on("mousemove", function(event, d) {                                                        
-                                var x_pos = d3.pointer(event)[0];
-                                var y_pos = d3.pointer(event)[1];
-                                var domain = xScale.domain(); 
-                                var range = xScale.range();
-        
-                                var rangePoints = d3.range(range[0], range[1], xScale.step())
-                                
-                                var y_value = yScale.invert(y_pos);
-                                var x_value = domain[d3.bisect(rangePoints, x_pos) -1];
-
-                                tooltip.html("" 
-                                            + x_value + ' : ' + y_value);
-                               
-                                return tooltip.style("top", (event.pageY-50)+"px")
-                                              .style("left",(event.pageX-40)+"px")
-                                              .style("opacity", "0.8");
-                                        
-                                    })
+                    line_mousemove_animation(event, d, element=this)                                       
+                })
         
                 //Add listener for the mouseout event
                 .on("mouseout", function (d, i) {                     
-                    og =  this;
-                    line_mouseout_tuple.forEach(function(item) {
-                        d3.select(og).style(item.key , function(d) { 
-                            return item.value });
-                    });
-                    d3.select(this)
-                    .transition()     // adds animation
-                    .duration(400)
-                    .attr('width', xScale.bandwidth());
-                    return tooltip.style("visibility", "hidden"); 
+                    line_mouseout_animation(d, i, element=this);
                 }) 
             
             }
@@ -540,7 +471,67 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
             // run the updateChart function with this selected option
             update(selectedGroup)
         })
-    }
+        
+               
+            
+       
+        // document.getElementById("slider").oninput = function() {
+
+        //     var val = $('#slider').slider("option", "value");
+        //     console.log(val);
+        // }
+
+
+        // $(function() {
+        //     $("#slider").slider();
+        
+        //     var startPos = $("#slider").slider("value"); 
+        //         endPos = '';
+            
+            
+        //     $("#slider").on("slidestart", function(event, ui) {
+               
+        //     // do stuff
+        //     console.log($("#slider").slider("value"));
+                
+        
+                
+        //     });
+
+        //     $("#slider").on("slidechange", function(event, ui) {
+               
+        //             // do stuff
+        //         console.log($("#slider").slider("value"));
+                
+        
+                
+        //     });
+
+
+
+        //     $("#slider").on("slidestop", function(event, ui) {
+        //         endPos = ui.value;
+        //         // let startPos = $("#slider").slider("value"); 
+        //         if (startPos != endPos) {
+        //             // do stuff
+        //             console.log($("#slider").slider("value"));
+        //         }
+        
+        //         startPos = endPos;
+        //     });
+        // });
+
+        $("#slider").slider({
+            slide: function( event, ui ) {
+                console.log('slide: function');
+                let val = $("#slider").slider("value");
+            }
+          });
+        // $( "#slider" ).on( "slide", function( event, ui ) {
+        //     console.log('slide');
+        // } );
+        
+    }    
   
 
 }
