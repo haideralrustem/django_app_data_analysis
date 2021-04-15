@@ -31,6 +31,21 @@ path {
     fill: none;
 }
 
+/* .slidecontainer {
+  margin-left: 10%;
+}
+.slider {
+  background:white;
+  -webkit-appearance: none;
+  border: 1px solid  blue ;
+} */
+
+/*   slider styling   */
+.slider {
+  margin: 0 10% ;
+  width: 10%;
+}
+
 
 
 

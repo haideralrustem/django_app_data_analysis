@@ -4,6 +4,21 @@
 {% static "csv_files/data2.csv" %}
 
 {% block children %}
+<script
+    src="https://code.jquery.com/jquery-3.5.1.js"
+    integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+    crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+
+<script src="{% static 'app1/jquery-ui-1.12.1.custom/jquery-ui.js' %}"></script>
+
+<script>
+    $( function() {
+      $( "#slider" ).slider();
+    } );
+</script>
 
 <div class="project-page-wrapper">
    
@@ -24,12 +39,15 @@
         </button>
     </div>
     <div id='svg-container'></div>
+
+    <div id="slider" draggable="true" class="slider"></div>
+    
   
 </div>
 
 <script>
     var received_data = '{{ debug_vars.json_string_dict|safe }}';
-    var parsed_data = JSON.parse(received_data)
+    var parsed_data = JSON.parse(received_data);
     //console.log(data);
     
     var file_path = ',,';
