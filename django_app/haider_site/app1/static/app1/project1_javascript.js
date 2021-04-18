@@ -141,7 +141,7 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
 
     yScale.domain([0, d3.max(data, function(d) { return  d[data_fields[1]] ; }) + 10 ]);
 
-
+    
 
     svg.append("g")
     .attr("transform", "translate(0," + height + ")")
@@ -307,7 +307,6 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
             }
     }
 
-
     // ..........
     
     if ( bar_mouseover_animation === true ) {
@@ -398,12 +397,14 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
     
     }
 
+
+
     //............
 
     
     
     // A function that update the chart
-    function update(selectedGroup) {
+    function updateData(selectedGroup) {
 
         // Create new data with the selection?
         var dataFilter = selectedGroup.map(function(d){return {x_value: d[data_fields[0]], y_value:d[data_fields[1]]} })
@@ -423,7 +424,7 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
             var e = svg.selectAll("circle")
             .data([dataFilter])
             .exit().remove();
-            console.log(e);
+            
 
             svg.selectAll("myCircles")
             .data(dataFilter)
@@ -455,11 +456,18 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
     }
 
 
+    // filtering slider 
+    
+    // $("#slider").slider("destroy");
+    
+    // Your Code Here
+    
     if (filtering) {
         d3.select("#update-button").on("click", function(d) {
             // recover the option that has been chosen
 
             // var selectedGroup = d3.select(this).property("value")
+
 
             // this filter should be based on the view
             var selectedGroup = data.filter( function(d) {
@@ -469,69 +477,51 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
             });
 
             // run the updateChart function with this selected option
-            update(selectedGroup)
+            updateData(selectedGroup)
         })
-        
-               
             
+            
+        $(function () {
+            $("#slider1").slider({
+                range: true,
+                min: xScale.domain()[0],
+                max: xScale.domain()[xScale.domain().length-1],
+                values: [xScale.domain()[0], xScale.domain()[xScale.domain().length-1]],
+                step: 0.1,
+                slide: function( event, ui ) { 
+                    console.log("sliding....");
+                    let min_val = Math.round(ui.values[ 0 ]);
+                    let max_val = Math.round(ui.values[ 1 ]);
+                    $("#label-slider1").html(min_val);
+                    $("#label-slider2").html(max_val);
+
+                    var selectedGroup=data.filter( function(d) {
+                        filter_boolean = (d[data_fields[0]] >= min_val && 
+                                          d[data_fields[0]] <= max_val)
+                        return filter_boolean
+                    });
+
+                    updateData(selectedGroup);
+                    console.log(xScale.domain());
+                }
+
+            });
+        });
        
-        // document.getElementById("slider").oninput = function() {
 
-        //     var val = $('#slider').slider("option", "value");
-        //     console.log(val);
-        // }
-
-
-        // $(function() {
-        //     $("#slider").slider();
-        
-        //     var startPos = $("#slider").slider("value"); 
-        //         endPos = '';
-            
-            
-        //     $("#slider").on("slidestart", function(event, ui) {
-               
-        //     // do stuff
-        //     console.log($("#slider").slider("value"));
-                
-        
-                
-        //     });
-
-        //     $("#slider").on("slidechange", function(event, ui) {
-               
-        //             // do stuff
-        //         console.log($("#slider").slider("value"));
-                
-        
-                
-        //     });
-
-
-
-        //     $("#slider").on("slidestop", function(event, ui) {
-        //         endPos = ui.value;
-        //         // let startPos = $("#slider").slider("value"); 
-        //         if (startPos != endPos) {
-        //             // do stuff
-        //             console.log($("#slider").slider("value"));
-        //         }
-        
-        //         startPos = endPos;
-        //     });
+        // var selectedGroup=data.filter( function(d) {
+        //     filter_boolean = (d[data_fields[0]] > 2006 && 
+        //                       d[data_fields[0]] < 2017)
+        //     return filter_boolean
         // });
 
-        $("#slider").slider({
-            slide: function( event, ui ) {
-                console.log('slide: function');
-                let val = $("#slider").slider("value");
-            }
-          });
-        // $( "#slider" ).on( "slide", function( event, ui ) {
-        //     console.log('slide');
-        // } );
+        // updateData(selectedGroup);
+        // console.log(xScale.domain());
+
         
-    }    
+    }
+    
+    
   
 
 }
