@@ -14,11 +14,7 @@
 
 <script src="{% static 'app1/jquery-ui-1.12.1.custom/jquery-ui.js' %}"></script>
 
-<script>
-    $( function() {
-      $( "#slider" ).slider();
-    } );
-</script>
+
 
 <div class="project-page-wrapper">
    
@@ -40,7 +36,23 @@
     </div>
     <div id='svg-container'></div>
 
-    <div id="slider" draggable="true" class="slider"></div>
+    <div id="slider-container">
+        <div>Slider 1</div>
+        <div id="slider-label-wrap">
+
+            <div id="label-slider1">minimum</div>
+            <div id="label-slider2">maximum</div>
+        </div>
+        <div id="slider1" class="slider"></div>
+        
+
+        <!-- <div>Max</div>
+        <div id="label-slider-max">Max !</div>
+        <div id="slider-max" class="slider"></div> -->
+
+        
+
+    </div>
     
   
 </div>

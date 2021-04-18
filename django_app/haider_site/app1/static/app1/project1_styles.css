@@ -41,9 +41,22 @@ path {
 } */
 
 /*   slider styling   */
+#slider-container {
+  margin: 0 1% 0 10% ;
+  width: 20%;
+}
+
+#slider-label-wrap {
+  display: inline-flex; 
+  width: 100%; 
+  justify-content: space-between;
+}
+.ui-slider-range.ui-corner-all.ui-widget-header {
+  background: #0084ff87;
+}
 .slider {
-  margin: 0 10% ;
-  width: 10%;
+  margin: 1% 0;
+  width: 100%;
 }
 
 
