@@ -24,12 +24,17 @@
   stroke: #000;
 }
 
-
 path { 
     stroke: steelblue;
     stroke-width: 2;
     fill: none;
 }
+.line-circles {
+  fill:rgb(107, 199, 253);
+  transition: visibility 1s ease-in-out;
+}
+
+
 
 /* .slidecontainer {
   margin-left: 10%;
