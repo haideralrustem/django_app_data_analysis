@@ -84,7 +84,9 @@ function line_graph(data){
 //...................................................
 
 function bar_graph (data, graph_title='default_title', x_title='x-label', 
-                    y_title='y_label', trend_line=false, bar_mouseover_animation=false,
+                    y_title='y_label', 
+                    bar_color='rgb(70, 130, 180)',
+                    trend_line=false, bar_mouseover_animation=false,
                     line_mouseover_animation=false, 
                     bar_tooltip=false,
                     line_tooltip=false,
@@ -188,7 +190,8 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
     svg.selectAll(".bar")
     .data(data)
     .enter().append("rect")
-    .attr("class", "bar")      
+    .attr("class", "bar")    
+    .style("fill", bar_color)  
     
     // specify the x position
     .attr("x", function(d) { return xScale( d[data_fields[0]] ); })
@@ -274,26 +277,15 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
     function bar_mousein_animation(d, i, element) {
         //-> Coloring
             //mousein_tuple
+            console.log(animation_state.highlighter_engaged);   
+            
 
-            if (animation_state.highlighter_engaged === false) {
-                mousein_tuple.forEach(function(item) {
-                    d3.select(element).style(item.key , function(d) { 
-                        return item.value });
-                });
-            }
-            else if (animation_state.highlighter_engaged){
-
-                mousein_tuple.forEach(function(item) {
-                    d3.select(element).style(item.key , function(d) { 
-                        return null });
-                });
-
-                highligh_style.forEach(function(item) {
-                    d3.select(element).style(item.key , function(d) { 
-                        return item.value });
-                });
-            }
-           
+            mousein_tuple.forEach(function(item) {
+                d3.select(element).style(item.key , function(d) { 
+                    return item.value });
+            });
+            
+                      
             d3.select(element)
             .transition()     // adds animation
             .duration(400)
@@ -306,6 +298,8 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
     }
 
     function bar_mousemove_animation(event, d, element, values) {
+
+       
         if ( bar_tooltip===true ) {
             let tooltip_value = ""
             
@@ -322,25 +316,15 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
     }
 
     function bar_mouseout_animation(d, i, element=this) {
+       
         
-        if (animation_state.highlighter_engaged===false){
             mouseout_tuple.forEach(function(item) {
                 d3.select(element).style(item.key , function(d) { 
                     return item.value });
             });
-        }
+        
 
-        else if (animation_state.highlighter_engaged) {
-            mousein_tuple.forEach(function(item) {
-                d3.select(element).style(item.key , function(d) { 
-                    return null });
-            });
-
-            highligh_style.forEach(function(item) {
-                d3.select(element).style(item.key , function(d) { 
-                    return item.value });
-            });
-        }
+        
 
         d3.select(element)
         .transition()     // adds animation
@@ -474,7 +458,7 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
             .data(dataFilter)
             .enter().append("rect")
             .attr("class", "bar")    
-              
+            .style("fill", bar_color)
             
             // specify the x position
             .attr("x", function(d) { return xScale( d.x_value ); })
@@ -512,6 +496,56 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
             } 
 
         }
+
+        if(highlighting=== true) {
+            let dataFilter_fields = []
+            for (var field in dataFilter[0]) {
+                // check if property not inherited
+                if (Object.prototype.hasOwnProperty.call(dataFilter[0], field)) {
+                    dataFilter_fields.push(field);
+                }
+            }
+            
+
+            highlight_onclick(svg=svg, selector=".bar", data=data, 
+                              highligh_style=highligh_style,
+                              d_fields=dataFilter_fields
+                              );
+            let svg_container = document.querySelector('#svg-container');
+
+            
+            
+            // have to update ALL listeners
+            
+            svg_container.addEventListener("click", function() {
+                // remove highlighting
+                animation_state.highlighter_engaged = false;
+    
+                svg.selectAll(".bar").style('fill', bar_color);
+                
+                if ( bar_mouseover_animation === true ) {
+                    svg.selectAll(".bar")
+                    .on("mouseover", function (d , i) {
+            
+                        bar_mousein_animation(d, i, element=this)
+                        
+                    })
+            
+                    .on("mousemove", function(event, d) {
+                        bar_mousemove_animation(event, d, element=this, 
+                            values=[d.y_value])
+                    })
+            
+                    //Add listener for the mouseout event
+                    .on("mouseout", function (d, i) { 
+                        bar_mouseout_animation(d, i, element=this)
+                    }) 
+                
+                } 
+                            
+            });
+            }
+        
 
 
 
@@ -633,78 +667,100 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
 
     //      HIGHLIGHTING    ///
 
-    console.log()
+    
     if(highlighting=== true) {
         highlight_onclick(svg=svg, selector=".bar", data=data, 
                           highligh_style=highligh_style,
+                          d_fields=data_fields
                           );
 
         // animation_state.highlighter_engaged = true;
 
         let svg_container = document.querySelector('#svg-container');
 
-        svg_container.addEventListener("click", function(){
-            alert('');
+        svg_container.addEventListener("click", function() {
+            // remove highlighting
+            animation_state.highlighter_engaged = false;
+
+            svg.selectAll(".bar").style('fill', bar_color);
+
+            if ( bar_mouseover_animation === true ) {
+                svg.selectAll(".bar")
+                .on("mouseover", function (d , i) {
+        
+                    bar_mousein_animation(d, i, element=this)
+                    
+                })
+        
+                .on("mousemove", function(event, d) {
+                    bar_mousemove_animation(event, d, element=null, 
+                        values=[d[data_fields[1]]])
+                })
+        
+                //Add listener for the mouseout event
+                .on("mouseout", function (d, i) { 
+                   bar_mouseout_animation(d, i, element=this)
+                }) 
+            
+            } 
+                        
         });
-        console.log('arrived.......')
+        
 
     }
 
 
     
-    function highlight_onclick(svg, selector, data, highligh_style)
+    function highlight_onclick(svg, selector, data, highligh_style, d_fields=null)
         {
+        console.log(data_fields);
+
         d3.selectAll(selector)
        .on("click", function(event,  data_point) {
            event.stopPropagation();
            console.log(event);
+           
 
-           obj = this
+           let obj = this
             highligh_style.forEach(function (item) {
                 d3.select(obj).style(item.key , function(d) { 
                     return item.value });
             });
 
 
-            d3.select(obj).on("mouseout", function (d, i, obj=obj) {
-                highligh_style.forEach(function (item) {
-                    d3.select(obj).style(item.key , function(d) { 
-                        return item.value });
-                })
-              }
-            );
            
-
-           console.log("event -> ", event, "\n / data_point -> ", data_point);
-    
-           animation_state.highlighter_engaged = true;
-
-        //    if ( bar_mouseover_animation === true ) {
-        //     svg.selectAll(".bar")
-            
-        //     .on("mouseover", function (d , i) {
-        //         bar_mousein_animation(d, i, element=this)
+            d3.select(obj).on('mouseover', function(d, i) {
                 
-        //     })
-    
-        //     .on("mousemove", function(event, d) {
-        //         bar_mousemove_animation(event, d, element=this,
-        //             values=[d[data_fields[1]]])
-        //     })
-    
-        //     //Add listener for the mouseout event
-        //     .on("mouseout", function (d, i) { 
-        //        bar_mouseout_animation(d, i, element=this)
-        //     }) 
+                //-> Tooltip
+                if ( bar_tooltip===true ) {
+                    return  tooltip.style("visibility", "visible");
+            }
+            });
+            
+            d3.select(obj).on("mousemove", function(event, d) {
+                
+                bar_mousemove_animation(event, d, element=null, 
+                    values=[d[d_fields[1]]])
+            });
+            
+            d3.select(obj).on('mouseout', function(d, i) {
+                //-> Tooltip
+                if ( bar_tooltip===true ) {
+                    return  tooltip.style("visibility", "hidden");
+            }
+            });
+              
+            animation_state.highlighter_engaged = true;
         
-        // }
-
+            console.log('from onclick highlight ', animation_state.highlighter_engaged);
+        
+            }
+            );
+          
     
-    });
+          
     }
-    
-    
-  
+     
 
 }
 
@@ -1087,6 +1143,7 @@ bar_graph (data1,   //data
           "SOME TITLE",  //graph_title
           'year', //x_title
           'value', //y_title
+          bar_color='rgb(70, 130, 180)',
           true, //trend_line
           true,  // bar_mouseover_animation
           true, //line_mouseover_animation
