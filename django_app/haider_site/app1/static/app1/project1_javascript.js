@@ -184,7 +184,7 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
     .text(y_title);
 
 
-    
+    // .............
 
     // adding the bar
     svg.selectAll(".bar")
@@ -241,8 +241,6 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
         .attr("text-anchor", "left")
         .attr("alignment-baseline", "middle")
 
-
-    
 
     if (trend_line === true) {
         var valueline = d3.line()
@@ -601,9 +599,6 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
             
             }
             
-           
-
-
     }
     let svg_container = document.querySelector('#svg-container');
     console.log(svg_container);
@@ -711,23 +706,53 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
 
 
     
-    function highlight_onclick(svg, selector, data, highligh_style, d_fields=null)
+    function highlight_onclick(svg, selector, data, highligh_style, d_fields=null,
+                                )
         {
-        console.log(data_fields);
+                
 
         d3.selectAll(selector)
-       .on("click", function(event,  data_point) {
+        .attr("data-index", function(d, i) { return i; })
+        .on("click", function(event,  d) {
            event.stopPropagation();
-           console.log(event);
+           
+           console.log(d);
+           let index_clicked = this.getAttribute("data-index");
            
 
            let obj = this
-            highligh_style.forEach(function (item) {
-                d3.select(obj).style(item.key , function(d) { 
-                    return item.value });
-            });
+           let selection = d3.select(obj);
+                    
+           // toggle
+           selection.classed("highlighted", selection.classed("highlighted") ? false : true);
+           
+           let bound_show_data_labels = show_data_labels.bind(this);
+            
+           // highlight case
+           if (selection.attr("class").includes("highlighted")) {
+                
+                highligh_style.forEach(function (item) {
+                    d3.select(obj).style(item.key , function(d) { 
+                        return item.value });
+                });
 
+                bound_show_data_labels(select_all=false, datum_clicked=d, 
+                    index_clicked=index_clicked, should_highlight_element=true,
+                    data_point_class_name='data_point_'+ index_clicked);
+                
+                animation_state.highlighter_engaged = true;
 
+           }
+           // de-highlight case
+           else {
+                
+                d3.select(obj).style('fill', bar_color);
+                bound_show_data_labels(select_all=false, datum_clicked=d, 
+                    index_clicked=index_clicked, should_highlight_element=false,
+                    data_point_class_name='data_point_'+ index_clicked);
+
+           }
+            
            
             d3.select(obj).on('mouseover', function(d, i) {
                 
@@ -738,7 +763,6 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
             });
             
             d3.select(obj).on("mousemove", function(event, d) {
-                
                 bar_mousemove_animation(event, d, element=null, 
                     values=[d[d_fields[1]]])
             });
@@ -750,15 +774,109 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
             }
             });
               
-            animation_state.highlighter_engaged = true;
+            
         
             console.log('from onclick highlight ', animation_state.highlighter_engaged);
         
             }
-            );
-          
+        );          
+    }
+
+
+    let f = true;
     
-          
+    
+    var i = 0; 
+
+    svg.selectAll('text.sec')
+            .data(data)
+            .enter()
+            .append('text')
+            
+            .attr("class", function(d, i) {
+               
+                return 'sec data_point_'+ i
+            })
+            
+            .attr("x", function(d) {return xScale(d[data_fields[0]]) } )
+            .attr("y", function(d) { return yScale(d[data_fields[1]])  } )
+            
+            .text(function(d) {   
+                    return "#"
+             } )
+            ;
+
+    
+    var data_mod = [];
+
+    // clicked_dataum, clicked_index
+    function show_data_labels(select_all, datum_clicked, index_clicked,
+        should_highlight_element, data_point_class_name) {
+    
+        if (select_all === true) {
+
+        }
+
+// use selctall with a specified class to remove those who dont have that class
+        else {
+            if (f === true) {
+            
+            
+            console.log("index_clicked  --> ",  index_clicked);
+
+            let clicked_obj = data[index_clicked];
+
+            console.log('clicked_obj = ', clicked_obj);
+            
+
+           
+            if (is_in_array(clicked_obj, data_mod)) {  // de-highlight
+                const index = data_mod.indexOf(clicked_obj);
+                if (index > -1) {
+                    console.log('splicing: ', data_mod.splice(index, 1));
+                    console.log('already exists! REMOVE!');
+                  }
+            }
+            else {  // highlight
+                data_mod.push(clicked_obj);
+            }
+
+            console.log('data_mod -> ', data_mod);
+            
+            let selector = "text.sec." + data_point_class_name; 
+            if (should_highlight_element=== true) {   //  class highlighted should be ON
+                
+                console.log('-----> ', selector);
+                console.log('----> ', d3.select(selector));
+                let enter_selection  = d3.selectAll(selector)            
+                
+                .text("" + Number(clicked_obj[data_fields[1]]).toFixed(2)   
+                 );
+                           
+
+            }
+
+            else if (should_highlight_element === false) {   //  class highlighted should be OFF
+               
+                let enter_selection  = d3.selectAll(selector)            
+                
+                .text("#");
+                
+
+            }
+            
+
+            
+            
+            }
+         
+
+        }
+
+    console.log('\n\n');  
+    
+    i ++;
+       
     }
      
 
@@ -766,10 +884,183 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
 
 
 
+function is_in_array(obj, arr) {
+    
+    for(let i=0; i < arr.length; i++) {
+        
+        if (obj === arr[i]) {
+            return true
+        }        
+    }
+    return false
+
+}
 
 // ...................................................................................
 //....................................................................................
 
+function testing(data) {
+
+    var data_fields = [];
+    
+    for (var field in data[0]) {
+        // check if property not inherited
+        if (Object.prototype.hasOwnProperty.call(data[0], field)) {
+            data_fields.push(field);
+        }
+    }
+
+    var animation_state = {
+        highlighter_engaged: false,
+        
+    }
+
+
+    // a method placed here must determine what type of data we are dealing with
+    // so that we load the right filters
+
+    margins = {top: 20, right: 20, bottom: 20, left: 50}
+
+    width = 400 - margins.left - margins.right
+    height = 400 - margins.top - margins.bottom
+    
+    
+    var svg = d3.select("#svg-container").append("svg")
+    .attr("width", width + margins.left + margins.right + 60)
+    .attr("height", height + margins.top + margins.bottom + 60)
+    .append("g")
+        
+        .attr("transform",
+              "translate(" + margins.left + "," + (margins.top) + ")");
+
+
+    // range is output
+    var xScale = d3.scaleBand().range ([0, width]).padding(0.4);
+    var x2Scale =  d3.scaleLinear().range ([0, width]);
+
+    var yScale = d3.scaleLinear().range ([height, 0]);
+    
+
+    // we  provide our domain values to the x and y scales    
+    xScale.domain(data.map(function(d) { return d[data_fields[0]]; }));
+
+    x2Scale.domain([d3.min(data, function(d) { return d[data_fields[0]]; }),
+        d3.max(data, function(d) { return d[data_fields[0]]; }) ]);
+
+    yScale.domain([0, d3.max(data, function(d) { return  d[data_fields[1]] ; }) + 10 ]);
+
+    
+    svg.append("g")
+    .attr("transform", "translate(0," + height + ")")
+    .call(d3.axisBottom(xScale));
+
+    svg.append("g")
+    .call(d3.axisLeft(yScale).tickFormat(function(d){
+        // format the ticks
+        return  d;
+    }).ticks(10))  // number of ticks
+    
+    // add title
+    svg.append("text")
+    .attr("transform", "translate(100,0)")
+    .attr("x", 30)
+    .attr("y", 0)
+    .attr("font-size", "24px")
+    .text("graph_title")
+    
+    svg.append("text")
+    .attr('x', (width/2) )
+    .attr('y', height + 35)
+    .attr("stroke", "black")
+    .text("x_title");
+
+    svg.append("text")
+    .attr("transform", 'rotate(-90)translate(-120, ' + -30 +')')
+    .attr("stroke", "black")
+    .text("y_title");
+
+    
+    // svg.selectAll("circle").data(data)
+    // .enter()
+    // .append("circle")
+    // .style("stroke", "gray")
+    // .style("fill", "red")
+    // .attr("r", 4)
+    // .attr("cx", function(d) {return xScale(d[data_fields[0]]) } )
+    // .attr("cy", function(d) { return yScale(d[data_fields[1]]) } );
+
+    // var node = svg.selectAll("circle")
+    //             .data(data)
+    //             .enter()
+    //             .append("circle")
+    // .attr("class", "dot")
+    // .style("fill", "red")
+    // .attr("cx",  function(d) {return xScale(d[data_fields[0]]) })
+    // .attr("cy", function(d) { return yScale(d[data_fields[1]]) })
+    // .attr("r", 3);
+    
+    console.log(svg);
+
+    // svg.selectAll("text.sec")
+    // .data(data)
+    // .enter()
+    // .append('text')
+    // .attr("class", "sec")
+    // .style("fill", "blue")
+    // .attr("x", function(d) {return xScale(d[data_fields[0]]) } )
+    // .attr("y", function(d) { return yScale(d[data_fields[1]]) - 25 } )
+    
+    // .text(function(d) { return yScale(d[data_fields[1]]) } );
+    
+        
+
+    document.querySelector('#update-button').addEventListener("click", button_click);
+
+    var r = 0;
+
+    var data_labels_tracker
+
+    function button_click() {
+        // let r = Math.floor(Math.random() * data.length);
+        if (r === data.length){
+            r = 0;
+        }
+
+
+
+        data_mod = data.slice(r, r+1);
+        
+        console.log(data_mod);
+        
+        var ex = svg.selectAll("text.sec")
+        .datum({})
+        .exit();
+        console.log(ex);
+
+
+        // svg.selectAll("text.sec")
+        // .data(data_mod)
+        // .exit()
+        // .remove();
+
+        // svg.selectAll("circle").data(data_mod)
+        // .exit().remove();
+        svg.selectAll("text.sec")
+        .data(data_mod)
+        .enter()
+        .append('text')
+        .attr("class", "sec")
+        .style("fill", "blue")
+        .attr("x", function(d) {return xScale(d[data_fields[0]]) } )
+        .attr("y", function(d) { return yScale(d[data_fields[1]]) - 25 } )
+        
+        .text(function(d) { return Number(yScale(d[data_fields[1]])).toFixed(2) } );
+        
+        r ++;
+
+    }
+
+}
 
 function bar_graph2 (data, graph_title='default_title', x_title='x-label', 
                     y_title='y_label', trend_line=false, bar_mouseover_animation=false,
@@ -1137,7 +1428,7 @@ const keys = Object.keys(parsed_data)
 const d1 = Object.values(parsed_data);
 console.log(d1);
 
-
+//testing(data=data1);
 
 bar_graph (data1,   //data
           "SOME TITLE",  //graph_title
