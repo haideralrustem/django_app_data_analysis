@@ -664,6 +664,11 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
 
     
     if(highlighting=== true) {
+
+        var data_mod = [];  // a variable to keep track of the clicked/de-clicked
+        // data objects. Used for text labels
+
+
         highlight_onclick(svg=svg, selector=".bar", data=data, 
                           highligh_style=highligh_style,
                           d_fields=data_fields
@@ -676,6 +681,16 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
         svg_container.addEventListener("click", function() {
             // remove highlighting
             animation_state.highlighter_engaged = false;
+            
+            // reset data_mod, which is an array containing highlighted items
+            data_mod = [];
+            // toggle
+           d3.selectAll(".bar").classed("highlighted", false );
+           
+
+            show_data_labels(select_all=true, datum_clicked=null, 
+                index_clicked=null, should_highlight_element=false,
+                data_point_class_name=null);
 
             svg.selectAll(".bar").style('fill', bar_color);
 
@@ -727,9 +742,13 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
            selection.classed("highlighted", selection.classed("highlighted") ? false : true);
            
            let bound_show_data_labels = show_data_labels.bind(this);
+
+           
             
            // highlight case
            if (selection.attr("class").includes("highlighted")) {
+
+            console.log('selection classes -> ', selection.attr("class"));
                 
                 highligh_style.forEach(function (item) {
                     d3.select(obj).style(item.key , function(d) { 
@@ -742,37 +761,67 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
                 
                 animation_state.highlighter_engaged = true;
 
+
+
+                d3.select(obj).on('mouseover', function(d, i) {
+                
+                    //-> Tooltip
+                    if ( bar_tooltip===true ) {
+                        return  tooltip.style("visibility", "visible");
+                }
+                });
+                
+                d3.select(obj).on("mousemove", function(event, d) {
+                    bar_mousemove_animation(event, d, element=null, 
+                        values=[d[d_fields[1]]])
+                });
+                
+                d3.select(obj).on('mouseout', function(d, i) {
+                    //-> Tooltip
+                    if ( bar_tooltip===true ) {
+                        return  tooltip.style("visibility", "hidden");
+                }
+                });
+
            }
            // de-highlight case
            else {
+
+            console.log('selection classes -> ', selection.attr("class"));
                 
                 d3.select(obj).style('fill', bar_color);
+
+                if ( bar_mouseover_animation === true ) {
+
+                    svg.selectAll(".bar")
+                    .on("mouseover", function (d , i) {
+            
+                        bar_mousein_animation(d, i, element=this)
+                        
+                    })
+            
+                    .on("mousemove", function(event, d) {
+                        bar_mousemove_animation(event, d, element=null, 
+                            values=[d[data_fields[1]]])
+                    })
+            
+                    //Add listener for the mouseout event
+                    .on("mouseout", function (d, i) { 
+                       bar_mouseout_animation(d, i, element=this)
+                    }) 
+                
+                } 
+
+                
                 bound_show_data_labels(select_all=false, datum_clicked=d, 
                     index_clicked=index_clicked, should_highlight_element=false,
                     data_point_class_name='data_point_'+ index_clicked);
+                   
 
            }
             
            
-            d3.select(obj).on('mouseover', function(d, i) {
-                
-                //-> Tooltip
-                if ( bar_tooltip===true ) {
-                    return  tooltip.style("visibility", "visible");
-            }
-            });
             
-            d3.select(obj).on("mousemove", function(event, d) {
-                bar_mousemove_animation(event, d, element=null, 
-                    values=[d[d_fields[1]]])
-            });
-            
-            d3.select(obj).on('mouseout', function(d, i) {
-                //-> Tooltip
-                if ( bar_tooltip===true ) {
-                    return  tooltip.style("visibility", "hidden");
-            }
-            });
               
             
         
@@ -802,18 +851,26 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
             .attr("y", function(d) { return yScale(d[data_fields[1]])  } )
             
             .text(function(d) {   
-                    return "#"
+                    return ""
              } )
             ;
 
     
-    var data_mod = [];
+    
 
     // clicked_dataum, clicked_index
     function show_data_labels(select_all, datum_clicked, index_clicked,
         should_highlight_element, data_point_class_name) {
     
         if (select_all === true) {
+
+
+            if (should_highlight_element === false) {
+                d3.selectAll("text.sec")            
+                
+                .text("");
+            }
+           
 
         }
 
@@ -827,9 +884,7 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
             let clicked_obj = data[index_clicked];
 
             console.log('clicked_obj = ', clicked_obj);
-            
-
-           
+                       
             if (is_in_array(clicked_obj, data_mod)) {  // de-highlight
                 const index = data_mod.indexOf(clicked_obj);
                 if (index > -1) {
@@ -844,10 +899,9 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
             console.log('data_mod -> ', data_mod);
             
             let selector = "text.sec." + data_point_class_name; 
-            if (should_highlight_element=== true) {   //  class highlighted should be ON
-                
-                console.log('-----> ', selector);
-                console.log('----> ', d3.select(selector));
+            if (should_highlight_element=== true) {   
+                //  class highlighted should be ON
+                               
                 let enter_selection  = d3.selectAll(selector)            
                 
                 .text("" + Number(clicked_obj[data_fields[1]]).toFixed(2)   
@@ -856,11 +910,13 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
 
             }
 
-            else if (should_highlight_element === false) {   //  class highlighted should be OFF
+            else if (should_highlight_element === false) {   
+                //  class highlighted should be OFF
                
                 let enter_selection  = d3.selectAll(selector)            
                 
-                .text("#");
+                .text("");
+                
                 
 
             }
