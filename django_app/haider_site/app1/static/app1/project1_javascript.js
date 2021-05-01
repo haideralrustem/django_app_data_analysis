@@ -3,7 +3,7 @@
 // console.log('-----> ', parsed_data);
 
 
-function line_graph(data){
+function line_graph_test(data){
 
     // set the dimensions and margins of the graph
     var margin = {top: 0, right: 0, bottom: 30, left: 50},
@@ -77,6 +77,313 @@ function line_graph(data){
 
 //..................................................
 
+
+function line_graph(data=[], x_title='x_title', y_title='y_title',
+                    graph_title='graph_title', y_ticks=10, data_circles=false,
+                    line_mouseover_animation=true, line_mousein_tuple,
+                    line_mouseout_tuple,
+                    num_of_lines=1,
+                    x_name='',
+                    y_names=[],
+                    x_axis_min=null,
+                    x_axis_max=null,
+                    y_axis_min=null,
+                    y_axis_max=null,
+                    ) {
+    var data_fields = [];
+    
+    for (var field in data[0]) {
+        // check if property not inherited
+        if (Object.prototype.hasOwnProperty.call(data[0], field)) {
+
+            data_fields.push(field);
+            
+        }
+    }
+
+    
+
+    var animation_state = {
+        highlighter_engaged: false,
+        
+    }
+
+
+    // a method placed here must determine what type of data we are dealing with
+    // so that we load the right filters
+
+    margins = {top: 20, right: 20, bottom: 20, left: 50}
+
+    width = 400 - margins.left - margins.right
+    height = 400 - margins.top - margins.bottom
+    
+    
+    var svg = d3.select("#svg-container").append("svg")
+    .attr("width", width + margins.left + margins.right + 60)
+    .attr("height", height + margins.top + margins.bottom + 60)
+    .append("g")
+        
+        .attr("transform",
+              "translate(" + margins.left + "," + (margins.top) + ")");
+
+    
+    // check if linear or should be other things
+    var xScale =  d3.scaleLinear().range ([0, width]);
+
+
+    var yScale = d3.scaleLinear().range ([height, 0]);
+
+
+
+    var max_y = 0;
+    var min_y = 0;
+   
+    var max_list = [];
+    var min_list = [];
+
+    for(let i=0; i < y_names.length; i++) {
+        let y_name = y_names[i];
+        // infer the domain??
+        let current_min = d3.min(data, function(d) { return d[y_name]; });
+        let current_max = d3.max(data, function(d) { return d[y_name]; });
+
+        min_list.push(current_min);
+        max_list.push(current_max);
+        if (current_max >= max_y) {
+            max_y = current_max;
+        }
+        if (current_min <= min_y) {
+            min_y = current_min;
+        }
+    }
+    max_list.sort(function(a, b){return b-a}); // sort descending
+    if (max_list[0] - max_list[1] > 200) {
+        alert(
+            'consider a different graph for the other line because' +
+            ' the y values difference is more than 200!'
+            )
+    }
+    min_list.sort(function(a, b){return a-b}); // sort ascending
+    if (min_list[1] - min_list[0] > 200) {
+        alert(
+            'consider a different graph for the other line because' +
+            ' the x values difference is more than 200! and the graph can' +
+            'appear distorted for some data points'
+            )
+    }
+
+    // ............
+
+    if (x_axis_max == null) {
+        x_axis_max = d3.max(data, function(d) { return d[x_name]; });
+    }
+    if (x_axis_min == null ) {
+        x_axis_min = d3.min(data, function(d) { return d[x_name]; });
+    }
+    if (y_axis_max == null) {
+        y_axis_max = max_y;
+    }
+    if (y_axis_min == null) {
+        y_axis_min = 0;
+    }
+
+    xScale.domain([x_axis_min, x_axis_max ]);
+    yScale.domain([y_axis_min, y_axis_max + 5 ]);
+    svg.append("g")
+    .attr("transform", "translate(0," + height + ")")
+    .call(d3.axisBottom(xScale));
+
+    svg.append("g")
+    .call(d3.axisLeft(yScale).tickFormat(function(d){
+        // format the ticks
+        return  d;
+    }).ticks(y_ticks))  // number of ticks
+    
+    // add title
+    svg.append("text")
+    .attr("transform", "translate(100,0)")
+    .attr("x", 30)
+    .attr("y", 0)
+    .attr("font-size", "24px")
+    .text(graph_title)
+    
+    svg.append("text")
+    .attr('x', (width/2) )
+    .attr('y', height + 35)
+    .attr("stroke", "black")
+    .text(x_title);
+
+    svg.append("text")
+    .attr("transform", 'rotate(-90)translate(-120, ' + -30 +')')
+    .attr("stroke", "black")
+    .text(y_title);
+
+
+
+    for(let i=0; i < y_names.length; i++) {
+        let y_name = y_names[i];
+        //line
+        var valueline = d3.line()
+
+            .x( function(d) { return xScale(d[x_name]); })
+            .y( function(d) { return yScale(d[y_name]); });
+            
+            var line= svg.append("path")
+            .datum(data)
+            .attr("class", "line")
+            .attr("d", valueline)
+            ;
+        
+
+        var tooltip = d3.select("#svg-container")
+        .append("div")
+        .style("position", "absolute")
+        .style("visibility", "hidden")
+        .style("background-color", "white")
+        .style("border", "solid")
+        .style("border-width", "1px")
+        .style("border-radius", "5px")
+        .style("padding", "10px")
+        .attr("class", "tooltip")
+        .text("I'm a circle!")
+        .html("<p>I'm a tooltip written in HTML</p>");
+
+        var bisect = d3.bisector(function(d) { return d[x_name]; }).left;
+    
+        
+        if( data_circles === true) {
+            var circles = svg.selectAll("myCircles")
+            .data(data)
+            .enter()
+            .append("circle")
+                .attr("class", "line-circles")
+                .attr("stroke", "none")
+                .attr("cx", function(d) { return xScale(d[x_name]) })
+                .attr("cy", function(d) { return yScale(d[y_name]) })
+                .attr("r", 5)
+                .style("opacity", 0)
+                .transition()     // adds animation
+                .duration(500)
+                .style("opacity", 1);;
+        }
+
+    
+
+        if ( line_mouseover_animation === true ) {
+            svg.selectAll(".line")
+            .on("mouseover", function (d , i) { 
+                line_mousein_animation(d, i, element=this, y_name=y_name)        
+            })
+
+            .on("mousemove", function(event, d) {
+                line_mousemove_animation(event, d, element=this, y_name=y_name)
+                                    
+            })
+
+            //Add listener for the mouseout event
+            .on("mouseout", function (d, i) { 
+                line_mouseout_animation(d, i, y_name=y_name)
+            }) 
+
+            svg.selectAll("circle")
+            .on("mouseover", function (d , i) { 
+                line_mousein_animation(d, i, element=this, y_name=y_name)        
+            })
+
+            .on("mousemove", function(event, d) {
+                line_mousemove_animation(event, d, element=this, y_name=y_name)
+                                    
+            })
+
+            //Add listener for the mouseout event
+            .on("mouseout", function (d, i) { 
+                line_mouseout_animation(d, i, y_name=y_name)
+            }) 
+        }
+
+    
+    }  // end for
+
+
+    function line_mousein_animation (d , i, element , y_name) {
+
+        line_mousein_tuple.forEach(function(item) {
+            d3.select(element).style(item.key , function(d) { 
+                return item.value });
+        });
+
+
+        let style_attr_name = ''
+        console.log(element.tagName)
+        if (element.tagName === "path") {
+            style_attr_name = 'stroke'
+        }
+        else if (element.tagName === "circle") {
+            style_attr_name = 'fill'
+        }
+
+        d3.select(element)
+        .style(style_attr_name, "rgb(107, 199, 253)")
+        .transition()     // adds animation
+        .duration(100)
+        .style(style_attr_name, "#D6A2E8")
+        ;
+
+        return  tooltip.style("visibility", "visible");            
+    }
+
+    function  line_mousemove_animation (event, d, element, y_name) {         
+        var x0 = xScale.invert(d3.pointer(event)[0]-25);
+
+        var i = bisect(data, x0, 0);
+
+        console.log('i -> ', i);
+
+        var selectedData = data[i]
+        
+        var y_value = selectedData[x_name];
+        var x_value = selectedData[y_name]
+
+        tooltip.html("" 
+                    + x_value + ' : ' + y_value);
+       
+        return tooltip.style("top", (event.pageY-50)+"px")
+                      .style("left",(event.pageX-40)+"px")
+                      .style("opacity", "0.8");
+                
+            }
+
+    function line_mouseout_animation(d, i, y_name) {                      
+        
+        line_mouseout_tuple.forEach(function(item) {
+            d3.select(element).style(item.key , function(d) { 
+                return item.value });
+        });
+
+        let style_attr_name = ''
+        console.log(element.tagName)
+        if (element.tagName === "path") {
+            style_attr_name = 'stroke'
+        }
+        else if (element.tagName === "circle") {
+            style_attr_name = 'fill'
+        }
+       
+        d3.select(element)
+        .style(style_attr_name, "#D6A2E8") 
+        
+        // before
+        .transition()     // adds animation
+        .duration(150)
+        .style(style_attr_name, "rgb(107, 199, 253)")
+        
+        ; // after
+
+        return tooltip.style("visibility", "hidden"); 
+    }
+
+
+}
 
 
 
@@ -819,18 +1126,12 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
                    
 
            }
-            
-           
-            
-              
-            
         
             console.log('from onclick highlight ', animation_state.highlighter_engaged);
         
             }
         );          
     }
-
 
     let f = true;
     
@@ -939,6 +1240,176 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
 }
 
 
+// ..............................
+
+function tootip_line(data) {
+
+    var data_fields = [];
+        
+        for (var field in data[0]) {
+            // check if property not inherited
+            if (Object.prototype.hasOwnProperty.call(data[0], field)) {
+                data_fields.push(field);
+                }
+            }
+        
+
+        // Set the dimensions of the canvas / graph
+        var margin = {top: 10, right: 30, bottom: 30, left: 60},
+        width = 660 - margin.left - margin.right,
+        height = 500 - margin.left - margin.right ;
+        
+        
+        var svg = d3.select("#svg-container")
+        .append("svg")
+        .attr("width", width + margin.right + margin.right + 100)
+        .attr("height", height + margin.top + margin.bottom + 100)
+        .append("g")
+        .attr("transform",
+              "translate(" + margin.left + "," + margin.top + ")");
+         
+        
+         // range is possible values
+        var xScale = d3.scaleLinear().range([0, width], 1);
+        var yScale = d3.scaleLinear().range([height , 0]);
+        
+        // we  provide our domain values to the x and y scales    
+        xScale.domain([d3.min(data, function(d) { return d[data_fields[0]]; })-4, 
+                       d3.max(data, function(d) { return d[data_fields[0]]; })+4]);
+
+        yScale.domain([0, d3.max(data, function(d) { return  d[data_fields[1]] + 20; }) ]);
+
+        // var g = svg.append("g")
+        // .attr("transform", "translate(" + 70 + "," + 50 + ")");
+
+        svg.append("g")
+         .attr("transform", "translate(0," + (height) + ")")
+         .call(d3.axisBottom(xScale).tickFormat( function(d) {
+                a = String(d)
+                a=a.replace(/\,/g,'')
+                a=Number(a)
+                return a
+         })
+         .ticks(10))
+         
+         .append("text")
+        // .attr("y", 300)
+        // .attr("x", (width)/2 )
+        .attr("transform", "translate(280," + (40) + ")")
+        //.attr("text-anchor", "middle")
+        .attr("stroke", "black")
+        .text("Year");
+
+        
+        svg.append("g")
+        .call(d3.axisLeft(yScale).tickFormat( function(d) {
+            return "$" + d;
+        }).ticks(10))
+        .append("text")
+        .attr("text-anchor", "middle")
+        .attr("y", 16)
+        .attr("dy", "-4.75em")
+        .attr("transform", 'rotate(-90)translate(-200, ' + -8 +')')
+        .attr("stroke", "black")
+        .text("Stock Price");
+        
+        
+        // svg.append("text")
+        // .attr("transform", "translate(100,-20)")
+        // .attr("x", 50)
+        // .attr("y", 50)
+        // .attr("font-size", "24px")
+        // .text("XYZ Foods Stock Price");
+
+
+         // Create the circle that travels along the curve of chart
+        var focus = svg
+        .append('g')
+        .append('circle')
+            .style("fill", "none")
+            .attr("stroke", "black")
+            .attr('r', 8.5)
+            .style("opacity", 0)
+
+        var focusText = svg
+            .append('g')
+            .append('text')
+            .style("opacity", 0)
+            .attr("text-anchor", "left")
+            .attr("alignment-baseline", "middle")
+
+
+        // This allows to find the closest X index of the mouse:
+        var bisect = d3.bisector(function(d) { return d[data_fields[0]]; }).left;
+
+        const line = d3.line()
+        .x(function(d) { return xScale(d[data_fields[0]])})
+        .y(function(d) { return yScale(d[data_fields[1]])});
+
+
+        // g.append("path")
+        // .data([data])
+        // .attr("class", "line")
+        // .attr("d", line);
+
+        svg.append("path")
+        .datum(data)
+        
+        .attr('fill', 'none')
+        .attr('stroke', 'blue')
+        .attr('stroke-width', 2)
+        
+        .attr('d', line);
+
+
+        // Create a rect on top of the svg area: this rectangle recovers mouse position
+        svg
+        .append('rect')
+        .style("fill", "none")
+        .style("pointer-events", "all")
+        .attr('width', width)
+        .attr('height', height)
+        .on('mouseover', mouseover)
+        .on('mousemove', mousemove)
+        .on('mouseout', mouseout);
+
+
+         // What happens when the mouse move -> show the annotations at the right positions.
+        function mouseover() {
+            focus.style("opacity", 1)
+            focusText.style("opacity",1)
+        }
+
+        function mousemove() {
+            // recover coordinate we need
+                        
+            var x0 = xScale.invert(d3.pointer(event)[0]-25);
+
+            var i = bisect(data, x0, 0);
+
+            console.log('i -> ', i);
+
+            var selectedData = data[i]
+            focus
+            .attr("cx", xScale(selectedData[data_fields[0]]))
+            .attr("cy", yScale(selectedData[data_fields[1]]))
+            focusText
+            .html("x:" + selectedData[data_fields[0]] + "  ,  " + "y:" + 
+                                                            selectedData[data_fields[1]])
+            .attr("x", xScale(selectedData[data_fields[0]]-1))
+            .attr("y", yScale(selectedData[data_fields[1]])-35)
+            }
+
+        function mouseout() {
+            focus.style("opacity", 0);
+            focusText.style("opacity", 0)
+        }
+
+        
+
+}
+
+//................................
 
 function is_in_array(obj, arr) {
     
@@ -1252,172 +1723,7 @@ function bar_graph2 (data, graph_title='default_title', x_title='x-label',
 
 // .......................................
 
-function tootip_line(data) {
 
-    var data_fields = [];
-        
-        for (var field in data[0]) {
-            // check if property not inherited
-            if (Object.prototype.hasOwnProperty.call(data[0], field)) {
-                data_fields.push(field);
-                }
-            }
-        
-
-        // Set the dimensions of the canvas / graph
-        var margin = {top: 10, right: 30, bottom: 30, left: 60},
-        width = 660 - margin.left - margin.right,
-        height = 500 - margin.left - margin.right ;
-        
-        
-        var svg = d3.select("#svg-container")
-        .append("svg")
-        .attr("width", width + margin.right + margin.right + 100)
-        .attr("height", height + margin.top + margin.bottom + 100)
-        .append("g")
-        .attr("transform",
-              "translate(" + margin.left + "," + margin.top + ")");
-         
-        
-         // range is possible values
-        var xScale = d3.scaleLinear().range([0, width], 1);
-        var yScale = d3.scaleLinear().range([height , 0]);
-        
-        // we  provide our domain values to the x and y scales    
-        xScale.domain([d3.min(data, function(d) { return d[data_fields[0]]; })-4, 
-                       d3.max(data, function(d) { return d[data_fields[0]]; })+4]);
-
-        yScale.domain([0, d3.max(data, function(d) { return  d[data_fields[1]] + 20; }) ]);
-
-        // var g = svg.append("g")
-        // .attr("transform", "translate(" + 70 + "," + 50 + ")");
-
-        svg.append("g")
-         .attr("transform", "translate(0," + (height) + ")")
-         .call(d3.axisBottom(xScale).tickFormat( function(d) {
-                a = String(d)
-                a=a.replace(/\,/g,'')
-                a=Number(a)
-                return a
-         })
-         .ticks(10))
-         
-         .append("text")
-        // .attr("y", 300)
-        // .attr("x", (width)/2 )
-        .attr("transform", "translate(280," + (40) + ")")
-        //.attr("text-anchor", "middle")
-        .attr("stroke", "black")
-        .text("Year");
-
-        
-        svg.append("g")
-        .call(d3.axisLeft(yScale).tickFormat( function(d) {
-            return "$" + d;
-        }).ticks(10))
-        .append("text")
-        .attr("text-anchor", "middle")
-        .attr("y", 16)
-        .attr("dy", "-4.75em")
-        .attr("transform", 'rotate(-90)translate(-200, ' + -8 +')')
-        .attr("stroke", "black")
-        .text("Stock Price");
-        
-        
-        // svg.append("text")
-        // .attr("transform", "translate(100,-20)")
-        // .attr("x", 50)
-        // .attr("y", 50)
-        // .attr("font-size", "24px")
-        // .text("XYZ Foods Stock Price");
-
-
-         // Create the circle that travels along the curve of chart
-        var focus = svg
-        .append('g')
-        .append('circle')
-            .style("fill", "none")
-            .attr("stroke", "black")
-            .attr('r', 8.5)
-            .style("opacity", 0)
-
-        var focusText = svg
-            .append('g')
-            .append('text')
-            .style("opacity", 0)
-            .attr("text-anchor", "left")
-            .attr("alignment-baseline", "middle")
-
-
-        // This allows to find the closest X index of the mouse:
-        var bisect = d3.bisector(function(d) { return d[data_fields[0]]; }).left;
-
-        const line = d3.line()
-        .x(function(d) { return xScale(d[data_fields[0]])})
-        .y(function(d) { return yScale(d[data_fields[1]])});
-
-
-        // g.append("path")
-        // .data([data])
-        // .attr("class", "line")
-        // .attr("d", line);
-
-        svg.append("path")
-        .datum(data)
-        
-        .attr('fill', 'none')
-        .attr('stroke', 'blue')
-        .attr('stroke-width', 2)
-        
-        .attr('d', line);
-
-
-        // Create a rect on top of the svg area: this rectangle recovers mouse position
-        svg
-        .append('rect')
-        .style("fill", "none")
-        .style("pointer-events", "all")
-        .attr('width', width)
-        .attr('height', height)
-        .on('mouseover', mouseover)
-        .on('mousemove', mousemove)
-        .on('mouseout', mouseout);
-
-
-         // What happens when the mouse move -> show the annotations at the right positions.
-        function mouseover() {
-            focus.style("opacity", 1)
-            focusText.style("opacity",1)
-        }
-
-        function mousemove() {
-            // recover coordinate we need
-                        
-            var x0 = xScale.invert(d3.pointer(event)[0]-25);
-
-            var i = bisect(data, x0, 0);
-
-            console.log('i -> ', i);
-
-            var selectedData = data[i]
-            focus
-            .attr("cx", xScale(selectedData[data_fields[0]]))
-            .attr("cy", yScale(selectedData[data_fields[1]]))
-            focusText
-            .html("x:" + selectedData[data_fields[0]] + "  ,  " + "y:" + 
-                                                            selectedData[data_fields[1]])
-            .attr("x", xScale(selectedData[data_fields[0]]-1))
-            .attr("y", yScale(selectedData[data_fields[1]])-35)
-            }
-
-        function mouseout() {
-            focus.style("opacity", 0);
-            focusText.style("opacity", 0)
-        }
-
-        
-
-}
     
 // -----------------------------------
 
@@ -1460,13 +1766,13 @@ function onMouseOut(d, i) {
 // ............................
 
 var data1 = [
-    {'date': 2006, 'close':40},
-    {'date': 2008 , 'close': 45},
-    {'date': 2010, 'close': 48},
-    {'date': 2012, 'close': 51},
-    {'date': 2014, 'close': 53},
-    {'date': 2016, 'close': 57},
-    {'date': 2017, 'close': 62}
+    {'date': 2006, 'close':40, 'loss': 70},
+    {'date': 2008 , 'close': 45, 'loss': 33},
+    {'date': 2010, 'close': 48, 'loss': 22},
+    {'date': 2012, 'close': 51, 'loss': 29},
+    {'date': 2014, 'close': 53, 'loss': 39},
+    {'date': 2016, 'close': 57, 'loss': 49},
+    {'date': 2017, 'close': 62, 'loss': 51}
 ]
 
 
@@ -1485,27 +1791,39 @@ const d1 = Object.values(parsed_data);
 console.log(d1);
 
 //testing(data=data1);
+line_graph(data=data1, x_title='xaxis', y_title='ytitle', graph_title='TITLEST',
+            y_ticks=10, data_circles=true, line_mouseover_animation=true,
+            line_mousein_tuple=[{key: "stroke", value: 'orange'}], 
+            line_mouseout_tuple=[{key: "stroke", value: 'rgb(70, 130, 180)'}],
+            num_of_lines=1,
+            x_name='date',
+            y_names=['close', 'loss'],
+            x_axis_min=2005,
+            x_axis_max=2018,
+            y_axis_min=null,
+            y_axis_max=100,
+            )
 
-bar_graph (data1,   //data
-          "SOME TITLE",  //graph_title
-          'year', //x_title
-          'value', //y_title
-          bar_color='rgb(70, 130, 180)',
-          true, //trend_line
-          true,  // bar_mouseover_animation
-          true, //line_mouseover_animation
-          true, //bar_tooltip : boolean
-          true, // line_tooltip : boolean
-          [{key: 'fill', value: 'orange'}],  //mousein_tuple
-          [{key: 'fill', value: 'rgb(70, 130, 180)'}],  //mouseout_tuple
-          [{key: 'stroke', value: 'blue'}], // line_mousein_tuple
-          [{key: 'stroke', value: '#74b9ff'}], // line_mouseout_tuple
-          filtering=true,
-          bar_filter=true,
-          line_filter=true,
-          highlighting=true,
-          highligh_style=[{key: "fill", value: "red"}]
-          )
+// bar_graph (data1,   //data
+//           "SOME TITLE",  //graph_title
+//           'year', //x_title
+//           'value', //y_title
+//           bar_color='rgb(70, 130, 180)',
+//           true, //trend_line
+//           true,  // bar_mouseover_animation
+//           true, //line_mouseover_animation
+//           true, //bar_tooltip : boolean
+//           true, // line_tooltip : boolean
+//           [{key: 'fill', value: 'orange'}],  //mousein_tuple
+//           [{key: 'fill', value: 'rgb(70, 130, 180)'}],  //mouseout_tuple
+//           [{key: 'stroke', value: 'blue'}], // line_mousein_tuple
+//           [{key: 'stroke', value: '#74b9ff'}], // line_mouseout_tuple
+//           filtering=true,
+//           bar_filter=true,
+//           line_filter=true,
+//           highlighting=true,
+//           highligh_style=[{key: "fill", value: "red"}]
+//           )
 
 
 

@@ -147,6 +147,30 @@ def updateUserForm(request):
     else:
         return JsonResponse({'status':'Fail', 'msg':'Not a valid request'})
 
+
+
+
+def test_updateUserForm(request):
+
+    print('\n\n\n  views.py has been hit \n\n\n')
+    print('\n\n\n  views.py has been hit \n\n\n')
+    if request.method == 'POST' and request.is_ajax():
+        try:
+            any_pk_id = request.user.id
+            obj = User.objects.get(id=any_pk_id)
+            obj.username = request.POST['username']
+            obj.save()
+            # get updated obj
+            obj = User.objects.get(id=request.user.id)
+            
+
+            return JsonResponse({'status':'Success', 'msg': 'save successfully', 
+                                 'new_username': obj.username})
+        except User.DoesNotExist:
+            return JsonResponse({'status':'Fail', 'msg': 'Object does not exist'})
+    else:
+        return JsonResponse({'status':'Fail', 'msg':'Not a valid request'})
+
 # .........................
 
 def getUser(request):
@@ -186,3 +210,21 @@ def user_profile(request):
     }
 
     return render(request, 'my_users/user_profile.html', context)
+
+
+
+
+def testing(request, p):
+
+    success_msg_visible = {'display_status': False}
+    u_form = UserUpdateForm(initial={'username': request.user.username})
+    users = User.objects.all()
+
+    context = {
+        'p': 7,
+        'u_form': u_form,
+        'users': users,
+        'success_msg_visible': success_msg_visible
+    }
+
+    return render(request, 'my_users/test.html', context)
