@@ -97,7 +97,8 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
                     height=400,
                     highlighting=true,
                     filtering=true,
-                                       
+                    highligh_style=[{key: "fill", value: "red"}],
+                    circle_radius=5      
                     ) 
 {
     var data_fields = [];
@@ -125,6 +126,7 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
         highlighter_engaged: false,
         
     }
+    var data_mod = [];  // a variable to keep track of the clicked/de-clicked
 
 
     // a method placed here must determine what type of data we are dealing with
@@ -289,7 +291,7 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
                 .attr("stroke", "none")
                 .attr("cx", function(d) { return xScale(d[x_name]) })
                 .attr("cy", function(d) { return yScale(d[y_name]) })
-                .attr("r", 5)
+                .attr("r", circle_radius)
                 .style("fill", current_color)
                 .style("opacity", 0)
                 .transition()     // adds animation
@@ -343,8 +345,6 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
         
         lines_array.push(line);
         circles_array.push(circles);
-
-
 
     
     }  // end for
@@ -463,7 +463,7 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
         // });
 
         let style_attr_name = ''
-        console.log(element.tagName)
+        
         if (element.tagName === "path") {
             style_attr_name = 'stroke'
         }
@@ -479,12 +479,16 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
         .transition()     // adds animation
         .duration(150)
         .style(style_attr_name, current_color)
+        console.log(current_color)
         
         ; // after
 
         return tooltip.style("visibility", "hidden"); 
     }
 
+
+
+    
 
 
     function updateData(selectedGroup, x_value, y_value, line_var, circle_var,
@@ -504,10 +508,8 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
                 }
             }
             
-
            
             let svg_container = document.querySelector('#svg-container');
-
             
             
             // have to update ALL listeners
@@ -579,39 +581,49 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
                 
                 .attr("cx", function(d) { return xScale(d.x_value) })
                 .attr("cy", function(d) { return yScale(d.y_value) })
-                .attr("r", 5)
+                .attr("r", circle_radius)
                 .style("fill", current_color)
                 .style("opacity", 0)
                 .transition()     // adds animation
                 .duration(500)
                 .style("opacity", 1);
                
-            ;
+            
 
             if ( line_mouseover_animation === true ) {
                 svg.selectAll(".line-circles"+ String(iteration_num))
-                .on("mouseover", function (d , i) {
-                    line_mousein_animation(d, i, element=this, y_name=y_value,
-                        current_color=current_color, 
-                        current_mousein_color=current_mousein_color ); 
+                .on("mouseover", function (d , i) { 
+                    line_mousein_animation(d, i, element=this, y_name=y_value, 
+                        current_color=current_color,
+                        current_mousein_color=current_mousein_color)        
                 })
-        
-        
-                .on("mousemove", function(event, d) {                                                        
-                    line_mousemove_animation(event, d, element=this, y_name=y_value)                                       
+    
+                .on("mousemove", function(event, d) {
+                    line_mousemove_animation(event, d, element=this, y_name=y_value)
+                                        
                 })
-        
+    
                 //Add listener for the mouseout event
-                .on("mouseout", function (d, i) {                     
-                    line_mouseout_animation(d, i, element=this,
-                        y_name=y_value,
-                        current_color=current_color, 
-                        current_mousein_color=current_mousein_color);
+                .on("mouseout", function (d, i) { 
+                    line_mouseout_animation(d, i, y_name=y_value, 
+                        current_color=current_color,
+                        current_mousein_color=current_mousein_color)
                 }) 
             
             }
             
+
+            if(highlighting=== true) {
+        
+                // data objects. Used for text labels
+                setup_highlighting();
+                // end highlight for
+            } 
+            
     }
+
+
+
     if (filtering) {
         // testing case
         d3.select("#update-button").on("click", function(d) {
@@ -680,16 +692,304 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
     let svg_container = document.querySelector('#svg-container');
     
 
-    // FILTERING //  
+    if(highlighting=== true) {
+        
+        // data objects. Used for text labels
+        setup_highlighting();
+        // end highlight for
+    } 
+
+
     
-    // $("#slider").slider("destroy");
     
-    // Your Code Here
+    function highlight_onclick(svg, selector, data, highligh_style, d_fields=null,
+                                x_name, y_name, iteration_num, current_color, 
+                                current_mousein_color
+                                )
+        {
+
+        d3.selectAll(selector)
+        .attr("data-index", function(d, i) { return i; })
+
+        // the click event <---
+
+        .on("click", function(event,  d) {
+           event.stopPropagation();
+           
+           //console.log('d in on click --> ', d);
+           let index_clicked = this.getAttribute("data-index");
+           let data_obj_of_clicked = data[index_clicked]
+           
+           let obj = this
+           let selection = d3.select(obj);
+                    
+           // toggle
+           selection.classed("highlighted", selection.classed("highlighted") ? false : true);
+           
+           let bound_show_data_labels = show_data_labels.bind(this);
+
+           
+           // highlight case
+           if (selection.attr("class").includes("highlighted")) {
+
+            console.log('selection classes -> ', selection.attr("class"));
+                
+                highligh_style.forEach(function (item) {
+                    d3.select(obj).style(item.key , function(d) { 
+                        return item.value });
+                });
+
+                bound_show_data_labels(select_all=false, datum_clicked=d, 
+                    index_clicked=index_clicked, should_highlight_element=true,
+                    data_point_class_name='data_point_'+ index_clicked + '_' + iteration_num,
+                    y_name, data_obj_of_clicked);
+                
+                animation_state.highlighter_engaged = true;
+
+
+                d3.select(obj).on('mouseover', function(d, i) {
+                    //-> Tooltip
+                    
+                    return  tooltip.style("visibility", "visible");
+                
+                });
+                
+                d3.select(obj).on("mousemove", function(event, d) {
+                    // bar_mousemove_animation(event, d, element=null, 
+                    //     values=[d[d_fields[1]]])
+                    line_mousemove_animation(event, d, element=this, y_name=y_name)
+                                
+                });
+                
+                d3.select(obj).on('mouseout', function(d, i) {
+                    //-> Tooltip
+                    
+                    return  tooltip.style("visibility", "hidden");
+                
+                });
+
+           }
+           // de-highlight case
+           else {
+
+            console.log('selection classes -> ', selection.attr("class"));
+                
+                d3.select(obj).style('fill', current_color);
+
+               
+                if ( line_mouseover_animation === true ) {
+                    svg.selectAll(".line-circles"+ String(iteration_num))
+                    .on("mouseover", function (d , i) { 
+                        line_mousein_animation(d, i, element=this, y_name=y_name, 
+                            current_color=current_color,
+                            current_mousein_color=current_mousein_color)        
+                    })
+        
+                    .on("mousemove", function(event, d) {
+                        line_mousemove_animation(event, d, element=this, y_name=y_name)
+                                            
+                    })
+        
+                    //Add listener for the mouseout event
+                    .on("mouseout", function (d, i) { 
+                        line_mouseout_animation(d, i, y_name=y_name, 
+                            current_color=current_color,
+                            current_mousein_color=current_mousein_color)
+                    }) 
+                
+                }
+
+                
+                bound_show_data_labels(select_all=false, datum_clicked=d, 
+                    index_clicked=index_clicked, should_highlight_element=false,
+                    data_point_class_name='data_point_'+ index_clicked + '_' + iteration_num,
+                    y_name, data_obj_of_clicked);
+                   
+
+           }
+        
+            console.log('from onclick highlight ', animation_state.highlighter_engaged);
+        
+            }
+        );          
+    }
+
+    function setup_highlighting() {
+
+        for(let i=0; i < y_names.length; i++) {
+
+            let current_color = color_schemes[i % 6];
+            let current_mousein_color = mousein_colors[i % 6];
     
+            let y_name = y_names[i];
+
+           
+
+            // this method toggles ON
+            highlight_onclick(svg=svg, selector=".line-circles"+ String(i), 
+                            data=data, 
+                            highligh_style=highligh_style,
+                            d_fields=data_fields,
+                            x_name, y_name, iteration_num=i, 
+                            current_color, 
+                            current_mousein_color
+                            );
+
+            // animation_state.highlighter_engaged = true;
+
+            let svg_container = document.querySelector('#svg-container');
+
+            svg_container.addEventListener("click", function() {
+                // remove highlighting
+                animation_state.highlighter_engaged = false;
+                
+                // reset data_mod, which is an array containing highlighted items
+                data_mod = [];
+                // toggle highlighted off
+                d3.selectAll(".line-circles"+ String(i)).classed("highlighted", false );
+                
+                // remove all data labels
+                show_data_labels(select_all=true, datum_clicked=null, 
+                    index_clicked=null, should_highlight_element=false,
+                    data_point_class_name=null);
+
+                svg.selectAll(".line-circles"+ String(i)).style('fill', current_color)
+                .attr("r", circle_radius);
+
+                if ( line_mouseover_animation === true ) {
+                    svg.selectAll(".line-circles"+ String(i))
+                    .on("mouseover", function (d , i) { 
+                        line_mousein_animation(d, i, element=this, y_name=y_name, 
+                            current_color=current_color,
+                            current_mousein_color=current_mousein_color)        
+                    })
+        
+                    .on("mousemove", function(event, d) {
+                        line_mousemove_animation(event, d, element=this, y_name=y_name)
+                                            
+                    })
+        
+                    //Add listener for the mouseout event
+                    .on("mouseout", function (d, i) { 
+                        line_mouseout_animation(d, i, y_name=y_name, 
+                            current_color=current_color,
+                            current_mousein_color=current_mousein_color)
+                    }) 
+                
+                }
+                            
+            });
+        
+
+        }
+
+    }
 
 
+    let f = true;
+    var j = 0; 
+    
+    for(let i=0; i < y_names.length; i++) {
+
+        let current_color = color_schemes[i % 6];
+        let current_mousein_color = mousein_colors[i % 6];
+
+        let y_name = y_names[i];
+                
+        svg.selectAll('text.sec text.sec'+String(i))
+                .data(data)
+                .enter()
+                .append('text')
+                .attr("class", function(d, ind) {
+                    console.log('sec data_point_'+ ind + '_' + i);
+                    return 'sec data_point_'+ ind + '_' + i
+                })
+                
+                .attr("x", function(d) {return xScale(d[x_name]) } )
+                .attr("y", function(d) { return yScale(d[y_name])  } )
+                
+                .text(function(d) {   
+                        return ""
+                } )
+                ;
+       
 
 
+    }
+
+        
+    // clicked_dataum, clicked_index
+    // this method is called every click on element (or a clear-all click)
+    function show_data_labels(select_all, datum_clicked, index_clicked,
+        should_highlight_element, data_point_class_name, y_name,
+        data_obj_of_clicked) {
+    
+        if (select_all === true) {
+
+            if (should_highlight_element === false) {
+                d3.selectAll("text.sec")            
+                
+                .text("");
+            }
+           
+
+        }
+
+    // use selectall with a specified class to remove those who dont have that class
+        else {
+            if (f === true) {
+            
+            console.log("index_clicked  --> ",  index_clicked);
+
+            let clicked_obj = data_obj_of_clicked;
+
+            console.log('clicked_obj = ', clicked_obj);
+                       
+            if (is_in_array(clicked_obj, data_mod)) {  // de-highlight
+                const index = data_mod.indexOf(clicked_obj);
+                if (index > -1) {
+                    console.log('splicing: ', data_mod.splice(index, 1));
+                    console.log('already exists! REMOVE!');
+                  }
+            }
+            else {  // highlight
+                data_mod.push(clicked_obj);
+            }
+
+            console.log('data_mod -> ', data_mod);
+            
+            let selector = "text.sec." + data_point_class_name; 
+
+            console.log(' selector --> ', selector);
+            console.log('y_name of clicked obj --> ', y_name);
+
+            if (should_highlight_element=== true) {   
+                //  class highlighted should be ON
+                               
+                let enter_selection  = d3.selectAll(selector)            
+                
+                .text("" + Number(clicked_obj[y_name]).toFixed(2)   
+                 );
+                           
+            }
+
+            else if (should_highlight_element === false) {   
+                //  class highlighted should be OFF
+               
+                let enter_selection  = d3.selectAll(selector)            
+                
+                .text("");                
+            }
+            
+            }
+
+        }
+
+    console.log('\n\n');  
+    
+    j ++;
+       
+    }
 
 
 }
@@ -1213,6 +1513,7 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
             }
             
     }
+
     let svg_container = document.querySelector('#svg-container');
     console.log(svg_container);
 
