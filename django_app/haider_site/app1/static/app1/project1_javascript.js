@@ -262,6 +262,7 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
             .style("stroke", current_color)
             .style("stroke-width", line_stroke_width)
             .attr("d", valueline)
+            
             ;
         
 
@@ -317,45 +318,160 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
 
             //Add listener for the mouseout event
             .on("mouseout", function (d, i) { 
-                line_mouseout_animation(d, i, y_name=y_name, 
+                line_mouseout_animation(d, i, element=this, y_name=y_name, 
                     current_color=current_color,
-                    current_mousein_color=current_mousein_color)
+                    current_mousein_color=current_mousein_color,
+                    original_radius=circle_radius)
             }) 
             
             // ......................
-            // svg.selectAll(".line-circles" + String(i))
-            // .on("mouseover", function (d , i) { 
-            //     line_mousein_animation(d, i, element=this, y_name=y_name, 
-            //         current_color=current_color,
-            //         current_mousein_color=current_mousein_color)        
-            // })
-
-            // .on("mousemove", function(event, d) {
-            //     line_mousemove_animation(event, d, element=this, y_name=y_name)
-                                    
-            // })
-
-            // //Add listener for the mouseout event
-            // .on("mouseout", function (d, i) { 
-            //     line_mouseout_animation(d, i, y_name=y_name, 
-            //                         current_color=current_color,
-            //                         current_mousein_color=current_mousein_color)
-            // });
+           
         }
         
         lines_array.push(line);
         circles_array.push(circles);
+
+        d3.selectAll(".line"+ ".line" + String(i) +
+        ".line-element"+ String(i))
+
+        .on("click", 
+            function(event, d){
+            let iteration_num = i;
+            event.stopPropagation();
+            console.log('line click ===>  ', event,  d);
+            
+            var x_pos = d3.pointer(event)[0];
+            var y_pos = d3.pointer(event)[1];
+
+            var y_value = yScale.invert(y_pos);
+            var x_value =  xScale.invert(x_pos);
+
+            if (dtypes[y_name]==="int") {
+                y_value = Number(y_value).toFixed(0);
+            }
+            else if (dtypes[y_name]==="string") {
+
+            }
+            if (dtypes[x_name]==="int") {
+                x_value = Number(x_value).toFixed(0);
+            }
+            else if (dtypes[x_name]==="string") {
+
+            }
+            
+            let spawn_circle_data = {x_name: x_value, y_name: y_value}
+           
+            svg.selectAll("myCirclesSpontanous")
+            .data([spawn_circle_data])
+            .enter().append("circle")
+            .attr("class", "line-circles"+ " line-circles" + String(iteration_num) +
+                        " line-element"+ String(iteration_num)+ " circle-spawn"
+                        + " line-circles-spawn" +String(iteration_num) ) 
+            
+                .attr("stroke", "none")
+                
+                .attr("cx", x_pos)
+                .attr("cy", y_pos)
+                .attr("r", circle_radius-1)
+                .style("fill", "red")
+                .style("opacity", 0)
+                .transition()     // adds animation
+                .duration(500)
+                .style("opacity", 1);       
+                
+                setTimeout(function() {
+                    
+                    svg.selectAll(".line-circles-spawn" +String(iteration_num))
+                    .on("mouseover", function (d , i) { 
+                        line_mousein_animation(d, i, element=this, y_name=y_name, 
+                            "red",
+                            "red")        
+                    })
+
+                    .on("mousemove", function(event, d) {
+                        line_mousemove_animation(event, d, element=this, y_name=y_name
+                            , type='continuous')
+                                            
+                    })
+
+                    //Add listener for the mouseout event
+                    .on("mouseout", function (d, i) { 
+                        console.log('----->> ', this);
+                        line_mouseout_animation(d, i, element=this, y_name=y_name,
+                            
+                           "red",
+                            "red",
+                            original_radius=circle_radius-1)
+            });
+            
+            
+            let label_x_pos = 0
+            let label_y_pos = 0
+
+            
+            // labeling
+            svg.selectAll('text.spawn text.sec text.sec'+ String(i))
+            .data([spawn_circle_data])
+            .enter()
+            .append('text')
+            .attr("class", function(d, ind) {
+                
+                return 'sec spawn data_point_'+ ind + '_' + i
+            })
+            
+            .attr("x", function(d) {
+                label_x_pos = xScale(d.x_name) - 10;
+                return xScale(d.x_name) - 15
+            } )
+            .attr("y", function(d) { 
+                label_y_pos = yScale(d.y_name) - 30 
+                return yScale(d.y_name) - 30  
+            } )
+            
+            .text(function(d) {   
+                    return "" + d.x_name + " : " + d.y_name
+            } );
+
+            let g = svg.append("g")
+        
+            .attr("transform",
+                  "translate(" + margins.left + "," + (margins.top) + ")");
+
+            let tooltip_line_data = [{xval: x_pos, yval: y_pos},
+                                    {xval: label_x_pos, yval: label_y_pos}]
+            
+            const line = d3.line()
+                        .x(d => d.xval)
+                        .y(d => d.yval);
+                svg.append('path').datum(tooltip_line_data)
+                .attr('stroke', 'grey')
+                .attr('class',  'tooltip-stick')
+                .attr('stroke-width', '5px')
+                .attr('d', line);
+
+                
+
+            }, 
+            500);
+                
+        });
+
+        
+
+        let line_selection =  d3.selectAll(".line"+ ".line" + String(i) +
+        ".line-element"+ String(i));
+        
 
     
     }  // end for
 
 
     function line_mousein_animation (d , i, element , y_name, current_color,
-                                    current_mousein_color) {
+                                    current_mousein_color, type=null) {
                
 
         let style_attr_name = ''
-        console.log(element.tagName)
+        
         if (element.tagName === "path") {
             style_attr_name = 'stroke'
         }
@@ -368,6 +484,7 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
         //     d3.select(element).style(item.key , function(d) { 
         //         return item.value });
         // });
+        console.log('d3.select(eleemnt) -> ', d3.select(element))
 
         d3.select(element)
         .style(style_attr_name, current_color)
@@ -377,14 +494,13 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
         .duration(100)
         .style(style_attr_name, current_mousein_color)
         ;
-
         return  tooltip.style("visibility", "visible");            
     }
 
-    function  line_mousemove_animation (event, d, element, y_name) {  
+    function  line_mousemove_animation (event, d, element, y_name, type=null) {  
         
 
-        if (element.tagName === "path") {
+        if (type==='continuous' || element.tagName === "path") {
 
             var x_pos = d3.pointer(event)[0];
             var y_pos = d3.pointer(event)[1];
@@ -415,13 +531,12 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
             
         }
 
-        else if (element.tagName === "circle") {
+        else if (type==='discrete' || element.tagName === "circle") {
             var x0 = xScale.invert(d3.pointer(event)[0]-25);
 
             var i = bisect(data, x0, 0);
 
-            console.log('i -> ', i);
-
+            
             var selectedData = data[i]
             
             var x_value = selectedData[x_name];
@@ -447,15 +562,12 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
             return tooltip.style("top", (event.pageY-50)+"px")
                         .style("left",(event.pageX-40)+"px")
                         .style("opacity", "0.8");
-        }
-
-
-        
+        }        
                 
         }
 
-    function line_mouseout_animation(d, i, y_name,  current_color,
-                                     current_mousein_color) {                      
+    function line_mouseout_animation(d, i, element, y_name,  current_color,
+                                     current_mousein_color, original_radius) {                      
         
         // line_mouseout_tuple.forEach(function(item) {
         //     d3.select(element).style(item.key , function(d) { 
@@ -474,12 +586,12 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
         d3.select(element)
         .style(style_attr_name, current_color) 
         .style('stroke-width', line_stroke_width)
-        .attr('r', 5)
+        .attr('r', original_radius)
         // before
         .transition()     // adds animation
         .duration(150)
         .style(style_attr_name, current_color)
-        console.log(current_color)
+        
         
         ; // after
 
@@ -488,11 +600,17 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
 
 
 
-    
-
-
     function updateData(selectedGroup, x_value, y_value, line_var, circle_var,
                         iteration_num, current_color, current_mousein_color) {
+        
+        // remove all data labels
+        show_data_labels(select_all=true, datum_clicked=null, 
+            index_clicked=null, should_highlight_element=false,
+            data_point_class_name=null);
+            
+        // remove tooltip sticking out
+        d3.selectAll('.tooltip-stick')
+        .data([]).exit().remove();
 
         // Create new data with the selection?
         var dataFilter = selectedGroup.map(function(d){return {x_value: d[x_value], y_value:d[y_value]} })
@@ -558,11 +676,11 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
             .style("opacity", 1)
 
             // .attr("stroke", function(d){ return myColor(selectedGroup) })
-            console.log('dataFilter-> ', dataFilter)
+            
             // var e = svg.selectAll(".line-circles"+String(iteration_num))
             let select=  ".line-circles.line-circles" + String(iteration_num) 
                             +".line-element"+ String(iteration_num);
-            console.log('select->', select);
+            
            
             svg.selectAll(select)
             .data([])
@@ -588,7 +706,6 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
                 .duration(500)
                 .style("opacity", 1);
                
-            
 
             if ( line_mouseover_animation === true ) {
                 svg.selectAll(".line-circles"+ String(iteration_num))
@@ -605,9 +722,11 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
     
                 //Add listener for the mouseout event
                 .on("mouseout", function (d, i) { 
-                    line_mouseout_animation(d, i, y_name=y_value, 
+                    line_mouseout_animation(d, i,  element=this, y_name=y_value, 
+                        element=this,
                         current_color=current_color,
-                        current_mousein_color=current_mousein_color)
+                        current_mousein_color=current_mousein_color,
+                        original_radius-circle_radius)
                 }) 
             
             }
@@ -680,6 +799,7 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
                             current_color=current_color,
                             current_mousein_color=current_mousein_color
                                         );
+
                     }
                 }
             });
@@ -691,6 +811,8 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
 
     let svg_container = document.querySelector('#svg-container');
     
+
+    // registering of highlighting happens here
 
     if(highlighting=== true) {
         
@@ -792,9 +914,11 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
         
                     //Add listener for the mouseout event
                     .on("mouseout", function (d, i) { 
-                        line_mouseout_animation(d, i, y_name=y_name, 
+                        line_mouseout_animation(d, i, element=this, y_name=y_name, 
+                           
                             current_color=current_color,
-                            current_mousein_color=current_mousein_color)
+                            current_mousein_color=current_mousein_color,
+                            original_radius=circle_radius)
                     }) 
                 
                 }
@@ -855,6 +979,13 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
 
                 svg.selectAll(".line-circles"+ String(i)).style('fill', current_color)
                 .attr("r", circle_radius);
+                
+                
+                d3.selectAll(".circle-spawn")
+                .data([]).exit().remove();
+
+                d3.selectAll('.tooltip-stick')
+                .data([]).exit().remove();
 
                 if ( line_mouseover_animation === true ) {
                     svg.selectAll(".line-circles"+ String(i))
@@ -871,9 +1002,11 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
         
                     //Add listener for the mouseout event
                     .on("mouseout", function (d, i) { 
-                        line_mouseout_animation(d, i, y_name=y_name, 
+                        line_mouseout_animation(d, i, element=this,
+                             y_name=y_name, 
                             current_color=current_color,
-                            current_mousein_color=current_mousein_color)
+                            current_mousein_color=current_mousein_color,
+                            original_radius=circle_radius)
                     }) 
                 
                 }
@@ -886,36 +1019,40 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
     }
 
 
+
+
     let f = true;
     var j = 0; 
+
+    generate_empty_text_labels();
+
+    function generate_empty_text_labels(){
     
-    for(let i=0; i < y_names.length; i++) {
+        for(let i=0; i < y_names.length; i++) {
 
-        let current_color = color_schemes[i % 6];
-        let current_mousein_color = mousein_colors[i % 6];
+            let current_color = color_schemes[i % 6];
+            let current_mousein_color = mousein_colors[i % 6];
 
-        let y_name = y_names[i];
-                
-        svg.selectAll('text.sec text.sec'+String(i))
-                .data(data)
-                .enter()
-                .append('text')
-                .attr("class", function(d, ind) {
-                    console.log('sec data_point_'+ ind + '_' + i);
-                    return 'sec data_point_'+ ind + '_' + i
-                })
-                
-                .attr("x", function(d) {return xScale(d[x_name]) } )
-                .attr("y", function(d) { return yScale(d[y_name])  } )
-                
-                .text(function(d) {   
-                        return ""
-                } )
-                ;
-       
-
-
-    }
+            let y_name = y_names[i];
+                    
+            svg.selectAll('text.sec text.sec'+String(i))
+                    .data(data)
+                    .enter()
+                    .append('text')
+                    .attr("class", function(d, ind) {
+                        console.log('sec data_point_'+ ind + '_' + i);
+                        return 'sec data_point_'+ ind + '_' + i
+                    })
+                    
+                    .attr("x", function(d) {return xScale(d[x_name]) } )
+                    .attr("y", function(d) { return yScale(d[y_name])  } )
+                    
+                    .text(function(d) {   
+                            return ""
+                    } )
+                    ;
+        } // end for
+}
 
         
     // clicked_dataum, clicked_index
@@ -980,11 +1117,10 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
                 
                 .text("");                
             }
-            
             }
 
         }
-
+    
     console.log('\n\n');  
     
     j ++;
