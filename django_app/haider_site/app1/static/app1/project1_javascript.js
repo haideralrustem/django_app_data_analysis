@@ -98,7 +98,8 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
                     highlighting=true,
                     filtering=true,
                     highligh_style=[{key: "fill", value: "red"}],
-                    circle_radius=5      
+                    circle_radius=5,
+                    grid_lines=true,  
                     ) 
 {
     var data_fields = [];
@@ -207,17 +208,60 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
 
     xScale.domain([x_axis_min, x_axis_max ]);
     yScale.domain([y_axis_min, y_axis_max + 5 ]);
+
+
+
+    
+
+   
+
     svg.append("g")
     .attr("transform", "translate(0," + height + ")")
+    .attr("class", "xAxis")
     .call(d3.axisBottom(xScale)
         .tickFormat(d3.format("d"))
     );
-
     svg.append("g")
+    .attr("class", "yAxis")
     .call(d3.axisLeft(yScale).tickFormat(function(d){
         // format the ticks
         return  d;
     }).ticks(y_ticks))  // number of ticks
+
+
+    if(grid_lines===true) { 
+        control_gridlines(action='on')
+        //control_gridlines(action='off');
+    }
+
+    
+
+    function control_gridlines(action){
+        if (action==='on') {
+            d3.selectAll("g.yAxis g.tick")
+            .append("line")
+            .attr("class", "gridline")
+            .attr("x1", 0)
+            .attr("y1", 0)
+            .attr("x2", width+margins.left)
+            .attr("y2", 0);
+
+            d3.selectAll("g.xAxis g.tick")
+                .append("line")
+                .attr("class", "gridline")
+                .attr("x1", 0)
+                .attr("y1", -height)
+                .attr("x2", 0)
+                .attr("y2", 0);
+        }
+
+        else if (action === 'off'){
+            d3.selectAll('.gridline').remove();
+        }
+    }
+    
+
+
     
     // add title
     svg.append("text")
@@ -226,6 +270,7 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
     .attr("y", 0)
     .attr("font-size", "24px")
     .text(graph_title)
+    
     
     svg.append("text")
     .attr('x', (width/2) )
@@ -336,6 +381,7 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
 
         .on("click", 
             function(event, d){
+
             let iteration_num = i;
             event.stopPropagation();
             console.log('line click ===>  ', event,  d);
@@ -430,10 +476,11 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
             
             .text(function(d) {   
                     return "" + d.x_name + " : " + d.y_name
-            } );
+            } )
+            .style('font-size', '13px')
+            ;
 
             let g = svg.append("g")
-        
             .attr("transform",
                   "translate(" + margins.left + "," + (margins.top) + ")");
 
@@ -448,8 +495,6 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
                 .attr('class',  'tooltip-stick')
                 .attr('stroke-width', '5px')
                 .attr('d', line);
-
-                
 
             }, 
             500);
@@ -584,7 +629,7 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
         }
        
         d3.select(element)
-        .style(style_attr_name, current_color) 
+        .style(style_attr_name, current_mousein_color) 
         .style('stroke-width', line_stroke_width)
         .attr('r', original_radius)
         // before
@@ -592,7 +637,8 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
         .duration(150)
         .style(style_attr_name, current_color)
         
-        
+        console.log('current_color -> ', current_color, 
+                    ' / original_radius -> ', original_radius)
         ; // after
 
         return tooltip.style("visibility", "hidden"); 
@@ -706,8 +752,12 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
                 .duration(500)
                 .style("opacity", 1);
                
-
+                
             if ( line_mouseover_animation === true ) {
+                console.log('y_name: ', y_value, 'current_color: ', current_color,
+                'current_mousein_color: ', current_mousein_color, 
+                '/ circle_radius:', circle_radius);
+
                 svg.selectAll(".line-circles"+ String(iteration_num))
                 .on("mouseover", function (d , i) { 
                     line_mousein_animation(d, i, element=this, y_name=y_value, 
@@ -723,10 +773,13 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
                 //Add listener for the mouseout event
                 .on("mouseout", function (d, i) { 
                     line_mouseout_animation(d, i,  element=this, y_name=y_value, 
-                        element=this,
-                        current_color=current_color,
-                        current_mousein_color=current_mousein_color,
-                        original_radius-circle_radius)
+                       
+                        current_color,
+                        current_mousein_color,
+                        circle_radius)
+
+                        //d, i, element, y_name,  current_color,
+                        //current_mousein_color, original_radius
                 }) 
             
             }
@@ -898,17 +951,19 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
                 
                 d3.select(obj).style('fill', current_color);
 
+                
                
                 if ( line_mouseover_animation === true ) {
                     svg.selectAll(".line-circles"+ String(iteration_num))
                     .on("mouseover", function (d , i) { 
                         line_mousein_animation(d, i, element=this, y_name=y_name, 
-                            current_color=current_color,
-                            current_mousein_color=current_mousein_color)        
+                            current_color,
+                            current_mousein_color,
+                            null)        
                     })
         
                     .on("mousemove", function(event, d) {
-                        line_mousemove_animation(event, d, element=this, y_name=y_name)
+                        line_mousemove_animation(event, d, element=this, y_name=y_name, null)
                                             
                     })
         
@@ -987,12 +1042,16 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
                 d3.selectAll('.tooltip-stick')
                 .data([]).exit().remove();
 
+                
+
                 if ( line_mouseover_animation === true ) {
+                    
+
                     svg.selectAll(".line-circles"+ String(i))
                     .on("mouseover", function (d , i) { 
                         line_mousein_animation(d, i, element=this, y_name=y_name, 
-                            current_color=current_color,
-                            current_mousein_color=current_mousein_color)        
+                            current_color,
+                            current_mousein_color)        
                     })
         
                     .on("mousemove", function(event, d) {
@@ -1004,9 +1063,9 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
                     .on("mouseout", function (d, i) { 
                         line_mouseout_animation(d, i, element=this,
                              y_name=y_name, 
-                            current_color=current_color,
-                            current_mousein_color=current_mousein_color,
-                            original_radius=circle_radius)
+                            current_color,
+                            current_mousein_color,
+                            circle_radius)
                     }) 
                 
                 }
@@ -1044,8 +1103,8 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
                         return 'sec data_point_'+ ind + '_' + i
                     })
                     
-                    .attr("x", function(d) {return xScale(d[x_name]) } )
-                    .attr("y", function(d) { return yScale(d[y_name])  } )
+                    .attr("x", function(d) {return xScale(d[x_name])-10 } )
+                    .attr("y", function(d) { return yScale(d[y_name])-15  } )
                     
                     .text(function(d) {   
                             return ""
@@ -2509,13 +2568,13 @@ function onMouseOut(d, i) {
 // ............................
 
 var data1 = [
-    {'date': 2006, 'close':40, 'loss': 70},
-    {'date': 2008 , 'close': 45, 'loss': 33},
-    {'date': 2010, 'close': 48, 'loss': 22},
-    {'date': 2012, 'close': 51, 'loss': 29},
-    {'date': 2014, 'close': 53, 'loss': 39},
-    {'date': 2016, 'close': 57, 'loss': 49},
-    {'date': 2017, 'close': 62, 'loss': 51}
+    {'date': 2006, 'close':40, 'loss': 70 ,'profit': 12},
+    {'date': 2008 , 'close': 45, 'loss': 33 ,'profit': 31},
+    {'date': 2010, 'close': 48, 'loss': 22 ,'profit': 5},
+    {'date': 2012, 'close': 51, 'loss': 29 ,'profit': 7},
+    {'date': 2014, 'close': 53, 'loss': 39 ,'profit': 8},
+    {'date': 2016, 'close': 57, 'loss': 49 ,'profit': 10},
+    {'date': 2017, 'close': 62, 'loss': 51 ,'profit': 40}
 ]
 
 
@@ -2541,19 +2600,21 @@ line_graph(data=data1, x_title='xaxis', y_title='ytitle', graph_title='TITLEST',
             line_mouseout_tuple=[{key: "stroke", value: 'rgb(70, 130, 180)'}],
             num_of_lines=1,
             x_name='date',
-            y_names=['close', 'loss'],
+            y_names=['close', 'loss', 'profit'],
             x_axis_min=2005,
             x_axis_max=2018,
             y_axis_min=null,
             y_axis_max=100,
             line_stroke_width='4px',
-            dtypes= {'date': 'int', 'close': 'int', 'loss': 'int'},
+            dtypes= {'date': 'int', 'close': 'int', 'loss': 'int', 'profit': 'int'},
             x_axis_added_length = 30,
             y_axis_added_length = 0,
             width=400,
             height=400,
             highlighting=true,
             filtering=true,
+            highligh_style=[{key: "fill", value: "red"}],
+            circle_radius=5 
 
             )
 

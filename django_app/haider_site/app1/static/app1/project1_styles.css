@@ -7,7 +7,17 @@
     stroke: steelblue;
     stroke-width: 2px;
   } */
+/* .axis-grid line {
+  stroke: #def;
+} */
 
+.gridline{
+  stroke: black;
+  shape-rendering: crispEdges;
+  stroke-opacity: .2;
+  }
+
+  
 .bar {
        
 }
