@@ -7,6 +7,7 @@
     stroke: steelblue;
     stroke-width: 2px;
   } */
+
 /* .axis-grid line {
   stroke: #def;
 } */
@@ -20,9 +21,7 @@
 .svg-wrap {
   display: inline-flex;
 }
-.bar {
-       
-}
+
 
 .myCircle:hover {
   stroke: black;

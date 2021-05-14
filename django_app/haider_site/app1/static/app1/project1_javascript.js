@@ -840,7 +840,6 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
                             current_color=current_color,
                             current_mousein_color=current_mousein_color
                                         );
-
                     }
                 }
             });

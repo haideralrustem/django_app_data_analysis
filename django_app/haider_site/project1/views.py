@@ -1,15 +1,17 @@
 from django.shortcuts import render
 
 
-
 from django.http import JsonResponse
 from django.core import serializers
+
 # me
 import my_functions
 from django.conf import settings
 
+
 import os
 import csv
+
 
 
 
@@ -25,6 +27,8 @@ def data_file_upload(request):
 
 
 # Create your views here.
+
+
 def main_page_viz(request):  
     file_path = os.path.join(settings.BASE_DIR, '')
     
@@ -46,6 +50,7 @@ def main_page_viz(request):
                                             list_of_rows=new_rows)  
         
     
+
     recieved_data = [
         {'date': 2006, 'close':40, 'loss': 70 ,'profit': 71},
         {'date': 2008 , 'close': 45, 'loss': 33 ,'profit': 31},
@@ -56,6 +61,7 @@ def main_page_viz(request):
         {'date': 2017, 'close': 62, 'loss': 51 ,'profit': 40}
     ]
 
+
     context = {
         'data_array': [1, 2, 3, 4 , 5],
         'rows': rows,
@@ -63,6 +69,7 @@ def main_page_viz(request):
         'file_path': file_path,
         'debug_vars': {
             'json_string_dict': json_string_dict
+
         },
         'recieved_data': recieved_data,
         
@@ -71,3 +78,4 @@ def main_page_viz(request):
 
     # return render(request, 'project1/main_page.html', context)
     return render(request, 'project1/presets_config.html', context)
+
