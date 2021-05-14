@@ -1,6 +1,5 @@
 from django.shortcuts import render
 
-
 from django.http import JsonResponse
 from django.core import serializers
 
@@ -8,10 +7,13 @@ from django.core import serializers
 import my_functions
 from django.conf import settings
 
-
 import os
+from datetime import datetime
+import time
 import csv
-
+# import sys
+# sys.path.append("..")
+# import my_functions
 
 
 
@@ -19,9 +21,12 @@ import csv
 # ajax post requests
 def data_file_upload(request):
     if request.method == 'POST' and request.is_ajax():
-            y_names = []
-            return JsonResponse({'status':'Success', 'msg': 'save successfully uploaded', 
-                                 'new_username': y_names})
+        file1 = request.FILES['file']
+
+        my_functions.prepare_data(file_name, dataset_name)
+        y_names = []
+        return JsonResponse({'status':'Success', 'msg': 'save successfully uploaded', 
+                                'new_username': y_names})
     else:
         return JsonResponse({'status':'Fail', 'msg':'Upload ERROR!!'})
 
@@ -38,7 +43,9 @@ def main_page_viz(request):
     file_path = os.path.join(settings.BASE_DIR, file_name)
 
     # pipeline to open csv, save the data to a TabularDataSets model
-    rows = my_functions.prepare_data(file_name=file_name, dataset_name='first_dummy')
+    dataset_name = "dataset_"+ str(time.time())
+
+    rows = my_functions.prepare_data(file_name=file_name, dataset_name=dataset_name)
     new_rows = []
     # get only the colummn names
     column_names = my_functions.unpack_csvrow_values(rows[0].row_variables)
@@ -72,6 +79,7 @@ def main_page_viz(request):
 
         },
         'recieved_data': recieved_data,
+        'y_names': column_names
         
     }
 
