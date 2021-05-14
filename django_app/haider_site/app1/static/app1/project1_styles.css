@@ -17,7 +17,9 @@
   stroke-opacity: .2;
   }
 
-  
+.svg-wrap {
+  display: inline-flex;
+}
 .bar {
        
 }

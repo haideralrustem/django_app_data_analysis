@@ -28,13 +28,31 @@
         
     {% endfor %}
     <p>{{ debug_vars.json_string_dict }}</p>
-`   
+ 
+
     <div id="filtering">
         <button id="update-button">
             Update
         </button>
     </div>
-    <div id='svg-container'></div>
+
+    
+
+    <div class="svg-wrap">
+        <div id='svg-container'></div>
+
+        {% for obj in recieved_data %}    
+        <div class="checkbox-wrapper">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                <label class="form-check-label" for="flexCheckDefault">
+                Default checkbox
+                </label>
+            </div>
+        </div>
+        {% endfor %}
+          
+    </div>
 
     <div id="slider-container">
         <div>Slider 1</div>

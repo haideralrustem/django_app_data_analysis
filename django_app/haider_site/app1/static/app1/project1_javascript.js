@@ -209,10 +209,7 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
     xScale.domain([x_axis_min, x_axis_max ]);
     yScale.domain([y_axis_min, y_axis_max + 5 ]);
 
-
-
     
-
    
 
     svg.append("g")
@@ -229,7 +226,7 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
     }).ticks(y_ticks))  // number of ticks
 
 
-    if(grid_lines===true) { 
+    if(grid_lines===true) {
         control_gridlines(action='on')
         //control_gridlines(action='off');
     }
@@ -284,7 +281,6 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
     .text(y_title);
 
     
-
     var lines_array = [];
     var circles_array = [];
 
@@ -306,6 +302,7 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
                   " line-element"+ String(i))
             .style("stroke", current_color)
             .style("stroke-width", line_stroke_width)
+            .attr("stroke-opacity", 0.5)
             .attr("d", valueline)
             
             ;
@@ -342,7 +339,7 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
                 .style("opacity", 0)
                 .transition()     // adds animation
                 .duration(500)
-                .style("opacity", 1);;
+                .style("opacity", 0.3);;
         }
 
     
@@ -442,9 +439,7 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
 
                     //Add listener for the mouseout event
                     .on("mouseout", function (d, i) { 
-                        console.log('----->> ', this);
                         line_mouseout_animation(d, i, element=this, y_name=y_name,
-                            
                            "red",
                             "red",
                             original_radius=circle_radius-1)
@@ -456,13 +451,13 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
 
             
             // labeling
-            svg.selectAll('text.spawn text.sec text.sec'+ String(i))
+            svg.selectAll('text.spawn'+ String(i))
             .data([spawn_circle_data])
             .enter()
             .append('text')
             .attr("class", function(d, ind) {
                 
-                return 'sec spawn data_point_'+ ind + '_' + i
+                return 'spawn data_point_'+ ind + '_' + i
             })
             
             .attr("x", function(d) {
@@ -513,28 +508,25 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
 
     function line_mousein_animation (d , i, element , y_name, current_color,
                                     current_mousein_color, type=null) {
-               
 
         let style_attr_name = ''
+        let style_attr_name2 = 'o'
+        style_attr_name2 = 'stroke-opacity'
         
         if (element.tagName === "path") {
             style_attr_name = 'stroke'
+            
         }
         else if (element.tagName === "circle") {
             style_attr_name = 'fill'
         }
-
-        
-        // line_mousein_tuple.forEach(function(item) {
-        //     d3.select(element).style(item.key , function(d) { 
-        //         return item.value });
-        // });
-        console.log('d3.select(eleemnt) -> ', d3.select(element))
+              
 
         d3.select(element)
         .style(style_attr_name, current_color)
-        .style('stroke-width', '6px')
-        .attr('r', 5+2)
+        .style('stroke-width', '7px')
+        .attr(style_attr_name2, 1)
+        .attr('r', 5+3)
         .transition()     // adds animation
         .duration(100)
         .style(style_attr_name, current_mousein_color)
@@ -613,16 +605,14 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
 
     function line_mouseout_animation(d, i, element, y_name,  current_color,
                                      current_mousein_color, original_radius) {                      
-        
-        // line_mouseout_tuple.forEach(function(item) {
-        //     d3.select(element).style(item.key , function(d) { 
-        //         return item.value });
-        // });
-
+                                       
         let style_attr_name = ''
+        let style_attr_name2 = 'o'
+        style_attr_name2 = 'stroke-opacity'
         
         if (element.tagName === "path") {
             style_attr_name = 'stroke'
+            style_attr_name2 = 'stroke-opacity'
         }
         else if (element.tagName === "circle") {
             style_attr_name = 'fill'
@@ -631,14 +621,13 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
         d3.select(element)
         .style(style_attr_name, current_mousein_color) 
         .style('stroke-width', line_stroke_width)
+        
         .attr('r', original_radius)
         // before
         .transition()     // adds animation
         .duration(150)
         .style(style_attr_name, current_color)
-        
-        console.log('current_color -> ', current_color, 
-                    ' / original_radius -> ', original_radius)
+        .attr(style_attr_name2, 0.5)
         ; // after
 
         return tooltip.style("visibility", "hidden"); 
@@ -661,7 +650,6 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
         // Create new data with the selection?
         var dataFilter = selectedGroup.map(function(d){return {x_value: d[x_value], y_value:d[y_value]} })
         
-        
 
         if(highlighting=== true) {
             let dataFilter_fields = []
@@ -671,7 +659,6 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
                     dataFilter_fields.push(field);
                 }
             }
-            
            
             let svg_container = document.querySelector('#svg-container');
             
@@ -754,9 +741,7 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
                
                 
             if ( line_mouseover_animation === true ) {
-                console.log('y_name: ', y_value, 'current_color: ', current_color,
-                'current_mousein_color: ', current_mousein_color, 
-                '/ circle_radius:', circle_radius);
+                
 
                 svg.selectAll(".line-circles"+ String(iteration_num))
                 .on("mouseover", function (d , i) { 
@@ -813,8 +798,11 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
 
             // run the updateChart function with this selected option
             //updateData(selectedGroup)
-        })
-            
+        });
+
+        
+
+        
             
         $(function () {
             $("#slider1").slider({
@@ -1124,7 +1112,9 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
 
             if (should_highlight_element === false) {
                 d3.selectAll("text.sec")            
-                
+                .text("");
+
+                d3.selectAll("text.spawn")
                 .text("");
             }
            
@@ -1164,7 +1154,7 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
                                
                 let enter_selection  = d3.selectAll(selector)            
                 
-                .text("" + Number(clicked_obj[y_name]).toFixed(2)   
+                .text("" + Number(clicked_obj[y_name]).toFixed(1)   
                  );
                            
             }
@@ -2568,10 +2558,10 @@ function onMouseOut(d, i) {
 // ............................
 
 var data1 = [
-    {'date': 2006, 'close':40, 'loss': 70 ,'profit': 12},
+    {'date': 2006, 'close':40, 'loss': 70 ,'profit': 71},
     {'date': 2008 , 'close': 45, 'loss': 33 ,'profit': 31},
     {'date': 2010, 'close': 48, 'loss': 22 ,'profit': 5},
-    {'date': 2012, 'close': 51, 'loss': 29 ,'profit': 7},
+    {'date': 2012, 'close': 51, 'loss': 29 ,'profit': 30},
     {'date': 2014, 'close': 53, 'loss': 39 ,'profit': 8},
     {'date': 2016, 'close': 57, 'loss': 49 ,'profit': 10},
     {'date': 2017, 'close': 62, 'loss': 51 ,'profit': 40}
