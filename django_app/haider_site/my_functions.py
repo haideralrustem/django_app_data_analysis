@@ -2,6 +2,8 @@ import os
 import csv
 import re
 import json
+import pandas as pd
+import io
 
 from django.conf import settings
 from project1.models import TabularDataSets, MyCsvRow
@@ -10,84 +12,103 @@ from project1.models import TabularDataSets, MyCsvRow
 
 
 def prepare_data(file_name, dataset_name):
-    # creates a model for each dataset.
-
+    
     print('\n\n\n')
-
-    csv_table = TabularDataSets(dataset_name=dataset_name)
-    if not (TabularDataSets.objects.filter(dataset_name=dataset_name).exists()):
-        csv_table.save()
-    else:
-        csv_table = TabularDataSets.objects.get(dataset_name=dataset_name)
-
     
-    file_path = os.path.join(settings.BASE_DIR, file_name)
-    
-    rows=[]
+    # file_path = os.path.join(settings.BASE_DIR, file_name)
 
-    with open(file_path) as f:
-        reader = csv.reader(f)
 
-        i = 0
-        csv_row_headers = []
+    # reader = csv.reader(file_name)
+    contents = file_name.read().decode('UTF-8').splitlines()
 
-        for csv_row in reader:
-            query_filters = {}
+    reader = csv.DictReader(contents)
+    rows = []
 
-            if i == 0:
-                csv_row_headers = [v for v in csv_row]
-                                
-            else:
+    i = 0
+    csv_row_headers = []
+    for csv_row in reader:
+        for key in csv_row.keys():
+            csv_row_headers.append(key)
+        
+        rows.append(csv_row)
+        i +=1
+     
+    return csv_row_headers, rows
 
-                row = MyCsvRow(parent_dataset_table=csv_table)
 
-                j = 0  
-                row_values = ''
-                row_variables = ''
-                for csv_field in csv_row:
+#.......................
 
-                    csv_field = re.sub(r"<,>", '"<,>"', csv_field)
-                    csv_row_headers[j] = re.sub(r"<,>", '"<,>"', csv_row_headers[j])
-                    
-                    if j > 0:
 
-                        row_values += '<,>'
-                        row_variables += '<,>'
+def detect_datatypes(csv_row_headers, rows):
+    #  int - string - float
+    dtypes_final_values={}
 
-                    row_variables += '{}'.format(csv_row_headers[j])
-                    row_values += '{}'.format(csv_field)
-                    
-                    j += 1
-                
-                row.row_values = row_values
-                row.row_variables = row_variables               
-                       
-                                   
-                if not (MyCsvRow.objects.filter(
-                        parent_dataset_table__dataset_name=dataset_name,
-                        row_values=row_values)
-                        .exists()):
+    dtypes= {}
+    for col in csv_row_headers:
+        dtypes[col] = []
+        for row in rows:
 
-                    row.save()
-
-                else:
-                    row = MyCsvRow.objects.get(
-                          parent_dataset_table__dataset_name=dataset_name,
-                          row_values=row_values)
-
-                csv_table.save()
-                print('>> ', row)
-
-                rows.append(row)
-
+            s = str(row[col]).strip()
+            val_type = "string"
             
-            i += 1
+            x = re.match(r'^[-+]?(\.[0-9]+|[0-9]+\.[0-9]+)$', s)
+            
+            # Check if float
+            if re.match(r'^[-+]?(\.[0-9]+|[0-9]+\.[0-9]+)$', s): 
+                val_type = "float"
 
-    # rows is a list of MyCsvRow models
-    return rows
+            # Check if int
+            elif re.match(r'^[-+]?[0-9]+$', s):
+                val_type = "int"
+            elif s == '':
+                val_type = "null"
+            else:
+                val_type = "string"
+            
+            dtypes[col].append(val_type)
 
 
-#...................
+    for col in dtypes.keys():
+        dtypes_final_values[col] = 'string'
+        types = dtypes[col]
+        
+        for t in types:
+            if t == 'float':
+                dtypes_final_values[col] = 'float'
+                 # ---->>>>  nullify the rest and keep numbers only -----
+                break
+            
+            if t == 'int':
+                c = types.count(t)
+                int_proportion = c / len(types)
+                string_proportions= types.count('string') / len(types)
+
+                if (int_proportion - string_proportions) > 0.01 :
+                    dtypes_final_values[col] = 'int'
+                    # ---->>>>  nullify the rest and keep numbers only -----
+                    break
+                elif (string_proportions - int_proportion) > 0.01:
+                    dtypes_final_values[col] = 'string'
+                    break
+
+            else:
+                string_proportions= types.count('string') / len(types)
+                if string_proportions > 0:
+                    dtypes_final_values[col] = 'string'
+                    break
+                
+
+
+
+#........................
+#  
+def post_process_dtypes(dtype_dict, headers, rows):
+
+    return
+          
+
+
+# ........................
 
 def unpack_csvrow_values(row_values, separator='<,>'):
 

@@ -24,9 +24,7 @@
 
     <p>{{ file_path }}</p>
 
-    {% for json_row in debug_vars.json_string_dict %}
-        
-    {% endfor %}
+    
     <p>{{ debug_vars.json_string_dict }}</p>
 
 
@@ -79,8 +77,8 @@
 </div>
 
 <script>
-    var received_data = '{{ debug_vars.json_string_dict|safe }}';
-    var parsed_data = JSON.parse(received_data);
+    // var received_data = '{{ debug_vars.json_string_dict|safe }}';
+    // var parsed_data = JSON.parse(received_data);
     //console.log(data);
     
     var file_path = ',,';

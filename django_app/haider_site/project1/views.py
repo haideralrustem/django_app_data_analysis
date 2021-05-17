@@ -17,45 +17,51 @@ import csv
 
 
 
-
-# ajax post requests
-def data_file_upload(request):
-    if request.method == 'POST' and request.is_ajax():
-        file1 = request.FILES['file']
-
-        my_functions.prepare_data(file_name, dataset_name)
-        y_names = []
-        return JsonResponse({'status':'Success', 'msg': 'save successfully uploaded', 
-                                'new_username': y_names})
-    else:
-        return JsonResponse({'status':'Fail', 'msg':'Upload ERROR!!'})
-
-
 # Create your views here.
+
+def data_file_upload(request):
+    
+
+    if request.method == 'POST':
+        
+        
+        y_names = []
+        file_path = os.path.join(settings.BASE_DIR, '')
+        rows=[]
+        file_name = 'app1\\static\\csv_files\\data2.csv'
+
+        uploaded_file = request.FILES['uploaded_file']
+        # file_path = os.path.join(settings.BASE_DIR, file_name)
+
+        # pipeline to open csv, save the data to a TabularDataSets model
+        dataset_name = "dataset_"+ str(time.time())
+
+        y_names, rows = my_functions.prepare_data(file_name=uploaded_file, dataset_name=dataset_name)
+        
+        my_functions.detect_datatypes(y_names, rows)
+        # get only the colummn names
+        # column_names = my_functions.unpack_csvrow_values(rows[0].row_variables)
+        # for r in rows:
+        #     single_row = my_functions.unpack_csvrow_values(row_values=r.row_values)
+        #     new_rows.append(single_row)
+            
+        # json_string_dict = my_functions.convert_rows_to_json(column_names=column_names, 
+        #                                         list_of_rows=new_rows)
+        
+        context = {'uploaded_file': uploaded_file, 'rows': rows, 'y_names': y_names}
+        return render(request, 'project1/presets_config.html', context)
+
+    else:
+        context = {'uploaded_file': 'no file uploaded!, ERROR'}
+        return render(request, 'project1/presets_config.html', context)
+
+
+# ........................................
 
 
 def main_page_viz(request):  
+      
     file_path = os.path.join(settings.BASE_DIR, '')
-    
-    rows=[]
-    file_name = 'app1\\static\\csv_files\\data2.csv'
-
-    file_path = os.path.join(settings.BASE_DIR, file_name)
-
-    # pipeline to open csv, save the data to a TabularDataSets model
-    dataset_name = "dataset_"+ str(time.time())
-
-    rows = my_functions.prepare_data(file_name=file_name, dataset_name=dataset_name)
-    new_rows = []
-    # get only the colummn names
-    column_names = my_functions.unpack_csvrow_values(rows[0].row_variables)
-    for r in rows:
-        single_row = my_functions.unpack_csvrow_values(row_values=r.row_values)
-        new_rows.append(single_row)
-        
-    json_string_dict = my_functions.convert_rows_to_json(column_names=column_names, 
-                                            list_of_rows=new_rows)  
-        
     
 
     recieved_data = [
@@ -71,19 +77,18 @@ def main_page_viz(request):
 
     context = {
         'data_array': [1, 2, 3, 4 , 5],
-        'rows': rows,
+       
         'BASE_DIR': settings.BASE_DIR,
         'file_path': file_path,
         'debug_vars': {
-            'json_string_dict': json_string_dict
+            'json_string_dict': ''
 
         },
         'recieved_data': recieved_data,
-        'y_names': column_names
+        
         
     }
 
-
     # return render(request, 'project1/main_page.html', context)
-    return render(request, 'project1/presets_config.html', context)
+    return render(request, 'project1/main_page.html', context)
 

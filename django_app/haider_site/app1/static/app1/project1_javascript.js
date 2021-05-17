@@ -2567,7 +2567,7 @@ var data1 = [
 ]
 
 
-const keys = Object.keys(parsed_data)
+// const keys = Object.keys(parsed_data)
 
 // var i = 0;
 // for (var key in parsed_data) {
@@ -2578,8 +2578,8 @@ const keys = Object.keys(parsed_data)
 //     }
 // }
 
-const d1 = Object.values(parsed_data);
-console.log(d1);
+// const d1 = Object.values(parsed_data);
+// console.log(d1);
 
 //testing(data=data1);
 line_graph(data=data1, x_title='xaxis', y_title='ytitle', graph_title='TITLEST',

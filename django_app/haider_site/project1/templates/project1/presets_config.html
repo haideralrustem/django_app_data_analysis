@@ -20,26 +20,38 @@
     <div class="file-uploader">
         <form id="data-file-uploader" method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            <input type="file" name="myfile" />
+            <input type="file" name="uploaded_file" accept="text/csv"/>
             <input type="submit" name="submit" value="Upload" />
         </form>
         
+    </div>
+    
+    <div class="file-viewer">
+        <div class="file-contents">
+            {% if uploaded_file %}
+                {{ uploaded_file }}
+            {% endif %}
+            
+            {% if y_names %}
+                {{ y_names }}
+            {% endif %}
+        </div>
     </div>
 
 </div>
 
 
-<script>
+<!-- <script>
     $("#data-file-uploader").submit(function (e) {
     // preventing from page reload and default actions
     e.preventDefault();
     // serialize the data for sending the form data.
-    var serializedData = $(this).serialize();
+    // var serializedData = $(this).serialize();
     // make POST ajax call
     $.ajax({
         type: 'POST',
         url: "{% url 'project1:data_file_upload' %}",
-        data: serializedData,
+        data: this,
         success: function (response) {
             // on successfull creating object
             // 1. clear the form.
@@ -48,6 +60,8 @@
             // $("#id_username").focus();
             
             consol.log(response);
+            //$('file-contents').html(response['data_json'])
+
             }
         , error: function(response) {
             console.log(response);
@@ -57,8 +71,8 @@
 
 });
 
-</script>
+</script> -->
 
-<script src="{% static 'app1/project1_javascript.js' %}"></script>
+<!-- <script src="{% static 'app1/project1_javascript.js' %}"></script> -->
 
 {% endblock children %}
