@@ -85,7 +85,7 @@ nav {
 
 .logo-img {
     cursor: pointer;
-    width: 10%;
+    width: 28%;
 }
 
 .nav-right-wrap {
@@ -1182,7 +1182,7 @@ site-map-column-subtitle {}
 @media only screen and (min-width: 1024px) {
     /* STYLES GO HERE */
     .logo-img {
-        width: 8%;
+        width: 28%;
     }
     .home-wrap {
         margin-left: 9%;
@@ -1275,7 +1275,7 @@ site-map-column-subtitle {}
 
 @media only screen and (min-width: 1229px) {
     .logo-img {
-        width: 7%;
+        width: 26%;
     }
 
     /* ------ profile ----- */
@@ -1344,7 +1344,7 @@ site-map-column-subtitle {}
 
 @media only screen and (min-width: 1429px) {
     .logo-img {
-        width: 7%;
+        width: 24%;
     }
     .footer {
         height: 475px;

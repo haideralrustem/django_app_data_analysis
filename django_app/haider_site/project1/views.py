@@ -38,7 +38,18 @@ def data_file_upload(request):
 
         y_names, rows = my_functions.prepare_data(file_name=uploaded_file, dataset_name=dataset_name)
         
-        my_functions.detect_datatypes(y_names, rows)
+        dtypes_values = my_functions.detect_datatypes(y_names, rows)
+        print('\n modded rows: \n')
+        mrows = my_functions.post_process_dtypes(dtypes_values, y_names, rows)
+        
+        for mr in rows:
+            print(mr)
+        
+        mrows, new_dtypes_values = my_functions.manual_cahnge_data_type(
+            dtypes_values, {'close': 'string'}, y_names, mrows)
+
+       
+
         # get only the colummn names
         # column_names = my_functions.unpack_csvrow_values(rows[0].row_variables)
         # for r in rows:
