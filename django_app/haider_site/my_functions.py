@@ -53,40 +53,50 @@ def prepare_data(file_name, dataset_name):
     
     return csv_row_headers, rows
 
-# ..................................
+# ..............................
+            
+# ......................................
+
 
 def read_excel(file_name):
-
     wb = openpyxl.load_workbook(file_name)
     print(f'\n\t wb = {wb} \n')
+    sheet_obj = wb.active
+    cell_obj = sheet_obj.cell(row = 2, column = 1)
+        
+    #pdb.set_trace()
+    print(f'{nt} cell_obj -> {(cell_obj.value)} {nl}')
+
+    print(f'{nt} cell_obj -> {type(cell_obj.value)} {nl}')
+
+    rows_list = []
+    headers = []
+
+    for col in sheet_obj.iter_cols():
+        # pdb.set_trace()
+        headers.append(col[0].value)
+
+    row_num = 0
+    for row in sheet_obj.iter_rows():
+        if row_num > 0:
+            single_row = {}
+            c = 0
+            for col in headers:
+                cell_value = row[c].value
+                single_row[col] = cell_value
+                c += 1
+            
+            rows_list.append(single_row)
+        row_num += 1
+    
+    # timedelta_obj = rows_list[2][0]
+    # f = convert_timedelta(timedelta_obj, desired_unit='hours')
+    
+    return headers, rows_list
 
 
 #.......................
 
-def convert_timedelta(cell_value, desired_unit='hours'):
-
-    final_value = cell_value
-
-    if isinstance(cell_value, datetime.timedelta):
-
-        timedelta_obj = cell_value
-        days = timedelta_obj.days
-        seconds = timedelta_obj.seconds
-
-        hours = seconds//3600
-        minutes = (seconds//60)
-
-        
-        if desired_unit == 'days':
-            final_value = days + (hours/24)
-
-        elif desired_unit == 'hours':
-            final_value = days *24 + (hours)
-        
-        elif desired_unit == 'minutes':
-            final_value = days *1440 + (minutes)
-
-    return final_value
 
 # .........................................
 
@@ -113,7 +123,7 @@ def detect_datatypes(csv_row_headers, rows):
                 val_type = "int"
             elif s == '':
                 val_type = "null"
-            elif isinstance(row[col], datetime.timedelta):
+            elif isinstance(row[col], timedelta):
                 val_type = 'datetime.timedelta'
             else:
                 val_type = "string"
@@ -258,19 +268,45 @@ def detect_datatypes(csv_row_headers, rows):
                 dtypes_final_values[col] = 'string'
 
        
-    
+    print(nl, nl)
     for k, v in dtypes_final_values.items():
         print(k, '\n\t', v)
 
     return dtypes_final_values
 
-
-
 #........................
-#  
+
+def convert_timedelta(cell_value, desired_unit='hours'):
+
+    final_value = cell_value
+
+    if isinstance(cell_value, timedelta):
+
+        timedelta_obj = cell_value
+        days = timedelta_obj.days
+        seconds = timedelta_obj.seconds
+
+        hours = seconds//3600
+        minutes = (seconds//60)
+
+        
+        if desired_unit == 'days':
+            final_value = days + (hours/24)
+
+        elif desired_unit == 'hours':
+            final_value = days *24 + (hours)
+        
+        elif desired_unit == 'minutes':
+            final_value = days *1440 + (minutes)
+
+    return final_value
+
+# ................................
+
 
 def post_process_dtypes(dtypes_values, headers, rows, timedelta_mode='auto'):
     modded_rows = []
+    new_dtypes_values = dtypes_values.copy()
 
     for row in rows:
         modded_rows.append({})
@@ -360,7 +396,7 @@ def post_process_dtypes(dtypes_values, headers, rows, timedelta_mode='auto'):
 
                         # return a float value representing minutes as float
                         new_val = mins + secs
-                        dtypes_values[col] = 'float'
+                        new_dtypes_values[col] = 'float'
 
                     # 55:00:00
                     elif x4:
@@ -372,17 +408,19 @@ def post_process_dtypes(dtypes_values, headers, rows, timedelta_mode='auto'):
 
                         # return a float value representing hours as float
                         new_val = hours + mins + secs
-                        dtypes_values[col] = 'float'
+                        new_dtypes_values[col] = 'float'
 
                     else:
                         new_val = None
 
-            elif 'datetime.timedelta' in dtype: # because you can have datetime.timedelta hours as dtype
+            elif 'datetime.timedelta' in dtype: # because you can have datetime.timedelta hours as dtype (manual change)
                 if timedelta_mode == 'auto':
                     new_val = convert_timedelta(old_val, desired_unit='hours')
+                    new_dtypes_values[col] = 'float'
                 elif timedelta_mode == 'manual':
                     desired_unit = dtype.split(' ')[1]
                     new_val = convert_timedelta(old_val, desired_unit)
+                    new_dtypes_values[col] = 'float'
                     
 
             elif dtype == "string":
@@ -391,21 +429,19 @@ def post_process_dtypes(dtypes_values, headers, rows, timedelta_mode='auto'):
             modded_rows[row_index][col] = new_val
             row_index += 1
 
-        
         col_indx += 1
         
-    return modded_rows
+    return modded_rows, new_dtypes_values
           
 
 
 # ........................
 
-def manual_cahnge_data_type(dtypes_values, target_change_cols, headers, rows):
+def manual_change_data_type(dtypes_values, target_change_cols, headers, rows):
+    # target_change_cols = {colname : 'dtype_string'}
     new_dtypes_values = dtypes_values.copy()
     print('\nnew_dtypes_values: \n', new_dtypes_values)
-
     
-
     timedelta_mode = 'auto'
     for col, new_dtype in target_change_cols.items():
         # if dtypes_values[col] == 'datetime.timedelta':
@@ -421,10 +457,10 @@ def manual_cahnge_data_type(dtypes_values, target_change_cols, headers, rows):
 
     print('\nnew_dtypes_values: \n', new_dtypes_values, '\n')
 
-    modded_rows = post_process_dtypes(new_dtypes_values, headers, rows, 
+    modded_rows, ndtypes = post_process_dtypes(new_dtypes_values, headers, rows, 
                                       timedelta_mode)
     
-    return modded_rows, new_dtypes_values
+    return modded_rows, ndtypes
 
 # ................................
 
@@ -436,6 +472,24 @@ def manual_cahnge_data_type(dtypes_values, target_change_cols, headers, rows):
 # 4 TEST manual change then print modded rows
 
 
+# ............................
+# ...........................
+# Deprecate?
+def post_process_excel_rows(rows_list, conversion, desired_unit='hours'):
+    new_rows_list = []
+    for row in rows_list:
+        print(row)
+        new_row = {}
+        for colname, cell in row.items():
+            new_cell = cell
+            if conversion == 'timedelta_conversion':
+                new_cell = convert_timedelta(cell, desired_unit)
+            
+            new_row[colname] = new_cell
+
+        new_rows_list.append(new_row)
+    
+    return new_rows_list
 
 # ................................
 # To be Deprecated?

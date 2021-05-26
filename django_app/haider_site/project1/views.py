@@ -6,6 +6,7 @@ from django.core import serializers
 # me
 import my_functions
 from django.conf import settings
+import pdb
 
 import os
 from datetime import datetime
@@ -35,19 +36,19 @@ def data_file_upload(request):
 
         # pipeline to open csv, save the data to a TabularDataSets model
         dataset_name = "dataset_"+ str(time.time())
+                        
+        headers, rows = my_functions.prepare_data(file_name=uploaded_file, dataset_name=dataset_name)
+        original_dtypes_values = my_functions.detect_datatypes(headers, rows)
 
-        y_names, rows = my_functions.prepare_data(file_name=uploaded_file, dataset_name=dataset_name)
+        modded_rows, new_dtypes_values = my_functions.post_process_dtypes(
+                                                            original_dtypes_values, 
+                                                            headers, rows)
+                                                           
+        # pdb.set_trace()
+        # user presented with a choice
+        # modded_rows2, new_dtypes_values2 = manual_change_data_type(original_dtypes_values, {'date': 'datetime.timedelta minutes'}
+        #                         , headers, rows)       
         
-        dtypes_values = my_functions.detect_datatypes(y_names, rows)
-        print('\n modded rows: \n')
-        mrows = my_functions.post_process_dtypes(dtypes_values, y_names, rows)
-        
-        for mr in rows:
-            print(mr)
-        
-        mrows, new_dtypes_values = my_functions.manual_cahnge_data_type(
-            dtypes_values, {'close': 'string'}, y_names, mrows)
-
        
 
         # get only the colummn names
@@ -59,7 +60,7 @@ def data_file_upload(request):
         # json_string_dict = my_functions.convert_rows_to_json(column_names=column_names, 
         #                                         list_of_rows=new_rows)
         
-        context = {'uploaded_file': uploaded_file, 'rows': rows, 'y_names': y_names}
+        context = {'uploaded_file': uploaded_file, 'rows': rows, 'headers': headers}
         return render(request, 'project1/presets_config.html', context)
 
     else:
