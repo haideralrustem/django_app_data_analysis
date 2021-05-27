@@ -1,0 +1,164 @@
+
+
+<!-- Button trigger modal -->
+<button type="button" id="file-preview-modal-btn" class="btn btn-primary" data-bs-toggle="modal" 
+    data-bs-target="#file-preview-modal" onclick="show_file_preview_modal(this)">
+    Launch demo modal
+  </button>
+  
+  <!-- Modal -->
+  <div class="modal fade" id="file-preview-modal" tabindex="-1" 
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="file-preview-modal-body" style="overflow-y:scroll;">
+              <div class='row'>
+                  <div class="col-12">
+                    <div class='file-preview-modal-content'>
+                        {% if rows %}
+                            <table class="">
+                                {% if headers %}
+                                <thead>
+                                    
+                                    <tr>
+                                        {% for header in headers %}
+                                        
+                                            <th>
+                                                <div 
+                                                id="resizeable-table-{{header}}" 
+                                                class="resizable-table">
+                                                {{ header }}
+                                                </div>
+                                            </th>
+                                        
+                                        {% endfor %}
+                                    </tr>
+                                    
+                                </thead>
+                                
+
+                                {% endif %}
+                            
+                            <tbody>
+                                {% for row in str_rows %}
+                                <tr>
+                                    {% for field, val in row.items %}
+                                    
+                                        <td>
+                                            <div class="resizable-table-vals-{{field}}">
+                                                {{ val }}
+                                            </div>
+                                        </td>
+                                    
+                                    {% endfor %}
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+
+                            </table>
+                        {% endif %}
+                    </div>
+                  </div>
+              </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+
+  <script>
+      var interval_arr = []
+      $('.resizable-table').mousedown(function() {
+        let clicked = this
+        let header = this.id.slice(this.id.indexOf('resizeable-table-') + 'resizeable-table-'.length)
+        interval_arr.forEach(function(e) {
+        clearInterval(e);
+        
+        });
+
+        let interval = setInterval(function(){ 
+          console.log(clicked);
+          $('.resizable-table-vals-'+ header).css({
+                'width': ($('#resizeable-table-'+header).width() + 'px')
+                });
+        }      
+        , 100);
+
+        interval_arr.push(interval);
+
+      });
+      
+
+// $(document).ready(function() {
+//       $('.resizable-table').each(function() {
+        
+//         let header = this.id.slice(this.id.indexOf('resizeable-table-') + 'resizeable-table-'.length)
+//         console.log(header);
+
+       
+//         var mousemove = false;
+//         var mousedown = false;
+//         $(this)
+//         .mousedown(function() {
+//             mousedown = true;
+//             $('.resizable-table-vals-'+header).css({
+//                 'width': ($(this).width() + 'px')
+//                 });
+//         })
+//         .mousemove(function() {
+//             mousemove = true;
+            
+//             $('.resizable-table-vals-'+header).css({
+//                 'width': ($(this).width() + 'px')
+//                 });
+            
+
+//         })
+//         .mouseup(function() {
+//             mousemove = false;
+//             mousedown = false;
+//             $('.resizable-table-vals-'+header).css({
+//                 'width': ($(this).width() + 'px')
+//                 });
+//         })
+//         ;
+
+
+//       });
+
+//     });
+        
+    // $(document).ready(function() {
+    //   $('.resizable-table').each(function() {
+        
+    //     let header = this.id.slice(this.id.indexOf('resizeable-table-') + 'resizeable-table-'.length)
+    //     console.log($(this).attr('id'));
+    //     console.log($(this).css( "width" ));
+
+    //     new ResizeSensor(jQuery(this), function(){ 
+            
+    //     $('.resizable-table-vals-'+header).css({
+            
+    //         'width': ($('#'+ $(this).attr('id')).width() + 'px')
+    //         });
+    //     });
+
+    //   });
+
+    // });
+      
+  </script>

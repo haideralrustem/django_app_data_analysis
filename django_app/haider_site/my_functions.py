@@ -97,7 +97,6 @@ def read_excel(file_name):
 
 #.......................
 
-
 # .........................................
 
 def detect_datatypes(csv_row_headers, rows):
@@ -463,6 +462,21 @@ def manual_change_data_type(dtypes_values, target_change_cols, headers, rows):
     return modded_rows, ndtypes
 
 # ................................
+
+def stringfy_data(dtypes_values, headers, rows, timedelta_mode='auto'):
+    modded_rows = []
+    new_dtypes_values = dtypes_values.copy()
+
+    for row in rows:
+        new_row = {}
+        for col in headers:
+            new_row[col] = str(row[col])
+        
+        modded_rows.append(new_row)
+
+    return modded_rows
+
+# ...................................
 
 # >>>>>>>>> TEST THE PIPELINE <<<<<<<<<<<<<<
 

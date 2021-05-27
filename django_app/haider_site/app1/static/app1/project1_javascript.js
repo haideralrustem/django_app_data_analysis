@@ -1,6 +1,15 @@
 // var from_python_data = data;
 
 // console.log('-----> ', parsed_data);
+function show_file_preview_modal(clicked_button){
+    let t = clicked_button.id;
+    let modal_id = t.substring(0, t.indexOf('-btn'))
+    var myModal = new bootstrap.Modal(document.getElementById(modal_id), {
+        keyboard: false
+      })
+    myModal.show()
+}
+
 
 
 function line_graph_test(data){

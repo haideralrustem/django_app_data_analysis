@@ -1,10 +1,13 @@
+
 from django.shortcuts import render
 
 from django.http import JsonResponse
 from django.core import serializers
 
+
 # me
 import my_functions
+
 from django.conf import settings
 import pdb
 
@@ -18,14 +21,15 @@ import csv
 
 
 
+# 
+
 # Create your views here.
 
 def data_file_upload(request):
+    # pdb.set_trace()
     
-
     if request.method == 'POST':
-        
-        
+                
         y_names = []
         file_path = os.path.join(settings.BASE_DIR, '')
         rows=[]
@@ -40,10 +44,12 @@ def data_file_upload(request):
         headers, rows = my_functions.prepare_data(file_name=uploaded_file, dataset_name=dataset_name)
         original_dtypes_values = my_functions.detect_datatypes(headers, rows)
 
+        str_rows = my_functions.stringfy_data(original_dtypes_values, headers, rows)
+
         modded_rows, new_dtypes_values = my_functions.post_process_dtypes(
                                                             original_dtypes_values, 
                                                             headers, rows)
-                                                           
+                                                         
         # pdb.set_trace()
         # user presented with a choice
         # modded_rows2, new_dtypes_values2 = manual_change_data_type(original_dtypes_values, {'date': 'datetime.timedelta minutes'}
@@ -60,7 +66,11 @@ def data_file_upload(request):
         # json_string_dict = my_functions.convert_rows_to_json(column_names=column_names, 
         #                                         list_of_rows=new_rows)
         
-        context = {'uploaded_file': uploaded_file, 'rows': rows, 'headers': headers}
+        context = {'uploaded_file': uploaded_file, 'rows': rows, 
+                    'headers': headers, 'original_dtypes_values': original_dtypes_values,
+                    'str_rows': str_rows,
+                    'modded_rows': modded_rows, 'new_dtypes_values': new_dtypes_values,
+                    }
         return render(request, 'project1/presets_config.html', context)
 
     else:
