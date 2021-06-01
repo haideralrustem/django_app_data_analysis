@@ -4,6 +4,8 @@
 {% static "csv_files/data2.csv" %}
 
 {% block children %}
+<link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@100&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
 <link rel="stylesheet" href="{% static 'app1/jquery-ui-1.12.1.custom/jquery-ui.css' %}">
 <script
@@ -49,7 +51,10 @@
 
     <script src="{% static 'app1/ResizeSensor.js' %}"></script>
     <script src="{% static 'app1/ElementQueries.js' %}"></script>
-    {% include 'project1/file_preview_modal.html' %}
+
+    <div id="bootstrap-overrides">
+        {% include 'project1/file_preview_modal.html' %}
+    </div>
 
 </div>
 
@@ -87,7 +92,10 @@
 </script> -->
 
 
-
+<script>
+    footer = document.querySelector('.footer');
+    footer.style.top = (window.screen.height - footer.offsetHeight) + "px";
+</script>
 <script src="{% static 'app1/project1_javascript.js' %}"></script>
 
 

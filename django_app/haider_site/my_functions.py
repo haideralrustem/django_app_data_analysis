@@ -10,7 +10,7 @@ import pdb
 
 import dateutil.parser
 from datetime import datetime, time, timedelta
-
+import string
 
 from django.conf import settings
 from project1.models import TabularDataSets, MyCsvRow
@@ -43,13 +43,17 @@ def prepare_data(file_name, dataset_name):
     rows = []
 
     i = 0
+    
     csv_row_headers = []
     for csv_row in reader:
-        for key in csv_row.keys():
-            csv_row_headers.append(key)
+
+        if  len(csv_row_headers) != len(csv_row.keys()):
+            for key in csv_row.keys():
+                csv_row_headers.append(key)
         
         rows.append(csv_row)
         i +=1
+
     
     return csv_row_headers, rows
 
@@ -340,13 +344,20 @@ def post_process_dtypes(dtypes_values, headers, rows, timedelta_mode='auto'):
                 try:
                     new_val = float(old_val)
                 except:
-                    new_val = None
+                    try:
+                        new_val = float(old_val.strip(string.ascii_letters))
+                    except:
+                        new_val = None
+                    
             
             elif dtype =='int':
                 try:
                     new_val = int(float(old_val))
                 except:
-                    new_val = None
+                    try:
+                        new_val = int(old_val.strip(string.ascii_letters))
+                    except:
+                        new_val = None
 
             elif dtype =='date':
                 x2 = re.match(date_word_pat2, str(old_val))

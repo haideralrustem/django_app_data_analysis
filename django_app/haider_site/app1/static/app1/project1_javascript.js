@@ -1,15 +1,25 @@
 // var from_python_data = data;
 
 // console.log('-----> ', parsed_data);
-function show_file_preview_modal(clicked_button){
-    let t = clicked_button.id;
-    let modal_id = t.substring(0, t.indexOf('-btn'))
-    var myModal = new bootstrap.Modal(document.getElementById(modal_id), {
-        keyboard: false
-      })
-    myModal.show()
-}
+// function show_file_preview_modal(clicked_button){
+//     let t = clicked_button.id;
+//     let modal_id = t.substring(0, t.indexOf('-btn'))
+//     var myModal = new bootstrap.Modal(document.getElementById(modal_id), {
+//         keyboard: false
+//       })
+//     myModal.show()
+// }
 
+
+// container = document.querySelector("body");
+// console.log(container);
+// new ResizeSensor(container, function()
+// {
+//     console.log("dimension changed:", container.clientWidth, container.clientHeight);
+//     let footer = document.querySelector('.footer');
+//     // footer.style.top = (container.clientHeight) + "px";
+//     footer.style.top = (window.screen.height - footer.offsetHeight) + "px";
+// });
 
 
 function line_graph_test(data){
@@ -1013,7 +1023,8 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
             // animation_state.highlighter_engaged = true;
 
             let svg_container = document.querySelector('#svg-container');
-
+            
+            if (svg_container) {
             svg_container.addEventListener("click", function() {
                 // remove highlighting
                 animation_state.highlighter_engaged = false;
@@ -1067,6 +1078,7 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
                 }
                             
             });
+            }
         
 
         }
@@ -2591,6 +2603,9 @@ var data1 = [
 // console.log(d1);
 
 //testing(data=data1);
+let svg_container = document.querySelector('#svg-container');
+
+if (svg_container) {
 line_graph(data=data1, x_title='xaxis', y_title='ytitle', graph_title='TITLEST',
             y_ticks=10, data_circles=true, line_mouseover_animation=true,
 
@@ -2615,7 +2630,7 @@ line_graph(data=data1, x_title='xaxis', y_title='ytitle', graph_title='TITLEST',
             circle_radius=5 
 
             )
-
+}
 // bar_graph (data1,   //data
 //           "SOME TITLE",  //graph_title
 //           'year', //x_title

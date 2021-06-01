@@ -1,164 +1,263 @@
 
 
 <!-- Button trigger modal -->
-<button type="button" id="file-preview-modal-btn" class="btn btn-primary" data-bs-toggle="modal" 
-    data-bs-target="#file-preview-modal" onclick="show_file_preview_modal(this)">
+<button type="button" id="file-preview-modal-btn" class="btn btn-primary"  
+    onclick="show_file_preview_modal(this)">
     Launch demo modal
   </button>
   
   <!-- Modal -->
-  <div class="modal fade" id="file-preview-modal" tabindex="-1" 
-    aria-labelledby="exampleModalLabel" aria-hidden="true">
 
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <div class="file-preview-modal-body" style="overflow-y:scroll;">
-              <div class='row'>
-                  <div class="col-12">
-                    <div class='file-preview-modal-content'>
-                        {% if rows %}
-                            <table class="">
-                                {% if headers %}
-                                <thead>
-                                    
-                                    <tr>
-                                        {% for header in headers %}
-                                        
-                                            <th>
-                                                <div 
-                                                id="resizeable-table-{{header}}" 
-                                                class="resizable-table">
-                                                {{ header }}
-                                                </div>
-                                            </th>
-                                        
-                                        {% endfor %}
-                                    </tr>
-                                    
-                                </thead>
-                                
+  <div id="myModal" class="myModal" >
 
-                                {% endif %}
-                            
-                            <tbody>
-                                {% for row in str_rows %}
-                                <tr>
-                                    {% for field, val in row.items %}
-                                    
-                                        <td>
-                                            <div class="resizable-table-vals-{{field}}">
-                                                {{ val }}
-                                            </div>
-                                        </td>
-                                    
-                                    {% endfor %}
-                                </tr>
-                                {% endfor %}
-                            </tbody>
+    <!-- Modal content -->
+    <span class="close movable-content">&times;</span>
+    <div class="modal-innercontent movable-content">    
+      
+      <div class="table-outer-wrap">
+        <div class='table-container'>
 
-                            </table>
-                        {% endif %}
-                    </div>
-                  </div>
-              </div>
+          <div id="mover" class='movable'>
+            
+            <div style="margin-top: 1%; font-family: 'Sarabun', sans-serif;
+            font-size: 18px;">
+              Uploaded Data Preview</div>
+
+            <p>Sowing only the first 100 rows.
+              <br>When uploading excel files, the active sheet will be used</p>
+            
           </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
-        </div>
+
+          <div class="container_col">
+            <div class='file-preview-modal-content'>
+
+
+              {% if rows %}
+              <form id="data-preview-table" class="">
+                <div class="divTable">
+                  {% if headers %}
+                  <div class="headRow">
+                    {% for header in headers %}
+                     <div id="resizeable-table-{{forloop.counter0}}" 
+                          class="divCell resizable-table stylized-table-cell">
+                          <p>{{header}}</p>
+                          
+                      </div>
+                    {% endfor %}
+                  </div>
+                  {% endif %}
+                
+                
+                {% for row in str_rows %}
+                  {% if forloop.counter0 < 100 %} 
+                  <div class="divRow">
+                        {% for field, val in row.items %}
+                          <div 
+                          class="divCell resizable-table-vals-{{forloop.counter0}} stylized-table-cell">
+                          <p>{{ val }}</p>
+                          </div>
+                        {% endfor %}
+                  </div>
+                  {% endif %}
+                {% endfor %}
+                 
+                 
+     
+                </div>
+
+            </form>
+          {% endif %}
+                
+
+                
+            </div>
+
+            <div class='rightside-modal-space movable'>
+            </div>
+
+          </div>
+
+          
+          <div class='movable'>
+            <button type="button" class="btn btn-secondary modal-button"
+                onclick="file_preview_close(this)">Close</button>
+    
+            <button type="button" class="btn btn-primary modal-button">Save changes</button>
+          </div>
+      </div>
+
+      
+
+
       </div>
     </div>
-  </div>
-
+    
   
+  </div>
+ 
+              
+        
+
+  <!-- fix the headers using javascript, increase left value as horizental scroll -->
+  <!-- fix X close button on window resize -->
+
 
   <script>
+    // Get the modal
+      var modal = document.getElementById("myModal");
+
       var interval_arr = []
       $('.resizable-table').mousedown(function() {
+        
         let clicked = this
-        let header = this.id.slice(this.id.indexOf('resizeable-table-') + 'resizeable-table-'.length)
+        let header = this.id.slice(this.id.indexOf('resizeable-table-') + 
+                    'resizeable-table-'.length);
+
         interval_arr.forEach(function(e) {
         clearInterval(e);
         
         });
 
         let interval = setInterval(function(){ 
-          console.log(clicked);
-          $('.resizable-table-vals-'+ header).css({
-                'width': ($('#resizeable-table-'+header).width() + 'px')
+          // console.log(clicked);
+          $('.resizable-table-vals-'+ header).css({ // affected element
+                'width': ($('#resizeable-table-'+header).width() + 'px'),// desired width
+                // 'height': ($('#data-preview-table tbody tr').height() + 'px')
                 });
+                   
         }      
-        , 100);
+        , 1);       
 
         interval_arr.push(interval);
 
       });
+
+      $('.resizable-table').mouseup(function() {
+                
+        setTimeout(function() {
+          interval_arr.forEach(function(e) {
+          clearInterval(e);
+          
+          });
+        }, 100);
+
+      });
       
 
-// $(document).ready(function() {
-//       $('.resizable-table').each(function() {
-        
-//         let header = this.id.slice(this.id.indexOf('resizeable-table-') + 'resizeable-table-'.length)
-//         console.log(header);
+      function file_preview_close(clicked) {
+          interval_arr.forEach(function(e) {
+          clearInterval(e);
+          
+          });
 
-       
-//         var mousemove = false;
-//         var mousedown = false;
-//         $(this)
-//         .mousedown(function() {
-//             mousedown = true;
-//             $('.resizable-table-vals-'+header).css({
-//                 'width': ($(this).width() + 'px')
-//                 });
-//         })
-//         .mousemove(function() {
-//             mousemove = true;
-            
-//             $('.resizable-table-vals-'+header).css({
-//                 'width': ($(this).width() + 'px')
-//                 });
-            
-
-//         })
-//         .mouseup(function() {
-//             mousemove = false;
-//             mousedown = false;
-//             $('.resizable-table-vals-'+header).css({
-//                 'width': ($(this).width() + 'px')
-//                 });
-//         })
-//         ;
-
-
-//       });
-
-//     });
-        
-    // $(document).ready(function() {
-    //   $('.resizable-table').each(function() {
-        
-    //     let header = this.id.slice(this.id.indexOf('resizeable-table-') + 'resizeable-table-'.length)
-    //     console.log($(this).attr('id'));
-    //     console.log($(this).css( "width" ));
-
-    //     new ResizeSensor(jQuery(this), function(){ 
-            
-    //     $('.resizable-table-vals-'+header).css({
-            
-    //         'width': ($('#'+ $(this).attr('id')).width() + 'px')
-    //         });
-    //     });
-
-    //   });
-
-    // });
+          modal.style.display = "none";
+      }
       
+  </script>
+
+
+<script>
+  
+  window.onresize = function() {
+    let modal = document.getElementById("myModal");
+
+    if (modal.style.display ==="block"){
+      let elmnt = document.querySelector(".modal-innercontent");
+      let span_close = document.querySelector('span.close');
+      span_close.style.left =  elmnt.offsetLeft +
+      elmnt.offsetWidth-35+'px';
+      span_close.style.top =  elmnt.offsetTop-60+'px';
+      
+    }
+    
+}
+
+  // Get the button that opens the modal
+  var btn = document.getElementById("file-preview-modal-btn");
+  
+  // Get the <span> element that closes the modal
+  var span = document.getElementsByClassName("close")[0];
+  
+  // When the user clicks the button, open the modal 
+  btn.onclick = function() {
+    modal.style.display = "block";
+    let span_close = document.querySelector('span.close');
+    span_close.style.left =  document.querySelector(".modal-innercontent").offsetLeft +
+    document.querySelector(".modal-innercontent").offsetWidth-35+'px';
+    span_close.style.top =  document.querySelector(".modal-innercontent").offsetTop-60+'px';
+    
+  }
+  
+  // When the user clicks on <span> (x), close the modal
+  span.onclick = function() {
+    modal.style.display = "none";
+  }
+  
+  // When the user clicks anywhere outside of the modal, close it
+  window.onclick = function(event) {
+    if (event.target == modal) {
+      // modal.style.display = "none";
+    }
+  }
+  
+  
+  dragElement(document.querySelector(".modal-innercontent"));
+  // dragElement(document.querySelectorAll(".movable-content"));
+  
+  
+  function dragElement(elmnt) {
+    var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+    if (document.querySelectorAll(".movable")) {
+      // if present, the header is where you move the DIV from:
+      console.log('if present, the header is where you move the DIV from:')
+      let arr = document.querySelectorAll(".movable");
+      arr.forEach(function(e) {
+        e.onmousedown = dragMouseDown;
+      });
+      
+      
+    } else {
+      // otherwise, move the DIV from anywhere inside the DIV:
+      elmnt.onmousedown = dragMouseDown;
+    }
+  
+    function dragMouseDown(e) {
+      e = e || window.event;
+      e.preventDefault();
+      // get the mouse cursor position at startup:
+      pos3 = e.clientX;
+      pos4 = e.clientY;
+      document.onmouseup = closeDragElement;
+      // call a function whenever the cursor moves:
+      document.onmousemove = elementDrag;
+    }
+  
+    function elementDrag(e) {
+      e = e || window.event;
+      e.preventDefault();
+      // calculate the new cursor position:
+      pos1 = pos3 - e.clientX;
+      pos2 = pos4 - e.clientY;
+      pos3 = e.clientX;
+      pos4 = e.clientY;
+      // set the element's new position:
+      elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+      elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+
+      
+      let span_close = document.querySelector('span.close');
+      span_close.style.left =  elmnt.offsetLeft +
+        document.querySelector(".modal-innercontent").offsetWidth-35+'px'
+        ;
+      span_close.style.top =  document.querySelector(".modal-innercontent").offsetTop-60+'px';
+      
+    }
+  
+    function closeDragElement() {
+      // stop moving when mouse button is released:
+      document.onmouseup = null;
+      document.onmousemove = null;
+    }
+  }
+  
   </script>

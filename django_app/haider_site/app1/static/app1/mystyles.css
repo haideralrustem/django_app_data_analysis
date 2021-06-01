@@ -5,9 +5,10 @@
     text-align: center;
 }
 
-
-
-
+body {
+    position: relative;
+    
+}
 
 .invisible {
     opacity: 0;
@@ -39,8 +40,9 @@
     align-items: center;
     padding: 0 1%;
     /* height: 80px; */
-    height: 100%;
-}
+    height: fit-content;
+    position: relative;
+}   
 
 .nav_header nav {
     display: flex;
@@ -534,17 +536,24 @@ div.alert {
 /* ---------------------------------- */
 /* ............. footer ...........  */
 
+
 .footer {
     background-color: rgba(0, 153, 255, 0.418);
     width: 100%;
-    height: 210px;
+    /* height: 210px; */
+    height: 280px;
     justify-content: space-between;
     align-items: center;
     padding: 0 1%;
-    margin-top: 17%;
-    position: relative;
+    margin-top: 20%;
+    
+    position: absolute;
+    height: 450px;
+    
     bottom: 0;
     left: 0;
+    top: 200px;
+    
     color: rgb(92, 104, 116);
     /* rgb(223, 249, 251)  light blue */
     /*  rgb(104, 109, 224)  purple border*/
@@ -706,6 +715,9 @@ site-map-column-subtitle {}
 
 @media only screen and (min-width: 320px) and (max-width: 480px) {
     /* STYLES GO HERE */
+    body {
+        min-height: 450px;
+    }
     .hamburger {
         display: none;
     }
@@ -824,7 +836,9 @@ site-map-column-subtitle {}
     /* footer */
     .footer {
         font-size: 9px;
-        height: 260px;
+        /* height: 260px; */
+        height: 300px;
+        margin-top: 20%;
     }
     .footer>.my-row {
         margin-left: 5vw;
@@ -856,6 +870,9 @@ site-map-column-subtitle {}
 }
 
 @media only screen and (min-width: 480px) and (max-width: 560px) {
+    body {
+        min-height: 300px;
+    }
     .logo-img {
         width: 9vw;
         height: 8vw;
@@ -940,7 +957,9 @@ site-map-column-subtitle {}
 
 
     .footer {
-        height: 315px;
+        /* height: 315px; */
+        height: 415px;
+        margin-top: 32%;
     }
     .side-footer {
         padding: 2% 0 0 0%;
@@ -970,6 +989,9 @@ site-map-column-subtitle {}
 }
 
 @media only screen and (min-width: 560px) and (max-width: 768px) {
+    body {
+        min-height: 300px;
+    }
     .nav_header {
         height: 10vw;
     }
@@ -1023,7 +1045,8 @@ site-map-column-subtitle {}
         margin-right: 8vw;
     }
     .footer {
-        height: 350px;
+        /* height: 350px; */
+        height:428px;
     }
     #second-footer-row {
         margin-left: 21%;
@@ -1041,7 +1064,9 @@ site-map-column-subtitle {}
 /* iPads  ----------- */
 
 @media only screen and (min-width: 768px) and (max-width: 918px) {
-
+    body {
+        min-height: 380px;
+    }
     /* ------ profile ----- */
 
     .profile-content-wrap {
@@ -1075,7 +1100,8 @@ site-map-column-subtitle {}
 
 
     .footer {
-        height: 360px;
+        height: 380px;
+        
         font-size: 12px;
     }
     .footer>.my-row {
@@ -1145,7 +1171,7 @@ site-map-column-subtitle {}
 
 
     .footer {
-        height: 400px;
+        height: 410px;
         font-size: 12px;
     }
     .footer>.my-row {
@@ -1225,6 +1251,7 @@ site-map-column-subtitle {}
 
     .footer {
         height: 440px;
+        
         font-size: 12px;
     }
     .footer>.my-row {
@@ -1312,7 +1339,9 @@ site-map-column-subtitle {}
 
 
     .footer {
-        height: 440px;
+        /* height: 430px; */
+        height: 34vw;
+        
     }
     .footer>.my-row {
         margin-left: 10vw;
@@ -1347,7 +1376,7 @@ site-map-column-subtitle {}
         width: 24%;
     }
     .footer {
-        height: 475px;
+        height: 480px;
     }
     .footer>.my-row {
         margin-left: 10vw;
@@ -1378,8 +1407,14 @@ site-map-column-subtitle {}
 }
 
 
-/* -------------------------------------------------------- */
+/* ......height media queries.......... */
+/* 1366 */
 
+
+
+
+/* -------------------------------------------------------- */
+/*  legacy media quereis */
 
 /* --------------------------------------------------------- */
 
