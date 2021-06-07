@@ -273,7 +273,7 @@ def detect_datatypes(csv_row_headers, rows):
        
     print(nl, nl)
     for k, v in dtypes_final_values.items():
-        print(k, '\n\t', v)
+        print(k, '\n\t', v, ' ', type(v))
 
     return dtypes_final_values
 
@@ -464,7 +464,6 @@ def manual_change_data_type(dtypes_values, target_change_cols, headers, rows):
         new_dtypes_values[col] = new_dtype
         
 
-
     print('\nnew_dtypes_values: \n', new_dtypes_values, '\n')
 
     modded_rows, ndtypes = post_process_dtypes(new_dtypes_values, headers, rows, 
@@ -486,6 +485,23 @@ def stringfy_data(dtypes_values, headers, rows, timedelta_mode='auto'):
         modded_rows.append(new_row)
 
     return modded_rows
+
+# .....................................
+
+
+def convert_to_readable_dtype_value(dtypes_values):
+    #  a more readable wording of the data types
+    mapper ={'float': 'Decimal number',
+             'int': 'Whole number',
+             'string': 'Text',
+             'date': 'Date', 
+             'time': 'Time',
+             'datetime.timedelta': 'Time period',}
+    readable_dtypes_values = {}
+    for col, dtype in dtypes_values.items():
+        readable_dtypes_values[col] = mapper[dtype]
+    
+    return readable_dtypes_values
 
 # ...................................
 

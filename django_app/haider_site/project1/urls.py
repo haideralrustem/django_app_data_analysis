@@ -7,5 +7,10 @@ urlpatterns = [
     
     path('', views.data_file_upload, name='data_file_upload'),
     path('/viz', views.main_page_viz, name='main_page'),
+    path('/testing', views.testing_page, name='testing_page'),
+
+    # ajax requests
+    path('/ajax/post/accept_uploaded_data', views.accept_uploaded_data, name="accept_uploaded_data"),
+    path('/ajax/post/change_col_dtype', views.change_col_dtype, name="change_col_dtype"),
   
 ]

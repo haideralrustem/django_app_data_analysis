@@ -12,7 +12,7 @@
 
     <!-- Modal content -->
     <span class="close movable-content">&times;</span>
-    <div class="modal-innercontent movable-content">    
+    <div class="modal-innercontent animated movable-content">    
       
       <div class="table-outer-wrap">
         <div class='table-container'>
@@ -78,11 +78,17 @@
           </div>
 
           
-          <div class='movable'>
+          <div id="bottom-panel-modal" class='movable'>
             <button type="button" class="btn btn-secondary modal-button"
                 onclick="file_preview_close(this)">Close</button>
-    
-            <button type="button" class="btn btn-primary modal-button">Save changes</button>
+            
+              <form id="accept-uploaded-data-form" class="" method="POST" enctype="multipart/form-data">
+                  {% csrf_token %}
+                  {{ uploaded_data_form_handler.accept_value }}
+                  <button type="submit" class="btn btn-primary modal-button" 
+                  onclick="confirm_data_upload(this)">Confirm Upload</button>                 
+              </form>
+            
           </div>
       </div>
 
@@ -100,11 +106,68 @@
 
   <!-- fix the headers using javascript, increase left value as horizental scroll -->
   <!-- fix X close button on window resize -->
+  
+  <script>
+    // Get the modal
+    var modal = document.getElementById("myModal");
+
+    function confirm_data_upload(clicked_btn) {
+      let accepted_value_field = $('#id_accept_value' );
+      accepted_value_field.val('true');
+      
+      modal.style.display = "none";
+      
+    }
+
+    $("#accept-uploaded-data-form").submit(function (e) {
+    // preventing from page reload and default actions
+    e.preventDefault();
+    // serialize the data for sending the form data.
+    var serializedData = $(this).serialize();
+    // make POST ajax call
+    $.ajax({
+        type: 'POST',
+        url: "{% url 'project1:accept_uploaded_data' %}",
+        data: serializedData,
+        success: function (response) {
+            
+          // Response here can Contain the stringified changed data when
+          // you implement the change datatype POST
+            
+            // 1. clear the form.
+            $("#accept-uploaded-data-form").trigger('reset');
+
+            console.log('\n response: ', response)
+            // SUCCESS FEEDBACK
+
+            // $('span.update-success-msg').css("opacity", "1");
+
+
+            // setTimeout(function(){
+            //     $('span.update-success-msg').css("opacity", "0");
+            // }, 3000);
+            // console.log('\n >> : \n', response['status']);
+
+            
+            // ->  Manipulate DOM to show data
+            // -> trigger the GET Request here if needed
+            
+            
+        },
+
+        error: function (response) {
+            // alert the error if any error occured
+
+            console.log('error occured! :\n', response);
+            
+        }
+      })
+  });
+  </script>
 
 
   <script>
-    // Get the modal
-      var modal = document.getElementById("myModal");
+    
 
       var interval_arr = []
       $('.resizable-table').mousedown(function() {
@@ -181,16 +244,28 @@
   // When the user clicks the button, open the modal 
   btn.onclick = function() {
     modal.style.display = "block";
+    let modal_innercontent = document.querySelector(".modal-innercontent");
     let span_close = document.querySelector('span.close');
-    span_close.style.left =  document.querySelector(".modal-innercontent").offsetLeft +
-    document.querySelector(".modal-innercontent").offsetWidth-35+'px';
-    span_close.style.top =  document.querySelector(".modal-innercontent").offsetTop-60+'px';
+
+    setTimeout(() => {
+      modal_innercontent.style['opacity'] = "1";
+    }, 90);
+    
+    span_close.style.left =  modal_innercontent.offsetLeft +
+    modal_innercontent.offsetWidth-35+'px';
+    span_close.style.top =  modal_innercontent.offsetTop-60+'px';
     
   }
   
   // When the user clicks on <span> (x), close the modal
   span.onclick = function() {
-    modal.style.display = "none";
+    let modal_innercontent = document.querySelector(".modal-innercontent");
+    modal_innercontent.style['opacity'] = "0.5";
+    setTimeout(() => {
+     
+      modal.style.display = "none";
+    }, 200);
+   
   }
   
   // When the user clicks anywhere outside of the modal, close it

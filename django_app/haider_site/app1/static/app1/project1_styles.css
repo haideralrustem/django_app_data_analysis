@@ -1,5 +1,92 @@
-/* ........... File Preview Styles ......... */
+.bordered {
+  border: 1px solid lightskyblue;
+  border-radius: 5px;
+}
 
+/* ............ testing_page styles .............. */
+
+.grid-content-container {
+  display: grid;
+  grid-template-columns: 1fr 7fr 1fr;
+  grid-template-rows: 2fr 5fr 3fr 1fr  1fr;
+  grid-template-areas: 
+    "header header header"
+    "side_menu content1 side_panel"
+    "side_menu content2 side_panel"
+    "side_menu content2 ."
+    "footer footer footer"
+   ;
+  grid-column-gap: 1vw;
+  grid-row-gap: 1vw;
+  padding-left: 5%;
+  padding-right: 5%;
+}
+.grid_div {
+  background-color: aliceblue;
+  border: 1px solid darkblue;
+}
+
+.first_div {
+  grid-area: header;
+}
+.second_div {
+  grid-area: side_menu;
+}
+.third_div {
+  grid-area: content1;
+  overflow: hidden;
+}
+.fourth_div {
+  grid-area: content2;
+}
+.fifth_div {
+  grid-area: side_panel;
+}
+.sixth_div {
+  grid-area: footer;
+}
+
+#testing-img {
+  overflow: hidden;
+}
+#testing-img:hover {
+  transform: scale(2);
+}
+
+/* .............General ................. */
+
+
+.loading-spinner {
+  display: block;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  margin: auto;
+  
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid #3498db;
+  width: 120px;
+  height: 120px;
+  -webkit-animation: spin 2s linear infinite; /* Safari */
+  animation: spin 2s linear infinite;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+
+/* ........... File Preview Styles ......... */
+.opacity-animated {
+  transition: opacity 0.5s ease-in-out;
+}
 
 #myModal {
   display: none; /* Hidden by default */
@@ -28,12 +115,15 @@
   box-sizing: content-box;
   border-radius: 10px;
   left: 7.5%;
+  top: 7%;
   
+  opacity: 0.5;
 }
 
 .table-outer-wrap {
   display: inline-flex;
   width: 100%;
+  opacity: 0;  
 }
 .table-container {
   display: block;
@@ -42,12 +132,23 @@
 }
 
 
-
+#accept-uploaded-data-form {
+  display: flex;
+}
 
 .movable {
   cursor: move;
   position: relative;
   
+}
+#bottom-panel-modal {
+  display: flex;
+  align-items: center;
+}
+#bottom-panel-modal button {
+  min-height: fit-content;
+  height: 46px;
+  margin-right: 7px;
 }
 
 #mover {
@@ -83,7 +184,7 @@ span.close:hover {
 .container_col {
   display: inline-flex;
   width: 100%;
-
+  margin-top: 2%;
 }
 .rightside-modal-space {
   width: 5vw;
@@ -121,6 +222,12 @@ span.close:hover {
       margin-left: 5px;
       margin-right: 1px;
   }
+
+.dtype-selector {
+  align-items: flex-end;
+  display: flex;
+  padding-left: 5px;
+}
 .divCell p {
   margin-left: 5px;
 }
@@ -300,8 +407,8 @@ path {
           margin-top: 4%;
         }
         .divTable {
-          margin-top: 11%;
-          height: 70vw;
+          margin-top: 65px;
+          height: 63vw;
         }
         .divCell {
           /* display:table-cell; */

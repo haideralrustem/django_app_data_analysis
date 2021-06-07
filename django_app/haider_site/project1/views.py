@@ -1,9 +1,9 @@
 
 from django.shortcuts import render
-
+from .forms import UploadedDataFormHandler, GenericValueForm, GenericMultichoiceForm
 from django.http import JsonResponse
 from django.core import serializers
-
+# import django.contrib.sessions
 
 # me
 import my_functions
@@ -20,23 +20,86 @@ import csv
 # sys.path.append("..")
 # import my_functions
 
+# persistent vars
+persistent_data_state = {}
+
+# AJAX Reqs
+def accept_uploaded_data(request):
+
+    print('\n\n\n accept_uploaded_data@  views.py has been hit \n\n\n')
+    if request.method == 'POST' and request.is_ajax():
+        
+        u_form = UploadedDataFormHandler(request.POST)
+        # save the data and after fetch the object in instance
+        if u_form.is_valid():
+            accept_value = u_form.cleaned_data['accept_value']   
+
+            
+            # pass session variables ??? <<<<<<<
+            if accept_value == 'true':
+                
+                rows = persistent_data_state['rows'] 
+                headers = persistent_data_state['headers'] 
+                original_dtypes_values = persistent_data_state['original_dtypes_values'] 
+                str_rows = persistent_data_state['str_rows'] 
+                modded_rows = persistent_data_state['modded_rows'] 
+                new_dtypes_values = persistent_data_state['new_dtypes_values'] 
+
+                data_state = {
+                'headers': headers, 'original_dtypes_values': original_dtypes_values,
+                'str_rows': str_rows,
+                'new_dtypes_values': new_dtypes_values
+                }
+                
+
+                return JsonResponse({                                    
+                'msg': 'accept_value posted successfully', 
+                                    'accept_value': accept_value,
+                                    }, status=200)
+
+            return JsonResponse({
+                                 'msg': 'form was valid but but accept_value was false',
+                                 'accept_value': accept_value,
+                                 }, status=400)
+        
+        else:
+            return JsonResponse({'msg':'Form was not valid'}, status=400)
+
+    return JsonResponse({'status':'Fail', 'msg':'Not a valid request'}, status=400)
+
+# .........................
+
+def change_col_dtype(request):
+    print('\n\n\n change_col_dtype @  views.py has been hit \n\n\n')
+    if request.method == 'POST' and request.is_ajax():
+        # pdb.set_trace()
+        u_form = GenericValueForm(request.POST)
+        print('\n\n u_form \n\n', u_form)
+        print('\n\n u_form \n\n', u_form.cleaned_data)
+        selected_value = u_form.cleaned_data['text_value']
+        return JsonResponse({                                    
+                'msg': 'change dtype posted successfully', 
+                                    'selected_value': selected_value
+                                    }, status=200) 
 
 
-# 
 
 # Create your views here.
 
 def data_file_upload(request):
     # pdb.set_trace()
-    
-    if request.method == 'POST':
-                
+    print('\n data_file_upload has been hit \n')
+    if request.method == 'POST' and not request.is_ajax():  # file upload 
+        # pdb.set_trace()
         y_names = []
         file_path = os.path.join(settings.BASE_DIR, '')
         rows=[]
         file_name = 'app1\\static\\csv_files\\data2.csv'
 
-        uploaded_file = request.FILES['uploaded_file']
+        if 'uploaded_file' in request.FILES:
+            uploaded_file = request.FILES['uploaded_file']
+        else:
+            return render(request, 'project1/presets_config.html')
         # file_path = os.path.join(settings.BASE_DIR, file_name)
 
         # pipeline to open csv, save the data to a TabularDataSets model
@@ -44,12 +107,17 @@ def data_file_upload(request):
                         
         headers, rows = my_functions.prepare_data(file_name=uploaded_file, dataset_name=dataset_name)
         original_dtypes_values = my_functions.detect_datatypes(headers, rows)
+        original_dtypes_values_readable = my_functions.convert_to_readable_dtype_value(
+                                                       original_dtypes_values)
 
         str_rows = my_functions.stringfy_data(original_dtypes_values, headers, rows)
+        # str_header_and_rows = 
 
         modded_rows, new_dtypes_values = my_functions.post_process_dtypes(
                                                             original_dtypes_values, 
                                                             headers, rows)
+
+        new_dtypes_values_readable = my_functions.convert_to_readable_dtype_value(new_dtypes_values)
                                                          
         # pdb.set_trace()
         # user presented with a choice
@@ -66,16 +134,37 @@ def data_file_upload(request):
             
         # json_string_dict = my_functions.convert_rows_to_json(column_names=column_names, 
         #                                         list_of_rows=new_rows)
+        uploaded_data_form_handler = UploadedDataFormHandler(initial={'accept_value': 'false'})
+        change_dtype_form = GenericValueForm()
+
+        choices = [ch for ch in original_dtypes_values_readable.keys()]
+        change_dtype_form_multi = GenericMultichoiceForm(custom_choices=choices)
         
         context = {'uploaded_file': uploaded_file, 'rows': rows, 
                     'headers': headers, 'original_dtypes_values': original_dtypes_values,
                     'str_rows': str_rows,
                     'modded_rows': modded_rows, 'new_dtypes_values': new_dtypes_values,
+                    'original_dtypes_values_readable': original_dtypes_values_readable,
+                    'uploaded_data_form_handler': uploaded_data_form_handler,
+                    'change_dtype_form': change_dtype_form,
+                    'change_dtype_form_multi': change_dtype_form_multi,
+
                     }
+
+        persistent_data_state['rows'] = rows
+        persistent_data_state['headers'] = headers
+        persistent_data_state['original_dtypes_values'] = original_dtypes_values
+        persistent_data_state['str_rows'] = str_rows
+        persistent_data_state['modded_rows'] = modded_rows
+        persistent_data_state['new_dtypes_values'] = new_dtypes_values
+        
+
         return render(request, 'project1/presets_config.html', context)
 
     else:
-        context = {'uploaded_file': 'no file uploaded!, ERROR'}
+        change_dtype_form = GenericValueForm()
+        context = {'uploaded_file': 'no file uploaded!, ERROR',
+                    'change_dtype_form': change_dtype_form}
         return render(request, 'project1/presets_config.html', context)
 
 
@@ -115,3 +204,8 @@ def main_page_viz(request):
     # return render(request, 'project1/main_page.html', context)
     return render(request, 'project1/main_page.html', context)
 
+
+
+def testing_page(request):
+        
+    return render(request, 'project1/testing_page.html', {})

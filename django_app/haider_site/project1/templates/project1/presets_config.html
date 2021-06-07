@@ -20,6 +20,8 @@
 <script src="{% static 'app1/jquery-ui-1.12.1.custom/jquery-ui.js' %}"></script>
 
 
+<div class="loading-spinner"></div>
+
 <div class="project-page-wrapper">
 
     <div class="file-uploader">
@@ -31,30 +33,123 @@
         
     </div>
     
-    <div class="file-viewer">
-        <div class="file-contents">
-            {% if uploaded_file %}
-                {{ uploaded_file }}
-            {% endif %}
-            
-            {% if headers %}
-                {{ headers }}
-            {% endif %}
+    <div class="on-page-file-viewer container">
+        <div><p>{% if uploaded_file %}
+            {{ uploaded_file }}
+        {% endif %}</p></div>
 
-            {% if rows %}
-                {% for row in str_rows %}
-                <div>{{ row }}</div>
-                {% endfor %}
-            {% endif %}
+        <div class="on-page-file-viewer">
+            
+            <div class="bordered"> 
+                
+                <div class="table-outer-wrap">
+                    <div class='table-container'>
+            
+                      <div id="" class=''>
+                        
+                        <div style="margin-top: 1%; font-family: 'Sarabun', sans-serif;
+                        font-size: 18px;">
+                          Uploaded Data Preview</div>
+            
+                        <p>Sowing only the first 100 rows.
+                          <br>When uploading excel files, the active sheet will be used</p>
+                        
+                      </div>
+
+
+                    
+                      <div class="container_col">
+                        <div class='file-preview-modal-content'>
+                        
+                            {% if headers %}
+                            <div class="divRow">
+                                {% for header, dtype  in original_dtypes_values_readable.items %}
+                                <div 
+                                    class="divCell resizable-table-vals-{{forloop.counter0}} stylized-table-cell dtype-selector">
+                                    
+                                    <form id="change-dtype-{{forloop.counter0}}" class='change-dtype' 
+                                  method="POST"  onsubmit='submit_dtype_change(this)'>
+                                      {% csrf_token %}
+                                        <label> {{ header }}: </label> 
+
+                                        {{ change_dtype_form.text_value }}
+                                        
+                                      <button id="change-dtype-btn-{{forloop.counter0}}" 
+                                      type="submit">G</button>
+                                        
+                                    </form>                               
+                                    
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+
+            
+                          {% if rows %}
+                          <form id="data-preview-table-onpage" class="data-preview-table">
+                            <div class="divTable">
+                              {% if headers %}
+                              <div class="headRow">
+                                {% for header in headers %}
+                                 <div id="resizeable-table-{{forloop.counter0}}" 
+                                      class="divCell resizable-table stylized-table-cell">
+                                      <p>{{header}}</p>
+                                      
+                                  </div>
+                                {% endfor %}
+                              </div>
+                              {% endif %}
+                            
+
+                            
+                            
+
+
+                            
+                            {% for row in str_rows %}
+                              {% if forloop.counter0 < 100 %} 
+                              <div class="divRow">
+                                    {% for field, val in row.items %}
+                                      <div 
+                                      class="divCell resizable-table-vals-{{forloop.counter0}} stylized-table-cell">
+                                      <p>{{ val }}</p>
+                                      </div>
+                                    {% endfor %}
+                              </div>
+                              {% endif %}
+                            {% endfor %}
+                             
+                             
+                 
+                            </div>
+            
+                        </form>
+                      {% endif %}
+                            
+                            
+                        </div>
+            
+                      </div>
+                      
+                    
+                    </div>      
+            
+                  </div>
+            </div>
+            
         </div>
     </div>
 
     <script src="{% static 'app1/ResizeSensor.js' %}"></script>
     <script src="{% static 'app1/ElementQueries.js' %}"></script>
 
-    <div id="bootstrap-overrides">
+    <div>
         {% include 'project1/file_preview_modal.html' %}
     </div>
+
+    
+
+    <a href="{% url 'project1:testing_page' %}" class="btn btn-primary">go to testing</a>
 
 </div>
 
@@ -95,7 +190,79 @@
 <script>
     footer = document.querySelector('.footer');
     footer.style.top = (window.screen.height - footer.offsetHeight) + "px";
+    $('#id_text_value').val();
 </script>
+<script>
+    let select_width = $('.dtype-change-select').width();
+    $('.stylized-table-cell').width(select_width + 15);
+    
+</script>
+
+
+<script>
+  function submit_dtype_change(button_clicked) {
+    console.log(button_clicked.id);
+    console.log($('#id_text_value').val())
+    document.getElementById('id_text_value').value = "HHHH" + button_clicked.id;
+    console.log($('#id_text_value').val())
+    
+  }
+
+ 
+
+  $('#change-dtype-0').submit(function (e) {
+    // preventing from page reload and default actions
+    e.preventDefault();
+    let submitted_form = $(this);
+    // serialize the data for sending the form data.
+    var serializedData = $(this).serialize();
+    // make POST ajax call
+    $.ajax({
+      type: 'POST',
+      url: "{% url 'project1:change_col_dtype' %}",
+      data: serializedData,
+      success: function (response) {
+            
+          // Response here can Contain the stringified changed data when
+          // you implement the change datatype POST
+            
+          // 1. clear the form.
+          //submitted_form.trigger('reset');
+
+          console.log('\n response on dtype change: ', response)
+          // SUCCESS FEEDBACK
+          
+          // ->  Manipulate DOM to show data
+          // -> trigger the GET Request here if needed            
+            
+        },
+        error: function (response) {
+            // alert the error if any error occured
+
+            console.log('>> error occured in dtype change! :\n', response);
+            
+        }
+    });
+  });
+</script>
+
+<script>
+  $(window).on ('load', function() {
+    $('.loading-spinner').hide();
+    $('.table-outer-wrap').css('opacity', '1');
+  });
+
+  // $(document)
+  // .ajaxStart(function () {
+  //   $('.loading-spinner').show();
+  //   console.log('ajx show!!!!!');
+  // })
+  // .ajaxStop(function () {
+  //   $('.loading-spinner').hide();
+  // });
+</script>
+
+
 <script src="{% static 'app1/project1_javascript.js' %}"></script>
 
 
