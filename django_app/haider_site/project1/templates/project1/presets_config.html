@@ -60,24 +60,45 @@
                     
                       <div class="container_col">
                         <div class='file-preview-modal-content'>
-                        
+
+                          <form id="change-dtype-constant" class='change-dtype' 
+                          method="POST"  > 
+                          <!-- onsubmit='submit_dtype_change(this)' -->
+                              {% csrf_token %}
+                              {{ change_dtype_form.text_value }}
+                              {{ change_dtype_form.text_key }}
+                              <button class='hidden-submit-btn' 
+                              id="change-dtype-btn-constant" 
+                              type="submit">G</button>
+                          </form>
+
                             {% if headers %}
                             <div class="divRow">
                                 {% for header, dtype  in original_dtypes_values_readable.items %}
                                 <div 
                                     class="divCell resizable-table-vals-{{forloop.counter0}} stylized-table-cell dtype-selector">
                                     
-                                    <form id="change-dtype-{{forloop.counter0}}" class='change-dtype' 
-                                  method="POST"  onsubmit='submit_dtype_change(this)'>
-                                      {% csrf_token %}
+                                    
                                         <label> {{ header }}: </label> 
 
-                                        {{ change_dtype_form.text_value }}
+                                                                               
+                                     
+
+                                      <select name="{{header}}" onchange="submit_dtype_change(this)">
+
+                                        <option value = "Decimal number" {% if 'Decimal number' == dtype %}selected{% endif %}> 
+                                          Decimal number </option> 
+                                       <option value = "Whole number" {% if 'Whole number' == dtype %}selected{% endif %}>
+                                          Whole number </option>
+                                       <option value = "Text" {% if 'Text' == dtype %}selected{% endif %}> 
+                                          Text </option>   
+                                       <option value = "Time" {% if 'Time' == dtype %}selected{% endif %}>
+                                          Time </option>  
+                                       <option value = "Time period" {% if 'Time period' == dtype %}selected{% endif %}>
+                                          Time period </option>  
+                                      </select>
                                         
-                                      <button id="change-dtype-btn-{{forloop.counter0}}" 
-                                      type="submit">G</button>
-                                        
-                                    </form>                               
+                                                                 
                                     
                                 </div>
                                 {% endfor %}
@@ -92,7 +113,8 @@
                               <div class="headRow">
                                 {% for header in headers %}
                                  <div id="resizeable-table-{{forloop.counter0}}" 
-                                      class="divCell resizable-table stylized-table-cell">
+                                      class="divCell resizable-table stylized-table-cell"
+                                     >
                                       <p>{{header}}</p>
                                       
                                   </div>
@@ -188,6 +210,8 @@
 
 
 <script>
+    
+
     footer = document.querySelector('.footer');
     footer.style.top = (window.screen.height - footer.offsetHeight) + "px";
     $('#id_text_value').val();
@@ -200,17 +224,23 @@
 
 
 <script>
-  function submit_dtype_change(button_clicked) {
-    console.log(button_clicked.id);
-    console.log($('#id_text_value').val())
-    document.getElementById('id_text_value').value = "HHHH" + button_clicked.id;
-    console.log($('#id_text_value').val())
+  function submit_dtype_change(select_element) {
+    //console.log(select_element.id);
+    let associated_header = select_element.name;
     
+    //console.log($('#id_text_value').val())
+    document.getElementById('id_text_value').value = select_element.value;
+    document.getElementById('id_text_key').value = associated_header;
+    //console.log($('#id_text_value').val())
+    
+    // should submit
+
+    document.getElementById('change-dtype-btn-constant' ).click();
   }
 
  
 
-  $('#change-dtype-0').submit(function (e) {
+  $('#change-dtype-constant').submit(function (e) {
     // preventing from page reload and default actions
     e.preventDefault();
     let submitted_form = $(this);

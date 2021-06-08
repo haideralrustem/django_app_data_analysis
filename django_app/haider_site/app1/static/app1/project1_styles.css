@@ -204,6 +204,10 @@ span.close:hover {
        padding: 1% 5% 1% 0%;
     }
 
+.hidden-submit-btn {
+ display: none;
+}
+
 .headRow {
   display: inline-flex;
   

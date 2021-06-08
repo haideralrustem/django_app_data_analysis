@@ -77,9 +77,11 @@ def change_col_dtype(request):
         print('\n\n u_form \n\n', u_form)
         print('\n\n u_form \n\n', u_form.cleaned_data)
         selected_value = u_form.cleaned_data['text_value']
+        selected_header = u_form.cleaned_data['text_key']
         return JsonResponse({                                    
                 'msg': 'change dtype posted successfully', 
-                                    'selected_value': selected_value
+                                    'selected_value': selected_value,
+                                    'selected_header': selected_header
                                     }, status=200) 
 
 

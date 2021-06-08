@@ -16,8 +16,11 @@ class UploadedDataFormHandler(forms.Form):
     # dtype_changes???
 
 class GenericValueForm(forms.Form):
+    text_key = forms.CharField(widget = forms.HiddenInput(), max_length=100,
+                                    required=False, initial=False)
     text_value = forms.CharField(widget = forms.HiddenInput(), max_length=100,
                                     required=False, initial=False)
+
 
 class GenericMultichoiceForm(forms.Form):
     def __init__(self, custom_choices, *args, **kwargs):
