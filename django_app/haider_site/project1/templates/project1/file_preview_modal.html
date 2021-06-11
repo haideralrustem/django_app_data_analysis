@@ -187,6 +187,7 @@
                 'width': ($('#resizeable-table-'+header).width() + 'px'),// desired width
                 // 'height': ($('#data-preview-table tbody tr').height() + 'px')
                 });
+         
                    
         }      
         , 1);       
@@ -203,6 +204,8 @@
           
           });
         }, 100);
+
+        $('#data-preview-table-onpage').width($('.dtype-change-row').width());
 
       });
       

@@ -448,7 +448,7 @@ def post_process_dtypes(dtypes_values, headers, rows, timedelta_mode='auto'):
 # ........................
 
 def manual_change_data_type(dtypes_values, target_change_cols, headers, rows):
-    # target_change_cols = {colname : 'dtype_string'}
+    # target_change_cols = {colname : 'string'}
     new_dtypes_values = dtypes_values.copy()
     print('\nnew_dtypes_values: \n', new_dtypes_values)
     
@@ -465,7 +465,7 @@ def manual_change_data_type(dtypes_values, target_change_cols, headers, rows):
         
 
     print('\nnew_dtypes_values: \n', new_dtypes_values, '\n')
-
+    
     modded_rows, ndtypes = post_process_dtypes(new_dtypes_values, headers, rows, 
                                       timedelta_mode)
     
@@ -502,6 +502,21 @@ def convert_to_readable_dtype_value(dtypes_values):
         readable_dtypes_values[col] = mapper[dtype]
     
     return readable_dtypes_values
+# ....................................
+
+def reverse_readable_dtype_value(value):
+    reverse_mapper = {}
+    mapper ={'float': 'Decimal number',
+             'int': 'Whole number',
+             'string': 'Text',
+             'date': 'Date', 
+             'time': 'Time',
+             'datetime.timedelta': 'Time period'}
+
+    for k, v in mapper.items():
+        reverse_mapper[v] = k
+    
+    return reverse_mapper[value]
 
 # ...................................
 

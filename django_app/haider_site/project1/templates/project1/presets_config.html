@@ -33,7 +33,7 @@
         
     </div>
     
-    <div class="on-page-file-viewer container">
+    <div class="on-page-file-viewer">
         <div><p>{% if uploaded_file %}
             {{ uploaded_file }}
         {% endif %}</p></div>
@@ -73,35 +73,35 @@
                           </form>
 
                             {% if headers %}
-                            <div class="divRow">
-                                {% for header, dtype  in original_dtypes_values_readable.items %}
-                                <div 
-                                    class="divCell resizable-table-vals-{{forloop.counter0}} stylized-table-cell dtype-selector">
-                                    
-                                    
-                                        <label> {{ header }}: </label> 
+                            <div class='dtype-change-row-wrap'>
+                              <div class="divRow dtype-change-row">
+                                  {% for header, dtype  in original_dtypes_values_readable.items %}
+                                  <div 
+                                      class="divCell resizable-table-vals-{{forloop.counter0}} stylized-table-cell dtype-selector">
+                                      
+                                      <div>
+                                          <p> {{ header }}: </p> 
 
-                                                                               
-                                     
+                                                                                
+                                        <select name="{{header}}" onchange="submit_dtype_change(this)">
 
-                                      <select name="{{header}}" onchange="submit_dtype_change(this)">
-
-                                        <option value = "Decimal number" {% if 'Decimal number' == dtype %}selected{% endif %}> 
-                                          Decimal number </option> 
-                                       <option value = "Whole number" {% if 'Whole number' == dtype %}selected{% endif %}>
-                                          Whole number </option>
-                                       <option value = "Text" {% if 'Text' == dtype %}selected{% endif %}> 
-                                          Text </option>   
-                                       <option value = "Time" {% if 'Time' == dtype %}selected{% endif %}>
-                                          Time </option>  
-                                       <option value = "Time period" {% if 'Time period' == dtype %}selected{% endif %}>
-                                          Time period </option>  
-                                      </select>
-                                        
-                                                                 
-                                    
-                                </div>
-                                {% endfor %}
+                                          <option value = "Decimal number" {% if 'Decimal number' == dtype %}selected{% endif %}> 
+                                            Decimal number </option> 
+                                        <option value = "Whole number" {% if 'Whole number' == dtype %}selected{% endif %}>
+                                            Whole number </option>
+                                        <option value = "Text" {% if 'Text' == dtype %}selected{% endif %}> 
+                                            Text </option>   
+                                        <option value = "Time" {% if 'Time' == dtype %}selected{% endif %}>
+                                            Time </option>  
+                                        <option value = "Time period" {% if 'Time period' == dtype %}selected{% endif %}>
+                                            Time period </option>  
+                                        </select>
+                                          
+                                      </div>                        
+                                      
+                                  </div>
+                                  {% endfor %}
+                              </div>
                             </div>
                             {% endif %}
 
@@ -124,8 +124,6 @@
                             
 
                             
-                            
-
 
                             
                             {% for row in str_rows %}
@@ -210,15 +208,21 @@
 
 
 <script>
-    
+    window.addEventListener('resize', function(event) {
+      $('#data-preview-table-onpage').width($('.dtype-change-row').width());
+    }, true); 
+    // 
 
     footer = document.querySelector('.footer');
     footer.style.top = (window.screen.height - footer.offsetHeight) + "px";
     $('#id_text_value').val();
 </script>
 <script>
+    
     let select_width = $('.dtype-change-select').width();
     $('.stylized-table-cell').width(select_width + 15);
+
+    
     
 </script>
 
@@ -234,7 +238,6 @@
     //console.log($('#id_text_value').val())
     
     // should submit
-
     document.getElementById('change-dtype-btn-constant' ).click();
   }
 

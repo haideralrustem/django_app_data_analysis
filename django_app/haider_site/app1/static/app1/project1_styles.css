@@ -174,18 +174,34 @@ span.close:hover {
 
 }
 
+.on-page-file-viewer {
+  margin: 1px 3%;
+}
+
+
 .file-preview-modal-content {
   width: 100%;
   height: fit-content;
   box-sizing: content-box;
-  overflow: auto;
+  padding-left: 3%;
+  overflow-y: auto;
 }
+
 
 .container_col {
   display: inline-flex;
   width: 100%;
   margin-top: 2%;
 }
+.on-page-file-viewer .container_col {
+  position: relative;
+}
+
+#data-preview-table-onpage {
+  /* position: relative; */
+  width: 100%;
+}
+
 .rightside-modal-space {
   width: 5vw;
 }
@@ -194,10 +210,11 @@ span.close:hover {
     {
         display:  block;
         border-radius: 2px;
-        overflow: auto;
+        overflow-y: scroll;
+        overflow-x: hidden;
         height: 20vw;
         background-color:white;
-        border:1px solid  #6666663b;
+        
         border-spacing:5px;/*cellspacing:poor IE support for  this*/
        /* border-collapse:separate;*/
 
@@ -212,26 +229,46 @@ span.close:hover {
   display: inline-flex;
   
 }
+
 .divRow {
     display: inline-flex;
     overflow: auto;
   }
+.dtype-change-row-wrap {
+}
+.dtype-change-row {
+  
+}
+/* for the dropdowns */
+.divRow select {
+  
+}
 
 .divCell {
      
       /* display:table-cell; */
-      width:12vw;
+      width:14vw;
       /* min-width: 7vw; */
       background-color:rgb(255, 254, 254);
       margin-left: 5px;
       margin-right: 1px;
   }
 
+
+
 .dtype-selector {
+  
   align-items: flex-end;
   display: flex;
+  width: 14vw;
   padding-left: 5px;
 }
+
+/* wrapper */
+.dtype-selector div {
+  padding-left: 2%;
+}
+
 .divCell p {
   margin-left: 5px;
 }

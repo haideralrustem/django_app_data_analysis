@@ -72,25 +72,54 @@ def accept_uploaded_data(request):
 def change_col_dtype(request):
     print('\n\n\n change_col_dtype @  views.py has been hit \n\n\n')
     if request.method == 'POST' and request.is_ajax():
-        # pdb.set_trace()
+        
         u_form = GenericValueForm(request.POST)
-        print('\n\n u_form \n\n', u_form)
-        print('\n\n u_form \n\n', u_form.cleaned_data)
-        selected_value = u_form.cleaned_data['text_value']
-        selected_header = u_form.cleaned_data['text_key']
-        return JsonResponse({                                    
-                'msg': 'change dtype posted successfully', 
-                                    'selected_value': selected_value,
-                                    'selected_header': selected_header
-                                    }, status=200) 
+        
+        if u_form.is_valid():
+            print('\n\n u_form \n\n', u_form.cleaned_data)
+            text_key = u_form.cleaned_data['text_value']
+            text_value = u_form.cleaned_data['text_key']
+
+            # retrieve the original data
+            rows = persistent_data_state['rows']
+            headers = persistent_data_state['headers']
+            original_dtypes_values = persistent_data_state['original_dtypes_values']
+            str_rows = persistent_data_state['str_rows']
+
+            # current rows (which could be modded) and dtypes
+            current_modded_rows = persistent_data_state['modded_rows']
+            current_dtypes_values = persistent_data_state['new_dtypes_values']
+
+            current_dtypes_values_readable = persistent_data_state['new_dtypes_values_readable'] 
+
+            target_dtype = my_functions.reverse_readable_dtype_value[text_value]
+            colname = text_key
+            target_change_cols = {colname : target_dtype}
+
+            modded_rows, ndtypes = my_functions.manual_change_data_type(
+                                                dtypes_values=current_dtypes_values, 
+                                                target_change_cols=target_change_cols, 
+                                                headers=headers, 
+                                                rows=current_modded_rows)
+
+            persistent_data_state['modded_rows'] = modded_rows
+            persistent_data_state['new_dtypes_values'] = ndtypes
+
+            return JsonResponse({                                    
+                    'msg': 'change dtype posted successfully', 
+                                        'selected_value': text_key,
+                                        'selected_header': text_value
+                                        }, status=200) 
+        else:
+            return JsonResponse({'msg': 'error form was not valid', 
+                                }, status=400)
 
 
 
 # Create your views here.
 
 def data_file_upload(request):
-    # pdb.set_trace()
-    print('\n data_file_upload has been hit \n')
+    
     if request.method == 'POST' and not request.is_ajax():  # file upload 
         # pdb.set_trace()
         y_names = []
@@ -120,7 +149,8 @@ def data_file_upload(request):
                                                             headers, rows)
 
         new_dtypes_values_readable = my_functions.convert_to_readable_dtype_value(new_dtypes_values)
-                                                         
+        
+                                                          
         # pdb.set_trace()
         # user presented with a choice
         # modded_rows2, new_dtypes_values2 = manual_change_data_type(original_dtypes_values, {'date': 'datetime.timedelta minutes'}
@@ -143,14 +173,14 @@ def data_file_upload(request):
         change_dtype_form_multi = GenericMultichoiceForm(custom_choices=choices)
         
         context = {'uploaded_file': uploaded_file, 'rows': rows, 
-                    'headers': headers, 'original_dtypes_values': original_dtypes_values,
+                    'headers': headers, 
+                    'original_dtypes_values': original_dtypes_values,
                     'str_rows': str_rows,
                     'modded_rows': modded_rows, 'new_dtypes_values': new_dtypes_values,
                     'original_dtypes_values_readable': original_dtypes_values_readable,
                     'uploaded_data_form_handler': uploaded_data_form_handler,
                     'change_dtype_form': change_dtype_form,
                     'change_dtype_form_multi': change_dtype_form_multi,
-
                     }
 
         persistent_data_state['rows'] = rows
@@ -159,6 +189,7 @@ def data_file_upload(request):
         persistent_data_state['str_rows'] = str_rows
         persistent_data_state['modded_rows'] = modded_rows
         persistent_data_state['new_dtypes_values'] = new_dtypes_values
+        persistent_data_state['new_dtypes_values_readable'] = new_dtypes_values_readable
         
 
         return render(request, 'project1/presets_config.html', context)
