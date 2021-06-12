@@ -178,6 +178,7 @@ def data_file_upload(request):
                     'str_rows': str_rows,
                     'modded_rows': modded_rows, 'new_dtypes_values': new_dtypes_values,
                     'original_dtypes_values_readable': original_dtypes_values_readable,
+                    'original_dtypes_values_readable_length': len(original_dtypes_values_readable),
                     'uploaded_data_form_handler': uploaded_data_form_handler,
                     'change_dtype_form': change_dtype_form,
                     'change_dtype_form_multi': change_dtype_form_multi,

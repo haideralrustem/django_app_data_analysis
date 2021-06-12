@@ -3,16 +3,16 @@ let footer = document.querySelector('.footer');
 footer.style.top = (window.screen.height) + "px";
 
 let container = document.querySelector("body");
-console.log(container);
+console.log("this is main JS");
 new ResizeSensor(container, function()
 {
     // console.log("dimension changed:", container.clientWidth, container.clientHeight);
     let footer = document.querySelector('.footer');
     footer.style.top = (container.clientHeight)*1 + "px";
     // footer.style.top = (window.screen.height - footer.offsetHeight)*0.72  + "px";
-    console.log((container.clientHeight)*1 + "px");
+    
 });
-
+// horizental-resizer
 
 
 //drop_menu_list   document.querySelectorAll('.profile-pic-wrap *');

@@ -33,8 +33,9 @@
         
     </div>
     
+    {% if uploaded_file %}
     <div class="on-page-file-viewer">
-        <div><p>{% if uploaded_file %}
+        <div class="file-name-indicator"><p>{% if uploaded_file %}
             {{ uploaded_file }}
         {% endif %}</p></div>
 
@@ -43,23 +44,22 @@
             <div class="bordered"> 
                 
                 <div class="table-outer-wrap">
-                    <div class='table-container'>
+                    <div class='table-container on-page'>
             
-                      <div id="" class=''>
+                      <div class='help-text-wrap'>
                         
-                        <div style="margin-top: 1%; font-family: 'Sarabun', sans-serif;
-                        font-size: 18px;">
+                        <div class="help-text-title">
                           Uploaded Data Preview</div>
             
                         <p>Sowing only the first 100 rows.
                           <br>When uploading excel files, the active sheet will be used</p>
-                        
+                        <p>- Use the dropdowns below to change the data format of the columns: </p>
                       </div>
 
 
                     
                       <div class="container_col">
-                        <div class='file-preview-modal-content'>
+                        <div class='file-preview-modal-content on-page '>
 
                           <form id="change-dtype-constant" class='change-dtype' 
                           method="POST"  > 
@@ -76,8 +76,8 @@
                             <div class='dtype-change-row-wrap'>
                               <div class="divRow dtype-change-row">
                                   {% for header, dtype  in original_dtypes_values_readable.items %}
-                                  <div 
-                                      class="divCell resizable-table-vals-{{forloop.counter0}} stylized-table-cell dtype-selector">
+                                  <div id="resizeable-table-{{forloop.counter0}}" 
+                                      class="divCell resizable-table  stylized-table-cell dtype-selector">
                                       
                                       <div>
                                           <p> {{ header }}: </p> 
@@ -109,18 +109,19 @@
                           {% if rows %}
                           <form id="data-preview-table-onpage" class="data-preview-table">
                             <div class="divTable">
-                              {% if headers %}
+
+                              <!-- {% if headers %}
                               <div class="headRow">
                                 {% for header in headers %}
-                                 <div id="resizeable-table-{{forloop.counter0}}" 
-                                      class="divCell resizable-table stylized-table-cell"
+                                 <div id="" 
+                                      class="divCell resizable-table-vals-{{forloop.counter0}} stylized-table-cell"
                                      >
                                       <p>{{header}}</p>
                                       
                                   </div>
                                 {% endfor %}
                               </div>
-                              {% endif %}
+                              {% endif %} -->
                             
 
                             
@@ -143,12 +144,12 @@
                  
                             </div>
             
-                        </form>
-                      {% endif %}
+                          </form>
+                          {% endif %}
                             
                             
                         </div>
-            
+
                       </div>
                       
                     
@@ -159,6 +160,7 @@
             
         </div>
     </div>
+    {% endif %}
 
     <script src="{% static 'app1/ResizeSensor.js' %}"></script>
     <script src="{% static 'app1/ElementQueries.js' %}"></script>
@@ -217,13 +219,83 @@
     footer.style.top = (window.screen.height - footer.offsetHeight) + "px";
     $('#id_text_value').val();
 </script>
+
 <script>
-    
-    let select_width = $('.dtype-change-select').width();
-    $('.stylized-table-cell').width(select_width + 15);
+    let header_len = '{{ original_dtypes_values_readable_length }}';
+    console.log('header_len ', header_len)
+
+    // let select_width = $('.dtype-change-row select').width();
+    // $('.stylized-table-cell').width(select_width + 20);
+
+    for (let h=0; h < header_len; h++) {
+      let header_width = $('#resizable-table-'+h).width();
+      $('.resizable-table-vals-'+h).width(header_width);
+    }
+
+    $('#data-preview-table-onpage').width($('.dtype-change-row').width());
 
     
+    $(document).ready(function() {
+      $('.dtype-selector').resizable({handles: 'e'});
+      
+    });
+</script>
+
+<!-- ..... -->
+<script>
     
+  var interval_arr = []
+  $('.on-page .resizable-table').mousedown(function() {
+    
+    let clicked = this
+    let header = this.id.slice(this.id.indexOf('resizeable-table-') + 
+                'resizeable-table-'.length);
+    
+    interval_arr.forEach(function(e) {
+    clearInterval(e);
+    
+    });
+
+    let interval = setInterval(function(){ 
+      console.log(header);
+
+      $('.on-page .resizable-table-vals-'+ header).css({ // affected element
+            'width': ($('.on-page #resizeable-table-'+header).width() + 'px'),// desired width
+            // 'height': ($('#data-preview-table tbody tr').height() + 'px')
+            
+            });
+      $('#data-preview-table-onpage').width($('.dtype-change-row').width());
+      $('.file-preview-modal-content.on-page').width($('.dtype-change-row').width());
+        
+    }      
+    , 1);       
+
+    interval_arr.push(interval);
+
+  });
+
+  $('.on-page .resizable-table').mouseup(function() {
+            
+    setTimeout(function() {
+      interval_arr.forEach(function(e) {
+      clearInterval(e);
+      
+      });
+    }, 100);
+
+    $('#data-preview-table-onpage').width($('.dtype-change-row').width());
+
+  });
+
+  function file_preview_close(clicked) {
+      interval_arr.forEach(function(e) {
+      clearInterval(e);
+      
+      });
+
+      modal.style.display = "none";
+  }
+  
 </script>
 
 

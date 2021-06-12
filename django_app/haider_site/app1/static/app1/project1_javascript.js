@@ -1,3 +1,4 @@
+console.log('this is project1 js')
 // var from_python_data = data;
 
 // console.log('-----> ', parsed_data);
@@ -20,6 +21,7 @@
 //     // footer.style.top = (container.clientHeight) + "px";
 //     footer.style.top = (window.screen.height - footer.offsetHeight) + "px";
 // });
+
 
 
 function line_graph_test(data){

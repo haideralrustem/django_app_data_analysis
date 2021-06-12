@@ -167,14 +167,20 @@
 
 
   <script>
+      $(document).ready(function() {
+        $('.myModal .resizable-table').resizable({handles: 'e'});
+        
+      });
     
 
       var interval_arr = []
-      $('.resizable-table').mousedown(function() {
+      $('.myModal .resizable-table').mousedown(function() {
         
         let clicked = this
         let header = this.id.slice(this.id.indexOf('resizeable-table-') + 
                     'resizeable-table-'.length);
+        
+
 
         interval_arr.forEach(function(e) {
         clearInterval(e);
@@ -182,13 +188,13 @@
         });
 
         let interval = setInterval(function(){ 
-          // console.log(clicked);
-          $('.resizable-table-vals-'+ header).css({ // affected element
-                'width': ($('#resizeable-table-'+header).width() + 'px'),// desired width
+          console.log(header);
+
+          $('.myModal .resizable-table-vals-'+ header).css({ // affected element
+                'width': ($('.myModal #resizeable-table-'+header).width() + 'px'),// desired width
                 // 'height': ($('#data-preview-table tbody tr').height() + 'px')
-                });
-         
-                   
+                
+                });                   
         }      
         , 1);       
 
@@ -196,7 +202,7 @@
 
       });
 
-      $('.resizable-table').mouseup(function() {
+      $('.myModal .resizable-table').mouseup(function() {
                 
         setTimeout(function() {
           interval_arr.forEach(function(e) {
@@ -205,7 +211,7 @@
           });
         }, 100);
 
-        $('#data-preview-table-onpage').width($('.dtype-change-row').width());
+       
 
       });
       
