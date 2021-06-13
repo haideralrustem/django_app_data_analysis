@@ -77,8 +77,8 @@ def change_col_dtype(request):
         
         if u_form.is_valid():
             print('\n\n u_form \n\n', u_form.cleaned_data)
-            text_key = u_form.cleaned_data['text_value']
-            text_value = u_form.cleaned_data['text_key']
+            text_key = u_form.cleaned_data['text_key']
+            text_value = u_form.cleaned_data['text_value']
 
             # retrieve the original data
             rows = persistent_data_state['rows']
@@ -91,24 +91,30 @@ def change_col_dtype(request):
             current_dtypes_values = persistent_data_state['new_dtypes_values']
 
             current_dtypes_values_readable = persistent_data_state['new_dtypes_values_readable'] 
-
-            target_dtype = my_functions.reverse_readable_dtype_value[text_value]
+            
+            target_dtype = my_functions.reverse_readable_dtype_value(text_value)
             colname = text_key
-            target_change_cols = {colname : target_dtype}
+            index_of_colname = headers.index(colname) # needed to target table cells
 
+            target_change_cols = { colname : target_dtype }
+            
             modded_rows, ndtypes = my_functions.manual_change_data_type(
                                                 dtypes_values=current_dtypes_values, 
                                                 target_change_cols=target_change_cols, 
                                                 headers=headers, 
-                                                rows=current_modded_rows)
+                                                rows=rows)
+            # str_rows is just for the view
+            str_modded_rows = my_functions.stringfy_data(ndtypes, headers, modded_rows)
 
             persistent_data_state['modded_rows'] = modded_rows
             persistent_data_state['new_dtypes_values'] = ndtypes
 
             return JsonResponse({                                    
                     'msg': 'change dtype posted successfully', 
-                                        'selected_value': text_key,
-                                        'selected_header': text_value
+                                        'selected_header': text_key,
+                                        'selected_value': text_value,
+                                        'selected_header_index': index_of_colname,
+                                        'str_modded_rows': str_modded_rows
                                         }, status=200) 
         else:
             return JsonResponse({'msg': 'error form was not valid', 
@@ -141,12 +147,15 @@ def data_file_upload(request):
         original_dtypes_values_readable = my_functions.convert_to_readable_dtype_value(
                                                        original_dtypes_values)
 
-        str_rows = my_functions.stringfy_data(original_dtypes_values, headers, rows)
+        
         # str_header_and_rows = 
 
         modded_rows, new_dtypes_values = my_functions.post_process_dtypes(
                                                             original_dtypes_values, 
                                                             headers, rows)
+
+        str_rows = my_functions.stringfy_data(original_dtypes_values, headers, rows)
+        str_modded_rows = my_functions.stringfy_data(original_dtypes_values, headers, modded_rows)
 
         new_dtypes_values_readable = my_functions.convert_to_readable_dtype_value(new_dtypes_values)
         
@@ -176,6 +185,7 @@ def data_file_upload(request):
                     'headers': headers, 
                     'original_dtypes_values': original_dtypes_values,
                     'str_rows': str_rows,
+                    'str_modded_rows': str_modded_rows,
                     'modded_rows': modded_rows, 'new_dtypes_values': new_dtypes_values,
                     'original_dtypes_values_readable': original_dtypes_values_readable,
                     'original_dtypes_values_readable_length': len(original_dtypes_values_readable),

@@ -505,17 +505,15 @@ def convert_to_readable_dtype_value(dtypes_values):
 # ....................................
 
 def reverse_readable_dtype_value(value):
-    reverse_mapper = {}
-    mapper ={'float': 'Decimal number',
-             'int': 'Whole number',
-             'string': 'Text',
-             'date': 'Date', 
-             'time': 'Time',
-             'datetime.timedelta': 'Time period'}
-
-    for k, v in mapper.items():
-        reverse_mapper[v] = k
     
+    reverse_mapper ={'Decimal number': 'float',
+              'Whole number':'int',
+              'Text':'string',
+              'Date':'date', 
+              'Time':'time',
+              'Time period':'datetime.timedelta'}
+
+        
     return reverse_mapper[value]
 
 # ...................................

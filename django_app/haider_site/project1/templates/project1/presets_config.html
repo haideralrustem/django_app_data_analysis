@@ -33,15 +33,15 @@
         
     </div>
     
-    {% if uploaded_file %}
+    {% if uploaded_file and rows %}
     <div class="on-page-file-viewer">
         <div class="file-name-indicator"><p>{% if uploaded_file %}
             {{ uploaded_file }}
         {% endif %}</p></div>
 
-        <div class="on-page-file-viewer">
+        <div class="on-page-file-viewer bordered">
             
-            <div class="bordered"> 
+            <div class=""> 
                 
                 <div class="table-outer-wrap">
                     <div class='table-container on-page'>
@@ -90,7 +90,9 @@
                                         <option value = "Whole number" {% if 'Whole number' == dtype %}selected{% endif %}>
                                             Whole number </option>
                                         <option value = "Text" {% if 'Text' == dtype %}selected{% endif %}> 
-                                            Text </option>   
+                                            Text </option>  
+                                        <option value = "Date" {% if 'Date' == dtype %}selected{% endif %}> 
+                                          Date </option>
                                         <option value = "Time" {% if 'Time' == dtype %}selected{% endif %}>
                                             Time </option>  
                                         <option value = "Time period" {% if 'Time period' == dtype %}selected{% endif %}>
@@ -127,7 +129,7 @@
                             
 
                             
-                            {% for row in str_rows %}
+                            {% for row in str_modded_rows %}
                               {% if forloop.counter0 < 100 %} 
                               <div class="divRow">
                                     {% for field, val in row.items %}
@@ -314,6 +316,7 @@
   }
 
  
+  // when the column dtype changes
 
   $('#change-dtype-constant').submit(function (e) {
     // preventing from page reload and default actions
@@ -335,9 +338,27 @@
           //submitted_form.trigger('reset');
 
           console.log('\n response on dtype change: ', response)
+          let selected_header = response['selected_header']
+          console.log(selected_header)
+          let selected_header_index = response['selected_header_index']
+          let str_modded_rows = response['str_modded_rows']
           // SUCCESS FEEDBACK
           
           // ->  Manipulate DOM to show data
+          let target_cells = document.querySelectorAll(
+                              '.on-page .resizable-table-vals-'+selected_header_index
+                              + ' p');
+          
+          for(let i=0; i < target_cells.length; i++ ) {
+            target_cells[i].innerHTML = str_modded_rows[i][selected_header];
+            target_cells[i].style['background-color'] = '#81ecec';
+            setTimeout(()=>{
+              target_cells[i].style['background-color'] = 'white';
+            }, 500);
+          }
+
+          
+
           // -> trigger the GET Request here if needed            
             
         },
