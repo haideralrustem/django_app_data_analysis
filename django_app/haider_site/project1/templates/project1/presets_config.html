@@ -27,13 +27,15 @@
     <div class="file-uploader">
         <form id="data-file-uploader" method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            <input type="file" name="uploaded_file" accept=".csv, .txt, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"/>
-            <input type="submit" name="submit" value="Upload" />
+            <input class='' type="file" name="uploaded_file" accept=".csv, .txt, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"/>
+            <input
+             class="blue-button" type="submit" name="submit" value="Upload File" />
         </form>
         
     </div>
     
     {% if uploaded_file and rows %}
+   
     <div class="on-page-file-viewer">
         <div class="file-name-indicator"><p>{% if uploaded_file %}
             {{ uploaded_file }}
@@ -53,7 +55,7 @@
             
                         <p>Sowing only the first 100 rows.
                           <br>When uploading excel files, the active sheet will be used</p>
-                        <p>- Use the dropdowns below to change the data format of the columns: </p>
+                        <p class="flashes">- Use the dropdowns below to change the data format of the columns: </p>
                       </div>
 
 
@@ -83,20 +85,20 @@
                                           <p> {{ header }}: </p> 
 
                                                                                 
-                                        <select name="{{header}}" onchange="submit_dtype_change(this)">
+                                        <select class="{{header}}-dropdown" name="{{header}}" onchange="submit_dtype_change(this)">
 
-                                          <option value = "Decimal number" {% if 'Decimal number' == dtype %}selected{% endif %}> 
+                                          <option class="Decimal number" value = "Decimal number" {% if 'Decimal number' == dtype %}selected{% endif %}> 
                                             Decimal number </option> 
-                                        <option value = "Whole number" {% if 'Whole number' == dtype %}selected{% endif %}>
+                                        <option class = "Whole number" value = "Whole number" {% if 'Whole number' == dtype %}selected{% endif %}>
                                             Whole number </option>
-                                        <option value = "Text" {% if 'Text' == dtype %}selected{% endif %}> 
+                                        <option class = "Text" value = "Text" {% if 'Text' == dtype %}selected{% endif %}> 
                                             Text </option>  
-                                        <option value = "Date" {% if 'Date' == dtype %}selected{% endif %}> 
+                                        <option class = "Date" value = "Date" {% if 'Date' == dtype %}selected{% endif %}> 
                                           Date </option>
-                                        <option value = "Time" {% if 'Time' == dtype %}selected{% endif %}>
+                                        <option class = "Time" value = "Time" {% if 'Time' == dtype %}selected{% endif %}>
                                             Time </option>  
-                                        <option value = "Time period" {% if 'Time period' == dtype %}selected{% endif %}>
-                                            Time period </option>  
+                                        <option class = "Time period" value = "Time period" {% if 'Time period' == dtype %}selected{% endif %}>
+                                            Hours </option>  
                                         </select>
                                           
                                       </div>                        
@@ -134,7 +136,7 @@
                               <div class="divRow">
                                     {% for field, val in row.items %}
                                       <div 
-                                      class="divCell resizable-table-vals-{{forloop.counter0}} stylized-table-cell">
+                                      class="divCell resizable-table-vals resizable-table-vals-{{forloop.counter0}} stylized-table-cell">
                                       <p>{{ val }}</p>
                                       </div>
                                     {% endfor %}
@@ -161,15 +163,32 @@
             </div>
             
         </div>
+      <hr class='shadow-divider'>
     </div>
+
+
+    
+
+    <script>
+      document.querySelector('p.flashes').style['background-color'] = '#81ecec';
+            setTimeout(()=>{
+              document.querySelector('p.flashes').style['background-color'] = 'white';
+            }, 1000);
+    </script>
+
     {% endif %}
 
-    <script src="{% static 'app1/ResizeSensor.js' %}"></script>
-    <script src="{% static 'app1/ElementQueries.js' %}"></script>
+    
+    <!-- ------------- -->
+    <div  class="top-shadowed-border format-choices-outwrap">
+      {% include 'project1/format_choices.html' %}
+    </div> 
+    <!-- ------------- -->
 
     <div>
         {% include 'project1/file_preview_modal.html' %}
     </div>
+
 
     
 
@@ -178,37 +197,6 @@
 </div>
 
 
-<!-- <script>
-    $("#data-file-uploader").submit(function (e) {
-    // preventing from page reload and default actions
-    e.preventDefault();
-    // serialize the data for sending the form data.
-    // var serializedData = $(this).serialize();
-    // make POST ajax call
-    $.ajax({
-        type: 'POST',
-        url: "{% url 'project1:data_file_upload' %}",
-        data: this,
-        success: function (response) {
-            // on successfull creating object
-            // 1. clear the form.
-            // $("#username-update-form").trigger('reset');
-            // // 2. focus to nickname input 
-            // $("#id_username").focus();
-            
-            consol.log(response);
-            //$('file-contents').html(response['data_json'])
-
-            }
-        , error: function(response) {
-            console.log(response);
-        }
-
-    });
-
-});
-
-</script> -->
 
 
 <script>
@@ -220,6 +208,13 @@
     footer = document.querySelector('.footer');
     footer.style.top = (window.screen.height - footer.offsetHeight) + "px";
     $('#id_text_value').val();
+    
+    // stop dropdowns from bubbling clicks
+    $(".dtype-change-row select").mousedown(function(e) {
+      // Do something
+      e.stopPropagation();
+    });
+    
 </script>
 
 <script>
@@ -307,8 +302,8 @@
     let associated_header = select_element.name;
     
     //console.log($('#id_text_value').val())
-    document.getElementById('id_text_value').value = select_element.value;
-    document.getElementById('id_text_key').value = associated_header;
+    document.querySelector('.change-dtype #id_text_value').value = select_element.value;
+    document.querySelector('.change-dtype #id_text_key').value = associated_header;
     //console.log($('#id_text_value').val())
     
     // should submit

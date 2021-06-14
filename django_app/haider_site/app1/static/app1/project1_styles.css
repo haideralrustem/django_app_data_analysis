@@ -2,6 +2,53 @@
   border: 1px solid lightskyblue;
   border-radius: 5px;
 }
+.flashes {
+  transition: background-color 0.5s ease-in-out;
+}
+p.flashes {
+  transition: background-color 1s ease-in-out;
+  border-radius: 10%;;
+}
+.project-page-wrapper {
+  margin-left: 6%;
+  margin-right: 1%;
+}
+
+.shadowed-border {
+  border: 0.2px solid #dfe6e9;
+  /* inset | offset-x | offset-y | color */
+  box-shadow: 1px 1px 5px #636e72;
+  border-radius: 12px;
+}
+
+.shadow-divider {
+  border-bottom: 0.1px solid #b5bdc0;
+  box-shadow: 0px 3px 5px 0px #b5bdc0;
+}
+
+.top-shadowed-border {
+  border-top: 0.2px solid #dfe6e9;
+  /* inset | offset-x | offset-y | color */
+  box-shadow: 0px -10px 17px -21px #636e72;  
+}
+
+.bottom-shadowed-border {
+  border-bottom: 0.2px solid #dfe6e9;
+  /* inset | offset-x | offset-y | color */
+  box-shadow: 0px 22px 17px -25px #636e73;
+}
+
+.blue-button {
+  background-color: #dff9fb;
+  border: 2px solid #00a8ff;
+  transition-duration: 0.4s;
+}
+.blue-button:hover {
+  background-color: #00a8ff;
+  color: white;
+}
+
+
 
 /* ............ testing_page styles .............. */
 
@@ -89,7 +136,8 @@
 }
 
 .file-uploader {
-  margin-left: 5%;
+  border: 1px solid #00a8ff ;
+  width: fit-content;
 }
 .file-name-indicator {
   margin-left: 2%;
@@ -194,10 +242,10 @@ span.close:hover {
 }
 
 .on-page-file-viewer {
-  margin: 1px 3%;
+  
   width: 90%;
   box-sizing: content-box;
-
+  margin-bottom: 5%;
 }
 
 .ui-resizable-handle{
@@ -287,8 +335,11 @@ span.close:hover {
   background-color: azure;
   width: 90%;
   outline: none;
-  border-radius: 10%;
+  border-radius: 5%;
   cursor: pointer;
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 20%);
+  
+  transition: all 0.5s ease-in-out;
 }
 
 .divCell {
@@ -367,6 +418,79 @@ span.close:hover {
   margin-top: 3%;
   margin-bottom: 3%;
 }
+
+
+
+
+/* ....file previw second section ...... */
+
+.format-choices-outwrap {
+  width: 90%;
+  padding-left: 3%;
+  margin: 3% 0 0 0;
+}
+.format-choices-wrap {
+  margin-top: 8%;
+  margin-bottom: 10%;
+  display: flex;
+  position: relative;
+}
+
+#detect-table-format-form {
+  width: fit-content;
+}
+#detect-table-format-form button {
+  width: 215px;
+  height: 50px;
+}
+.tooltip-creator {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black;
+}
+.format-choices-wrap .tooltiptext {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  width: 310px;
+  height: auto;
+  background: rgb(209, 240, 248);
+  color: rgb(11, 35, 114);
+  text-align: center;
+  border-radius: 40px;
+  padding: 15px 0 15px 20px;
+  position: absolute;
+  z-index: 1;
+  
+  top: -25px;
+  
+  left: 256px;   /* calculated based on button width */
+  opacity: 0;
+  transition: opacity 0.4s ease-in-out;
+}
+
+.format-choices-wrap .tooltiptext::after {
+  
+  content: ""; 
+  position: absolute;  /* compared to the tooltip span element itself*/
+  top: 25%;
+  right: 90%;
+  width: 0px;
+  height: 0px;
+  border-left: 26px solid transparent;
+  /* border-right: 12px solid transparent; */
+  border-right: 87px solid rgb(209, 240, 248);
+  border-top: 12px solid transparent;
+  border-bottom: 4px solid transparent;
+    
+  
+  border-style: solid;
+  /* border-color: transparent black transparent transparent; */
+}
+
+.format-choices-wrap .tooltiptext p {
+  margin-right: 10px;
+  margin-left: 10px;
+}
+
 
 
 /* ................ VIZ css styles ............ */
@@ -475,6 +599,9 @@ path {
           .container_col {
             margin-top: 7%;
           }
+          .myModal .container_col {
+            margin-top: 10%;
+          }
           .table-outer-wrap {
             width: 95%;
           }
@@ -505,6 +632,9 @@ path {
         }
         .container_col {
           margin-top: 4%;
+        }
+        .myModal .container_col {
+          margin-top: 21%;
         }
         .divTable {
           margin-top: 1%;
@@ -547,8 +677,12 @@ path {
         }
 
         .divTable {
-          height: 25vw;
+          height: 22vw;
           margin-top: 1%;
+        }
+        /* for the dropdowns */
+        .dtype-change-row select {
+          width: 100%;
         }
       }
 

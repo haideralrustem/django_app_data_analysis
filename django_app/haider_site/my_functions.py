@@ -301,7 +301,9 @@ def convert_timedelta(cell_value, desired_unit='hours'):
         
         elif desired_unit == 'minutes':
             final_value = days *1440 + (minutes)
-
+    else:
+        final_value = None
+    
     return final_value
 
 # ................................
@@ -424,6 +426,7 @@ def post_process_dtypes(dtypes_values, headers, rows, timedelta_mode='auto'):
                         new_val = None
 
             elif 'datetime.timedelta' in dtype: # because you can have datetime.timedelta hours as dtype (manual change)
+                
                 if timedelta_mode == 'auto':
                     new_val = convert_timedelta(old_val, desired_unit='hours')
                     new_dtypes_values[col] = 'float'
@@ -458,7 +461,7 @@ def manual_change_data_type(dtypes_values, target_change_cols, headers, rows):
         #  new_dtypes for timedelta:  datetime.timedelta days,
         #  datetime.timedelta hours, 
         # datetime.timedelta minutes, datetime.timedelta string (as is)
-        if 'datetime.timedelta' in dtypes_values[col]:
+        if 'datetime.timedelta' in new_dtype:
             timedelta_mode = 'manual'
 
         new_dtypes_values[col] = new_dtype
@@ -473,7 +476,7 @@ def manual_change_data_type(dtypes_values, target_change_cols, headers, rows):
 
 # ................................
 
-def stringfy_data(dtypes_values, headers, rows, timedelta_mode='auto'):
+def stringfy_data(dtypes_values, headers, rows, timedelta_mode='auto', timedelta_str=None):
     modded_rows = []
     new_dtypes_values = dtypes_values.copy()
 
@@ -481,7 +484,11 @@ def stringfy_data(dtypes_values, headers, rows, timedelta_mode='auto'):
         new_row = {}
         for col in headers:
             new_row[col] = str(row[col])
-        
+            
+            if 'datetime.timedelta' in dtypes_values[col]:
+                new_row[col] = str(row[col]) + ' hours'
+            if timedelta_str:
+                new_row[col] = str(row[col]) + ' ' + timedelta_str
         modded_rows.append(new_row)
 
     return modded_rows
@@ -511,10 +518,11 @@ def reverse_readable_dtype_value(value):
               'Text':'string',
               'Date':'date', 
               'Time':'time',
-              'Time period':'datetime.timedelta'}
+              'Time period':'datetime.timedelta hours'}
 
         
     return reverse_mapper[value]
+
 
 # ...................................
 

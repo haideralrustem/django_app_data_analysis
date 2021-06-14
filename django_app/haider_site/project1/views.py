@@ -22,6 +22,7 @@ import csv
 
 # persistent vars
 persistent_data_state = {}
+select_options =['Decimal number', 'Whole number', 'Text', 'Date', 'Time', 'Time period']
 
 # AJAX Reqs
 def accept_uploaded_data(request):
@@ -67,6 +68,61 @@ def accept_uploaded_data(request):
 
     return JsonResponse({'status':'Fail', 'msg':'Not a valid request'}, status=400)
 
+# .................................
+
+
+def auto_detect_data(request):
+
+    if request.method == 'POST' and request.is_ajax():
+        detect_table_format = GenericValueForm(request.POST)
+
+        if detect_table_format.is_valid() and len(persistent_data_state) > 0:
+            text_key = detect_table_format.cleaned_data['text_key']
+            text_value = detect_table_format.cleaned_data['text_value']
+
+            # retrieve the original data
+            rows = persistent_data_state['rows']
+            headers = persistent_data_state['headers']
+            original_dtypes_values = persistent_data_state['original_dtypes_values']
+            str_rows = persistent_data_state['str_rows']
+
+            if text_value == 'auto-format':
+                # auto format
+                # modded_rows, new_dtypes_values = my_functions.post_process_dtypes(
+                #                                                 original_dtypes_values, 
+                #                                                 headers, rows)
+
+                modded_rows = persistent_data_state['original_modded_rows']
+                original_modded_dtypes_values =persistent_data_state[
+                                                'original_modded_dtypes_values']
+
+                str_modded_rows = my_functions.stringfy_data(original_modded_dtypes_values, headers, modded_rows)
+            
+                new_dtypes_values_readable = my_functions.convert_to_readable_dtype_value(original_modded_dtypes_values)
+                
+               
+                persistent_data_state['modded_rows'] = modded_rows
+                persistent_data_state['new_dtypes_values'] = original_modded_dtypes_values
+                persistent_data_state['new_dtypes_values_readable'] = new_dtypes_values_readable
+                
+                return JsonResponse({                                    
+                        'msg': 'auto_detect_data posted successfully', 
+                                            'text_key': text_key,
+                                            'text_value': text_value,
+                                            'headers': headers,
+                                            'str_modded_rows': str_modded_rows,
+                                            'original_modded_dtypes_values': original_modded_dtypes_values,
+                                            'original_dtypes_values_readable_length': len(new_dtypes_values_readable),
+                                            'new_dtypes_values_readable': new_dtypes_values_readable,
+                                            'select_options': select_options #dropdown options
+                                            }, status=200) 
+            else:
+                return JsonResponse({'msg': 'error auto_detect_data value was not "auto-format"', 
+                                }, status=400)
+
+        else:
+                return JsonResponse({'msg': 'error auto_detect_data form was not valid or no file uploaded', 
+                                    }, status=400)
 # .........................
 
 def change_col_dtype(request):
@@ -103,8 +159,16 @@ def change_col_dtype(request):
                                                 target_change_cols=target_change_cols, 
                                                 headers=headers, 
                                                 rows=rows)
+            timedelta_str = None
             # str_rows is just for the view
-            str_modded_rows = my_functions.stringfy_data(ndtypes, headers, modded_rows)
+            if 'datetime.timedelta' in target_dtype:
+                timedelta_str = target_dtype.split(' ')[1]
+                                
+            
+            str_modded_rows = my_functions.stringfy_data(ndtypes, 
+                                                        headers, 
+                                                        modded_rows, 
+                                                        timedelta_str=timedelta_str)
 
             persistent_data_state['modded_rows'] = modded_rows
             persistent_data_state['new_dtypes_values'] = ndtypes
@@ -153,14 +217,14 @@ def data_file_upload(request):
         modded_rows, new_dtypes_values = my_functions.post_process_dtypes(
                                                             original_dtypes_values, 
                                                             headers, rows)
-
+        
         str_rows = my_functions.stringfy_data(original_dtypes_values, headers, rows)
         str_modded_rows = my_functions.stringfy_data(original_dtypes_values, headers, modded_rows)
-
+       
         new_dtypes_values_readable = my_functions.convert_to_readable_dtype_value(new_dtypes_values)
         
                                                           
-        # pdb.set_trace()
+        
         # user presented with a choice
         # modded_rows2, new_dtypes_values2 = manual_change_data_type(original_dtypes_values, {'date': 'datetime.timedelta minutes'}
         #                         , headers, rows)       
@@ -177,6 +241,7 @@ def data_file_upload(request):
         #                                         list_of_rows=new_rows)
         uploaded_data_form_handler = UploadedDataFormHandler(initial={'accept_value': 'false'})
         change_dtype_form = GenericValueForm()
+        detect_table_format = GenericValueForm()
 
         choices = [ch for ch in original_dtypes_values_readable.keys()]
         change_dtype_form_multi = GenericMultichoiceForm(custom_choices=choices)
@@ -184,21 +249,26 @@ def data_file_upload(request):
         context = {'uploaded_file': uploaded_file, 'rows': rows, 
                     'headers': headers, 
                     'original_dtypes_values': original_dtypes_values,
+                    'original_modded_dtypes_values': new_dtypes_values,
                     'str_rows': str_rows,
                     'str_modded_rows': str_modded_rows,
                     'modded_rows': modded_rows, 'new_dtypes_values': new_dtypes_values,
                     'original_dtypes_values_readable': original_dtypes_values_readable,
                     'original_dtypes_values_readable_length': len(original_dtypes_values_readable),
                     'uploaded_data_form_handler': uploaded_data_form_handler,
+                    'detect_table_format': detect_table_format,
                     'change_dtype_form': change_dtype_form,
                     'change_dtype_form_multi': change_dtype_form_multi,
+                    'show_modal': 'true'
                     }
 
         persistent_data_state['rows'] = rows
         persistent_data_state['headers'] = headers
         persistent_data_state['original_dtypes_values'] = original_dtypes_values
+        persistent_data_state['original_modded_dtypes_values'] = new_dtypes_values
         persistent_data_state['str_rows'] = str_rows
         persistent_data_state['modded_rows'] = modded_rows
+        persistent_data_state['original_modded_rows'] = modded_rows
         persistent_data_state['new_dtypes_values'] = new_dtypes_values
         persistent_data_state['new_dtypes_values_readable'] = new_dtypes_values_readable
         
