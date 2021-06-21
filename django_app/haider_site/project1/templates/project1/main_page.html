@@ -14,6 +14,8 @@
 
 <script src="{% static 'app1/jquery-ui-1.12.1.custom/jquery-ui.js' %}"></script>
 
+<!-- Color scale -->
+<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 
 
 <div class="project-page-wrapper">
@@ -68,13 +70,19 @@
         <!-- <div>Max</div>
         <div id="label-slider-max">Max !</div>
         <div id="slider-max" class="slider"></div> -->
-
-        
-
     </div>
     
+    
+    
+
+    <!-- Create a div where the graph will take place -->
+    <div id="chart"></div>
+    
+   
   
 </div>
+
+
 
 <script>
     // var received_data = '{{ debug_vars.json_string_dict|safe }}';
@@ -84,6 +92,8 @@
     var file_path = ',,';
 
 </script>
+
+
 
 <script src="{% static 'app1/project1_javascript.js' %}"></script>
 

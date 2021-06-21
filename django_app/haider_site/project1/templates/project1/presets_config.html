@@ -23,23 +23,57 @@
 <div class="loading-spinner"></div>
 
 <div class="project-page-wrapper">
-
+  
     <div class="file-uploader">
         <form id="data-file-uploader" method="post" enctype="multipart/form-data">
             {% csrf_token %}
+            
             <input class='' type="file" name="uploaded_file" accept=".csv, .txt, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"/>
             <input
-             class="blue-button" type="submit" name="submit" value="Upload File" />
+             class="blue-button"  type="submit" name="file-upload-submit" value="Upload File" />
         </form>
-        
+        <div class="file-name-indicator">
+          <p>
+          {% if uploaded_file %}
+          {{ uploaded_file }}
+          {% endif %}
+          
+          </p>
+          
+        </div>
+
+        <span class="tooltiptext">
+          <p>
+          Choose an Excel or CSV file to upload your data here!
+          </p>
+          
+         </span>
+
     </div>
+    <p> Supported formats: xlsx/ xls / csv / txt</p>
+    
+    {% if uploaded_file == 'no file uploaded yet' %}
+    <script>  
+    if ($(window).width() > 700) {
+
+    $('.file-uploader .tooltiptext').css("opacity", "1");
+    setTimeout(function(){
+        $('.file-uploader .tooltiptext').css("opacity", "0");
+      }, 2000);
+    }
+    else {
+        $('.file-uploader .tooltiptext').css("width", "0px");
+      }
+    </script>
+    {% endif %}
+         
+    
+
     
     {% if uploaded_file and rows %}
    
     <div class="on-page-file-viewer">
-        <div class="file-name-indicator"><p>{% if uploaded_file %}
-            {{ uploaded_file }}
-        {% endif %}</p></div>
+        
 
         <div class="on-page-file-viewer bordered">
             
@@ -170,19 +204,51 @@
     
 
     <script>
-      document.querySelector('p.flashes').style['background-color'] = '#81ecec';
-            setTimeout(()=>{
-              document.querySelector('p.flashes').style['background-color'] = 'white';
-            }, 1000);
+        
+        document.querySelector('p.flashes').style['background-color'] = '#55efc4';
+        document.querySelector('p.flashes').style['font-style'] = 'italic';
+        document.querySelector('p.flashes').style['font-weight'] = 'bold';
+
+              setTimeout(()=>{
+                document.querySelector('p.flashes').style['background-color'] = 'white';
+                document.querySelector('p.flashes').style['font-style'] = 'initial';
+                
+              }, 3000);
+    
+        
+        
     </script>
 
     {% endif %}
 
     
     <!-- ------------- -->
+    
+    {% if  uploaded_file and rows%}
     <div  class="top-shadowed-border format-choices-outwrap">
       {% include 'project1/format_choices.html' %}
     </div> 
+    <hr class='shadow-divider'>
+
+    <div class="plot-selector-wrap">
+      {% include 'project1/plot-selector.html' %}
+    </div>
+    
+    <script>
+
+      if ($(window).width() > 700){
+        $('.format-choices-wrap .tooltiptext').css("opacity", "1");
+        setTimeout(function(){
+            $('.format-choices-wrap .tooltiptext').css("opacity", "0");
+          }, 5000);
+      }
+      else {
+        $('.format-choices-wrap .tooltiptext').css("width", "0px");
+      }
+      
+
+    </script>
+    {% endif %}
     <!-- ------------- -->
 
     <div>
@@ -192,8 +258,8 @@
 
     
 
-    <a href="{% url 'project1:testing_page' %}" class="btn btn-primary">go to testing</a>
-
+    <a href="{% url 'project1:main_page' %}" class="btn btn-primary">go to testing</a>
+    
 </div>
 
 
@@ -205,9 +271,12 @@
     }, true); 
     // 
 
+    $( document ).ready(function(){
     footer = document.querySelector('.footer');
+    
     footer.style.top = (window.screen.height - footer.offsetHeight) + "px";
     $('#id_text_value').val();
+    });
     
     // stop dropdowns from bubbling clicks
     $(".dtype-change-row select").mousedown(function(e) {
@@ -297,6 +366,8 @@
 
 
 <script>
+ 
+
   function submit_dtype_change(select_element) {
     //console.log(select_element.id);
     let associated_header = select_element.name;
@@ -309,6 +380,22 @@
     // should submit
     document.getElementById('change-dtype-btn-constant' ).click();
   }
+
+  // .........
+  
+  // need to check if we need to send ajax again when dropdowns are not clicked(back button case)
+  $( document ).ready(function() {
+    let dropdowns = document.querySelectorAll('.dtype-change-row select');
+    
+    // re-execute ajax reqs that is submit below, by clicking the same submit
+    //  button 5 (or more based on number of columns) times. Same form 
+    // should be submitted multiple times but with different values each iteration
+    dropdowns.forEach(select_element => {
+        submit_dtype_change(select_element)
+    });
+  });
+
+  
 
  
   // when the column dtype changes
@@ -365,6 +452,12 @@
         }
     });
   });
+
+ 
+
+ 
+
+   
 </script>
 
 <script>

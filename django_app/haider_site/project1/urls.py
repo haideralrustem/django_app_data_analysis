@@ -13,6 +13,9 @@ urlpatterns = [
     path('/ajax/post/accept_uploaded_data', views.accept_uploaded_data, name="accept_uploaded_data"),
     #auto_detect_data
     path('/ajax/post/auto_detect_data', views.auto_detect_data, name="auto_detect_data"),
+    
     path('/ajax/post/change_col_dtype', views.change_col_dtype, name="change_col_dtype"),
+    # 
+    path('/ajax/post/select_chart_type', views.select_chart_type, name="select_chart_type"),
   
 ]

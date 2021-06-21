@@ -1,0 +1,402 @@
+{% load static %}
+<div class='plot-selector-container'>
+
+    <div class="plot-panel-flexible shadow-light">
+
+        <div class="plot-choice-panel" >
+            <div class="plot-grid-container">
+
+                <div class="BAR-CHART plot_grid_div first plot-select-highlighter">
+                    <img onclick="fire_ajax_select_chart(this)" onmouseover='img_text_hover(this)' onmouseout="img_text_unhover(this)" 
+                    class="BAR-CHART plot-select-img plot-select-highlighter" src="{% get_media_prefix %}bar_chart.png">
+                    
+                </div>
+
+                <div class="LINE-CHART plot_grid_div second plot-select-highlighter ">
+                    <img onclick="fire_ajax_select_chart(this)" onmouseover='img_text_hover(this)' onmouseout="img_text_unhover(this)" 
+                    class="LINE-CHART plot-select-img plot-select-highlighter" src="{% get_media_prefix %}line_chart.jpg">
+                </div>
+
+                <div class="BAR-CHART plot_grid_div third plot-select-highlighter">
+                    <p onclick="fire_ajax_select_chart(this)" class="BAR-CHART plot-select-text plot-select-highlighter" onmouseover='img_text_hover(this)' onmouseout="img_text_unhover(this)">BAR CHART</p>
+                </div>
+
+                <div class="LINE-CHART plot_grid_div fourth  plot-select-highlighter">
+                    <p onclick="fire_ajax_select_chart(this)" class="LINE-CHART plot-select-text plot-select-highlighter" onmouseover='img_text_hover(this)' onmouseout="img_text_unhover(this)">LINE CHART</p>
+                </div>
+
+                <div class="MULTI-LINE-CHART plot_grid_div fifth plot-select-highlighter ">
+                    <img onclick="fire_ajax_select_chart(this)" id='MULTI-LINE-CHART' onmouseover='img_text_hover(this)' onmouseout="img_text_unhover(this)" 
+                    class="MULTI-LINE-CHART plot-select-img plot-select-highlighter" src="{% get_media_prefix %}multi_line_chart.png">
+                     
+                </div>
+
+                <div></div>
+
+                <div class="MULTI-LINE-CHART plot_grid_div sixth ">
+                    <p onclick="fire_ajax_select_chart(this)" class="MULTI-LINE-CHART plot-select-highlighter plot-select-text" onmouseover='img_text_hover(this)' onmouseout="img_text_unhover(this)">MULTI-LINE CHART</p>   
+                </div>
+            </div>
+
+            
+        </div>
+
+
+
+        <div class="axis-choice axis-choice-element selector-associated-panel hidden-axis-choice">
+            
+            <div class="axis-panel-title axis-panel-border axis-choice-element">
+                <p class="axis-choice-element"> Select Columns for X and Y axis</p>
+            </div>
+            <div class="axis-choice-element axis-inner-panel-wrap">
+                                
+                <div class="axis-choice-element axis-card x-card axis-panel-border">
+                    <div class="axis-choice-element axis-subtitle">
+                        <p class="axis-choice-element ">Select X-AXIS</p>
+                    </div>
+
+                    <p class="axis-choice-element axis-card-text">list of valid selectable columns:</p>
+                    <div class="axis-choice-element axis-choice-box flashes">
+                        <form class="axis-choice-element">
+                           
+                        </form>
+                    </div>
+                </div>
+
+                <!-- second card -->
+                <div class="axis-choice-element axis-card y-card axis-panel-border">
+                    <div class="axis-choice-element axis-subtitle">
+                        <p class="axis-choice-element ">Select Y-AXIS</p>
+                    </div>
+                    <p class="axis-choice-element axis-card-text">list of valid selectable columns:</p>
+                    <div class="axis-choice-element axis-choice-box flashes">
+                        <form class="axis-choice-element">
+                            
+                        </form>
+                    </div>
+                </div>
+
+
+
+            </div>
+            <button id="vizualize" class="btn btn-primary axis-generate-btn axis-choice-element">GENERATE PLOT</button>
+        </div>
+
+    </div>
+
+<!-- invisible forms that send ajax. link them up with whats being clicked -->
+<form id="select_chart_type_form" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{select_chart_type_form.text_key}}
+    {{select_chart_type_form.text_value}}
+    <button class="BAR-CHART hidden-submit-btn" type="submit" onclick="stop_propag(this)"></button>
+    <button class="LINE-CHART hidden-submit-btn" type="submit" onclick="stop_propag(this)"></button>
+    <button class="MULTI-LINE-CHART hidden-submit-btn" type="submit" onclick="stop_propag(this)"></button>
+</form>
+
+
+<form id='select_axis_form'>
+    {% csrf_token %}
+    {{ select_axis_form.text_key }}
+    {{ select_axis_form.text_value }}
+    <button class="axis-form-button hidden-submit-btn" type="submit" 
+            onclick="fire_ajax_select_axis(this)"></button>
+</form>
+
+</div>
+
+
+
+<script>
+    function img_text_hover(hovered_img) {
+        
+        let class_id = hovered_img.classList[0];
+        let text_elms = document.querySelectorAll('p.'+ class_id);
+        let images = document.querySelectorAll('img.'+ class_id);
+
+
+        text_elms.forEach( (text_elm) => {
+            // text_elm.style['font-size'] = '103%';
+            // text_elm.style['font-weight'] = 'bold';
+            if ( ! text_elm.classList.contains('bolded-font')) {
+                text_elm.classList.add('bolded-font')
+            }
+            
+        });
+        images.forEach((i)=> {
+            // i.style['transform'] = "scale(1.2)";
+            if ( ! i.classList.contains('scaled-up')) {
+                i.classList.add('scaled-up')
+            }
+        })
+
+       
+    }
+    
+    function img_text_unhover(hovered_img) {
+        let class_id = hovered_img.classList[0];
+        let text_elms = document.querySelectorAll('p.'+ class_id );
+        let images = document.querySelectorAll('img.'+ class_id)
+
+        
+        text_elms.forEach( (text_elm) => {
+            // text_elm.style['font-size'] = '100%';
+            // text_elm.style['font-weight'] = 'initial';
+            if ( ! $('div.'+class_id).hasClass('borderd_selected')) {
+                 text_elm.classList.remove('bolded-font')
+            }
+        });
+
+        images.forEach((i)=> {
+            // i.style['transform'] = "scale(1)"
+            if ( ! $('div.'+class_id).hasClass('borderd_selected')) {
+                i.classList.remove('scaled-up')
+            }
+        })
+
+       
+    }
+
+    
+
+</script>
+
+<!-- button triggers -->
+<script>
+    function stop_propag(clicked) {
+        event.stopPropagation();
+   }
+
+   function fire_ajax_select_axis(clicked){
+        event.stopPropagation();
+        // retrieve chosen axes
+        //let y_name = $().val();
+        //let x_name = $().val();
+        $('#select_axis_form #id_text_value').val('y_name');
+        $('#select_axis_form #id_text_key').val('x_name');
+
+        
+   }
+
+    function fire_ajax_select_chart(clicked_elem) {
+        event.stopPropagation();
+        let class_id = clicked_elem.classList[0];
+        let btn_to_submit = document.querySelector('button.'+class_id);
+        
+        // VISUAL CHANGES
+        // unselect all previous
+        let all_previously_bordered = $('.borderd_selected');
+        all_previously_bordered.each(function(index) {
+            $(this).removeClass("borderd_selected");
+        });
+        $('.scaled-up').each(function(index){
+            $(this).removeClass('scaled-up');
+        });
+        $('.bolded-font').each(function(index){
+            $(this).removeClass('bolded-font');
+        });
+
+        // select clicked
+        let selected_to_bordered = $('div.'+class_id);
+        selected_to_bordered.each(function(index) {
+            
+            $(this).addClass("borderd_selected");
+        });
+        $('img.' + class_id).addClass('scaled-up');
+        $('p.' + class_id).addClass('bolded-font');
+        
+        // show side panel (axis-choice)
+        let selector_panel = $('.selector-associated-panel');
+        selector_panel.addClass('shown-axis-choice');
+        selector_panel.removeClass('hidden-axis-choice');
+        
+        // side panel more effects
+        $('.axis-choice-box').addClass('flash-color');
+        
+        setTimeout( function(){
+            $('.axis-choice-box').removeClass('flash-color');
+        } , 500)
+
+
+
+        // class_id indicates the chart type
+        $('#select_chart_type_form #id_text_value').val(class_id);
+        $('#select_chart_type_form #id_text_key').val('Chart type');
+
+        console.log($('#select_chart_type_form #id_text_value').val());
+        console.log(btn_to_submit);
+        btn_to_submit.click();
+    }
+
+// de-clicks
+
+$('.plot-grid-container').click(function(event){
+    // main js function
+    
+    let excluded = $('.plot-grid-container *').find(event.target);
+    
+
+    // only deselect when the click is not a descendant of plot-grid-container
+    if (excluded.length == 0) {  
+        let list_of_jquery_elements = $('.plot-grid-container .borderd_selected');
+        deselect(list_of_jquery_elements);
+        list_of_jquery_elements = $('.plot-grid-container .bolded-font');
+        deselect(list_of_jquery_elements);
+        list_of_jquery_elements = $('.plot-grid-container .borderd_selected');
+        deselect(list_of_jquery_elements);
+    }
+
+});
+
+// de-click events that de-highlights, de-selects, etc....
+function deselect(list_of_jquery_elements) {
+    if (list_of_jquery_elements.length > 0) {
+        list_of_jquery_elements.each(function(i){
+            $(this).removeClass('bolded-font');
+            $(this).removeClass('scaled-up');
+            $(this).removeClass('borderd_selected');
+        });
+    }
+}
+
+function element_click_deselect(e, list_of_jquery_elements) {
+    
+    if (e.target.classList.contains('plot-select-highlighter')
+        || e.target.classList.contains('axis-choice-element')) {
+        return
+    }
+    else {
+        if(list_of_jquery_elements && list_of_jquery_elements.length > 0){
+            console.log('deselect occurred!!')
+            deselect(list_of_jquery_elements);
+        }
+
+        if(list_of_jquery_elements && list_of_jquery_elements.length > 0){
+            list_of_jquery_elements = $('.plot-grid-container .bolded-font');
+            deselect(list_of_jquery_elements);
+        }
+        if(list_of_jquery_elements && list_of_jquery_elements.length > 0){
+            list_of_jquery_elements = $('.plot-grid-container .borderd_selected');
+            deselect(list_of_jquery_elements);
+        }
+
+    }
+
+    
+}
+
+$(document).on('click','body *',function(event){
+//  $(this) = your current element that clicked.
+// additional code
+    let list_of_jquery_elements = $('.plot-grid-container .borderd_selected');
+    element_click_deselect(event, list_of_jquery_elements);
+    // hide the side panel?
+    let selector_panel = $('.selector-associated-panel');
+    if (event.target.classList.contains('axis-choice-element')) {
+        return
+    }
+    else {
+        if (selector_panel.hasClass('shown-axis-choice')) {
+        selector_panel.removeClass('shown-axis-choice');
+        selector_panel.addClass('hidden-axis-choice');
+       }
+    }
+    
+    
+
+})
+
+
+</script>
+
+
+<!-- AJAX SCript -->
+<script>
+    $("#select_chart_type_form").submit(function (e) {
+    // preventing from page reload and default actions
+    e.preventDefault();
+    // serialize the data for sending the form data.
+    var serializedData = $(this).serialize();
+    // make POST ajax call
+    $.ajax({
+        type: 'POST',
+        url: "{% url 'project1:select_chart_type' %}",
+        data: serializedData,
+        success: function (response) {
+            
+          // Response here can Contain the stringified changed data when
+          // you implement the change datatype POST
+            
+            // 1. clear the form.
+            $("#select_chart_type_form").trigger('reset');
+
+            console.log('\n\n response: ', response)
+            console.log(response['chart_type'])
+            // SUCCESS FEEDBACK
+
+            // update side panel:
+            // 1- show available x-y-axes based on chart (view should send us respones)
+            // 2- show START button
+            // 3- Any other visuals (toggle classes for elems inside panel?)
+            
+            
+            let allowed_x = JSON.parse(response['allowed_x_columns']);
+            let allowed_y = JSON.parse(response['allowed_y_columns']);
+            
+            let x_card_form = $('.x-card form');
+            let y_card_form = $('.y-card form');
+            
+
+            // destroy input choices
+            $('.x-card form').empty();
+            $('.y-card form').empty();
+
+            let ind = 0;
+            allowed_x.forEach(function(x_col){
+                let checked = '';
+                if (ind == 0) {
+                    checked = 'checked';
+                }
+                else {
+                    checked = '';
+                }
+                let elm = `<label class="axis-choice-element">
+                              <input class="${x_col} axis-choice-element" type="radio" name="optradio" ${checked}>
+                              ${x_col}</input>
+                            </label>`
+                $('.x-card form').append(elm);
+
+                ind ++;
+            });
+        
+            ind = 0;
+            allowed_y.forEach(function(y_col){
+                let checked = '';
+                if (ind == 0) {
+                    checked = 'checked';
+                }
+                else {
+                    checked = '';
+                }
+                let elm = `<label class="axis-choice-element">
+                              <input class="${y_col} axis-choice-element" type="radio" name="optradio" ${checked}>
+                              ${y_col}</input>
+                            </label>`
+                $('.y-card form').append(elm);
+
+                ind ++;
+            });
+
+
+
+        // success end
+        } ,
+
+        error: function (response) {
+            // alert the error if any error occured
+            console.log('error occured! :\n', response);
+            
+        }
+      })
+  });
+</script>

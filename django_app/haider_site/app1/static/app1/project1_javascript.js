@@ -1,26 +1,6 @@
 console.log('this is project1 js')
 // var from_python_data = data;
 
-// console.log('-----> ', parsed_data);
-// function show_file_preview_modal(clicked_button){
-//     let t = clicked_button.id;
-//     let modal_id = t.substring(0, t.indexOf('-btn'))
-//     var myModal = new bootstrap.Modal(document.getElementById(modal_id), {
-//         keyboard: false
-//       })
-//     myModal.show()
-// }
-
-
-// container = document.querySelector("body");
-// console.log(container);
-// new ResizeSensor(container, function()
-// {
-//     console.log("dimension changed:", container.clientWidth, container.clientHeight);
-//     let footer = document.querySelector('.footer');
-//     // footer.style.top = (container.clientHeight) + "px";
-//     footer.style.top = (window.screen.height - footer.offsetHeight) + "px";
-// });
 
 
 
@@ -1223,18 +1203,22 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
                     bar_filter=true,
                     line_filter=true,
                     highlighting=true,
-                    highligh_style=[{key:'', value:''}]
+                    highligh_style=[{key:'', value:''}],
+                    y_name='',
+                    x_name=''
                     ) 
     {
     
     var data_fields = [];
     
-    for (var field in data[0]) {
-        // check if property not inherited
-        if (Object.prototype.hasOwnProperty.call(data[0], field)) {
-            data_fields.push(field);
-        }
-    }
+    // for (var field in data[0]) {
+    //     // check if property not inherited
+    //     if (Object.prototype.hasOwnProperty.call(data[0], field)) {
+    //         data_fields.push(field);
+    //     }
+    // }
+    data_fields.push(x_name);
+    data_fields.push(y_name);
 
     var animation_state = {
         highlighter_engaged: false,
@@ -1486,12 +1470,14 @@ function bar_graph (data, graph_title='default_title', x_title='x-label',
                 return item.value });
         });
 
+        
         d3.select(element)
         .style("fill", "rgb(107, 199, 253)")
         .transition()     // adds animation
         .duration(100)
         .style("fill", "#D6A2E8")
         ;
+        
 
         return  tooltip.style("visibility", "visible");            
     }
@@ -2538,6 +2524,118 @@ function bar_graph2 (data, graph_title='default_title', x_title='x-label',
 // .......................................
 
 
+function pie_chart(dataa=[], x_title='x_title', y_title='y_title',
+            graph_title='graph_title', y_ticks=10, data_circles=true,
+            line_mouseover_animation=true, line_mousein_tuple,
+            line_mouseout_tuple,
+            num_of_lines=1,
+            x_name='',
+            y_names=[],
+            x_axis_min=null,
+            x_axis_max=null,
+            y_axis_min=null,
+            y_axis_max=null,
+            line_stroke_width='3px',
+            dtypes={},
+            x_axis_added_length = 10,
+            y_axis_added_length = 10,
+            width=400,
+            height=400,
+            highlighting=true,
+            filtering=true,
+            highligh_style=[{key: "fill", value: "red"}],
+            circle_radius=5,
+grid_lines=true,  )
+{
+    
+
+    var data = [
+        {name: "<5", value: 5},
+        {name: "5-9", value: 10},
+        {name: "10-14", value: 20},
+        {name: "15-19", value: 2},
+        {name: "20-24", value: 61},
+        {name: "25-29", value: 3},
+       
+        ]
+    y_names = ['value']
+    y_name = y_names[0]
+    x_name = 'name'
+
+    var data_fields = [];
+
+    for (var field in data[0]) {
+        // check if property not inherited
+        if (Object.prototype.hasOwnProperty.call(data[0], field)) {
+
+            data_fields.push(field);
+            
+        }
+    }
+
+        
+    
+    width = 500;
+    height = Math.min(width, 500);
+    let margin = 40;
+    const radius = Math.min(width, height) / 2 - margin;
+
+    var svg = d3.select("#chart")
+                    .append("svg")
+                    .attr("width", width)
+                    .attr("height", height)
+                    .append("g")
+                    .attr("transform", "translate(" + 
+                         width / 2 + "," + height / 2 + ")");
+
+    let color = d3.scaleOrdinal()
+                .domain(data.map(d => { 
+                    //console.log(d3.quantize(t => d3.interpolateSpectral(t * 0.8 + 0.1), data.length).reverse())
+                    return d[x_name] } ))
+                .range(d3.quantize(t => d3.interpolateSpectral(t * 0.8 + 0.1), data.length).reverse());
+    
+
+    let pie = d3.pie()
+        .value(d => {return d[y_name]} )
+        ;
+
+    var data_ready = pie(data);
+
+    // shape helper to build arcs:
+    var arcGenerator = d3.arc()
+    .innerRadius(0)
+    .outerRadius(radius)
+
+    // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
+    svg
+    .selectAll('mySlices')
+    .data(data_ready)
+    .enter()
+    .append('path')
+    .attr('d', arcGenerator)
+    .attr('fill', function(d) { 
+        //color(d.data[x_name])
+        return color(d.data[x_name])
+    })
+    .attr("stroke", "black")
+    .style("stroke-width", "2px")
+    .style("opacity", 0.7)
+
+    svg
+    .selectAll('mySlices')
+    .data(data_ready)
+    .enter()
+    .append('text')
+    .text(function(d){ 
+        
+        return "grp " + d.data[x_name]})
+    .attr("transform", function(d) { return "translate(" + arcGenerator.centroid(d) + ")";  })
+    .style("text-anchor", "middle")
+    .style("font-size", 17)
+    
+}
+    
+
     
 // -----------------------------------
 
@@ -2608,31 +2706,34 @@ var data1 = [
 let svg_container = document.querySelector('#svg-container');
 
 if (svg_container) {
-line_graph(data=data1, x_title='xaxis', y_title='ytitle', graph_title='TITLEST',
-            y_ticks=10, data_circles=true, line_mouseover_animation=true,
+    
+// line_graph(data=data1, x_title='xaxis', y_title='ytitle', graph_title='TITLEST',
+//             y_ticks=10, data_circles=true, line_mouseover_animation=true,
 
-            line_mousein_tuple=[{key: "stroke", value: 'orange'}], 
-            line_mouseout_tuple=[{key: "stroke", value: 'rgb(70, 130, 180)'}],
-            num_of_lines=1,
-            x_name='date',
-            y_names=['close', 'loss', 'profit'],
-            x_axis_min=2005,
-            x_axis_max=2018,
-            y_axis_min=null,
-            y_axis_max=100,
-            line_stroke_width='4px',
-            dtypes= {'date': 'int', 'close': 'int', 'loss': 'int', 'profit': 'int'},
-            x_axis_added_length = 30,
-            y_axis_added_length = 0,
-            width=400,
-            height=400,
-            highlighting=true,
-            filtering=true,
-            highligh_style=[{key: "fill", value: "red"}],
-            circle_radius=5 
+//             line_mousein_tuple=[{key: "stroke", value: 'orange'}], 
+//             line_mouseout_tuple=[{key: "stroke", value: 'rgb(70, 130, 180)'}],
+//             num_of_lines=1,
+//             x_name='date',
+//             y_names=['close', 'loss', 'profit'],
+//             x_axis_min=2005,
+//             x_axis_max=2018,
+//             y_axis_min=null,
+//             y_axis_max=100,
+//             line_stroke_width='4px',
+//             dtypes= {'date': 'int', 'close': 'int', 'loss': 'int', 'profit': 'int'},
+//             x_axis_added_length = 30,
+//             y_axis_added_length = 0,
+//             width=400,
+//             height=400,
+//             highlighting=true,
+//             filtering=true,
+//             highligh_style=[{key: "fill", value: "red"}],
+//             circle_radius=5 
 
-            )
-}
+//             )
+    }
+
+
 // bar_graph (data1,   //data
 //           "SOME TITLE",  //graph_title
 //           'year', //x_title

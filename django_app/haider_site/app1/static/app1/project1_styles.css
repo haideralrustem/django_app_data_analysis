@@ -1,3 +1,4 @@
+
 .bordered {
   border: 1px solid lightskyblue;
   border-radius: 5px;
@@ -5,12 +6,15 @@
 .flashes {
   transition: background-color 0.5s ease-in-out;
 }
+.flash-color {
+  background-color: #48dafb56;
+}
 p.flashes {
   transition: background-color 1s ease-in-out;
-  border-radius: 10%;;
+  border-radius: 6%;
 }
 .project-page-wrapper {
-  margin-left: 6%;
+  margin-left: 10%;
   margin-right: 1%;
 }
 
@@ -19,6 +23,9 @@ p.flashes {
   /* inset | offset-x | offset-y | color */
   box-shadow: 1px 1px 5px #636e72;
   border-radius: 12px;
+}
+.shadowed-text {
+  text-shadow: 1px 1px 5px grey;
 }
 
 .shadow-divider {
@@ -137,8 +144,54 @@ p.flashes {
 
 .file-uploader {
   border: 1px solid #00a8ff ;
+  border-radius: 6px;
   width: fit-content;
+  padding: 1% 4% 1% 1%;
+  margin-bottom: 2%;
+  position: relative;
+
 }
+.file-uploader .tooltiptext {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  width: 310px;
+  height: auto;
+  background: rgb(209, 240, 248);
+  color: rgb(11, 35, 114);
+  text-align: center;
+  border-radius: 40px;
+  padding: 15px 0 15px 20px;
+  position: absolute;
+  z-index: 1;
+  
+  top: 89%;
+  left: 30%;
+  opacity: 0;
+  transition: opacity 0.4s ease-in-out;
+}
+
+.file-uploader .tooltiptext::after {
+  content: ""; 
+  position: absolute;  /* compared to the tooltip span element itself*/
+  top: -15%;
+  right: 90%;
+  width: 0px;
+  height: 0px;
+  transform: rotate(45deg);
+  border-left: 66px solid transparent;
+    border-right: 7px solid transparent;
+    border-top: 8px solid rgb(209, 240, 248);
+    border-bottom: 8px solid transparent;
+    
+  
+  border-style: solid;
+  /* border-color: transparent black transparent transparent; */
+}
+
+.file-uploader .tooltiptext p {
+  margin-right: 10px;
+  margin-left: 10px;
+}
+
 .file-name-indicator {
   margin-left: 2%;
 }
@@ -243,9 +296,9 @@ span.close:hover {
 
 .on-page-file-viewer {
   
-  width: 90%;
+  width: 85%;
   box-sizing: content-box;
-  margin-bottom: 5%;
+  margin-bottom: 3%;
 }
 
 .ui-resizable-handle{
@@ -263,6 +316,7 @@ span.close:hover {
 .file-preview-modal-content.on-page {
   width: fit-content;
   border-right: 1px solid rgb(0, 174, 255);
+  border-left: 1px solid rgb(0, 174, 255);
   padding-right: 2%;
   
 }
@@ -279,6 +333,7 @@ span.close:hover {
   position: relative;
   margin-left: 0;
   box-sizing: border-box;
+  padding-left: 8%;
   
 }
 
@@ -345,7 +400,7 @@ span.close:hover {
 .divCell {
      
       /* display:table-cell; */
-      width:17vw;  /* compare to below .dtype-selector */
+      width: 12vw;  /* compare to below .dtype-selector */
       /* min-width: 7vw; */
       background-color:rgb(255, 254, 254);
       margin-left: 5px;
@@ -356,7 +411,7 @@ span.close:hover {
 }
 
 .dtype-selector {
-  width: 17vw;
+  width: 12vw;
   align-items: flex-end;
   display: flex;
   
@@ -425,13 +480,14 @@ span.close:hover {
 /* ....file previw second section ...... */
 
 .format-choices-outwrap {
+  
   width: 90%;
   padding-left: 3%;
   margin: 3% 0 0 0;
 }
 .format-choices-wrap {
-  margin-top: 8%;
-  margin-bottom: 10%;
+  margin-top: 2%;
+  margin-bottom: 1%;
   display: flex;
   position: relative;
 }
@@ -491,14 +547,203 @@ span.close:hover {
   margin-left: 10px;
 }
 
+.format-success-text {
+  opacity: 0;
+  color: #10ac84;
+  font-weight: bold;
+  font-size: 18px;
+  transition: all 0.5s ease-in-out;
+}
 
+
+/* ...............  plot choice panel section ............. */
+
+.plot-selector-container {
+  
+}
+.plot-selector-container .my-row {
+
+}
+.shadow-bordered-light {
+  border: 0.2px solid #dfe6e9;
+  box-shadow: 0px 0px 17px -7px #636e72;
+}
+
+
+.plot-panel-flexible {
+  display: flex;
+}
+.plot-choice-panel {
+  max-width: 100%;
+}
+
+
+.plot-grid-container {
+  
+  padding-bottom: 10%;
+  
+  max-width: 72vw;  /*100vw*/
+  
+  display: grid;
+  grid-template-columns: 50% 50%;
+  grid-template-rows: 38% 10% 38% 10%;
+  
+  grid-column-gap: 1vw;
+  grid-row-gap: 1vw;
+  padding-left: 1%;
+  padding-right: 1%;
+
+}
+
+.plot_grid_div {
+  overflow: hidden;
+  position: relative;
+  text-align: center;
+  border: 0.1px solid lightskyblue;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+
+.plot_grid_div.first {
+  
+}
+
+.plot-select-img {
+  padding: 2%;
+  width: 100%;
+  height: 100%;
+  transition: all 0.7s ease-in-out;
+  
+}
+.fifth .plot-select-img {
+  padding: 8%;
+}
+
+.plot-select-img:hover {
+  opacity: 0.5;
+  transform: scale(1.2);
+  cursor: pointer;
+}
+
+/* click selection classes */
+.borderd_selected {
+  border: 3px solid rgb(80, 151, 245);
+  box-shadow: 0px 0px 17px -7px #636e72;
+}
+.bolded-font {
+  font-weight:bold;
+  font-size: 103%;
+}
+.scaled-up {
+  transform : scale(1.2);
+}
+
+.plot-select-text {
+  transition: all 0.1s ease-in-out;
+  color: black;
+  
+}
+
+.axis-choice {
+  width: 90%;
+  /* border: 0.1px solid  #bdc3c7; */
+  border-radius: 10px;
+  box-shadow: 0px 0px 20px 0px #bdc3c780;
+  margin: 1%;
+  opacity: 1;
+  position: relative;
+  left: -40%;
+  transition: all 0.5s ease-in;
+}
+
+
+
+.hidden-axis-choice {
+  /* visibility: collapse; */
+  opacity: 0;
+  left: -10%;
+}
+.shown-axis-choice {
+  /* visibility: visible; */
+  opacity: 1;
+  left: 0;
+} 
+
+.axis-panel-border {
+  box-shadow: 0px 0px 3px #0984e3;
+}
+.axis-inner-panel-wrap {
+  display: block;
+  margin: 7% 4% 1% 3%;
+  border-radius: 7px;
+
+}
+
+.axis-panel-title {
+  
+  /* inset | offset-x | offset-y | color */
+  border-radius: 1px;
+  padding: 2% 1% 1% 2%;
+  margin: 3% 4% 1% 2%;
+  font-family: Palatino, Palatino Linotype, Georgia, Times, "Times New Roman", serif;
+  font-size: 157%;
+  font-weight: bold;
+  color: rgb(0, 64, 148);
+  text-shadow: 0px 0px 9px rgb(79 155 255 / 53%);
+}
+
+.axis-subtitle {
+  font-family: Palatino, Palatino Linotype, Georgia, Times, "Times New Roman", serif;
+  font-size: 100%;
+  font-weight: bold;
+  margin: 0% 0 1% 2%;
+  padding: 1% 0 0 0;
+      
+}
+.axis-card  {
+  margin: 5% 0 0 0;
+  /* transition: all 0.5s ease-in-out; */
+}
+.axis-card-text {
+  font-family: Palatino, Palatino Linotype, Georgia, Times, "Times New Roman", serif;
+  font-style: italic;
+  margin: 0 0 2% 2%;
+}
+
+.axis-choice-box {
+  
+}
+
+
+.axis-choice-box form {
+  width: 100%;
+}
+
+.axis-choice-box label {
+  margin: 1% 2% 1% 2%;
+  width: 100%;
+  cursor: pointer;
+}
+.axis-choice-box input{
+  float: none;
+}
+
+.axis-generate-btn {
+  width: 92%;
+  margin: 4% 1% 1% 4%;
+  font-size: 110%;
+  font-weight: bold;
+}
 
 /* ................ VIZ css styles ............ */
 
 #svg-container {
    padding-left: 10%;
 }
-
+#chart {
+  margin-top: 15%;
+}
 /* .line {
     fill: none;
     stroke: steelblue;
@@ -599,8 +844,16 @@ path {
           .container_col {
             margin-top: 7%;
           }
+         
           .myModal .container_col {
             margin-top: 10%;
+          }
+          .on-page-file-viewer  {
+            width: 94%;
+          }
+
+          .on-page-file-viewer .container_col {
+            padding-left: 4%;
           }
           .table-outer-wrap {
             width: 95%;
@@ -612,6 +865,36 @@ path {
           .divCell {
             /* display:table-cell; */
             width:18vw;
+          }
+
+
+          .plot-grid-container {
+            padding-bottom: 14%;
+            
+            padding-left: 2%;
+            padding-right: 3%;
+            
+            display: grid;
+            grid-template-columns: 50% 50%;
+            grid-template-rows: 38% 15% 38% 15%;
+            
+          }
+
+          .plot-panel-flexible {
+            display: block;
+          }
+
+          .tooltiptext {
+            width: 0;
+            height: 0;
+          }
+          .file-uploader .tooltiptext {
+            width: 0;
+            height: 0;
+          }
+
+          .project-page-wrapper {
+            margin-right: 2%;
           }
 
       }
@@ -627,8 +910,19 @@ path {
           width: 76vw;
           height: auto;
         }
+        .tooltiptext {
+          width: 0;
+          height: 0;
+        }
+        .file-uploader .tooltiptext {
+          width: 0;
+          height: 0;
+        }
         .table-outer-wrap {
           width: 95%;
+        }
+        .on-page-file-viewer  {
+          width: 94%;
         }
         .container_col {
           margin-top: 4%;
@@ -642,8 +936,27 @@ path {
         }
         .divCell {
           /* display:table-cell; */
-          width:16vw;
+          width:15vw;
         }
+        .plot-panel-flexible {
+          display: block;
+        }
+
+        .plot-grid-container {
+
+          padding-bottom: 14%;
+          padding-left: 2%;
+          padding-right: 3%;
+          
+          display: grid;
+          grid-template-columns: 50% 50%;
+          grid-template-rows: 38% 10% 38% 10%;
+        }
+
+        .project-page-wrapper {
+          margin-right: 5%;
+        }
+
         
       }
 
@@ -666,7 +979,32 @@ path {
           margin-top: 1%;
           height: 38vw;
         }
+        .plot-panel-flexible {
+          display: flex;
+        }
+        .plot-grid-container {
+          padding-bottom: 14%;
+          padding-top: 2%;
+          padding-left: 2%;
+          padding-right: 6%;
+
+         
+          display: grid;
+          grid-template-columns: 50% 50%;
+          grid-template-rows: 38% 10% 38% 10%;
+        }
+
+        .project-page-wrapper {
+          margin-right: 6%;
+        }
+
+
+
       }
+      
+
+
+
 
 
       @media (min-width: 1024px)  {
@@ -677,13 +1015,50 @@ path {
         }
 
         .divTable {
-          height: 22vw;
+          height: 16vw;
           margin-top: 1%;
         }
         /* for the dropdowns */
         .dtype-change-row select {
           width: 100%;
         }
+
+        .plot-panel-flexible {
+          display: flex;
+        }
+
+        .project-page-wrapper {
+          margin-right: 10%;
+        }
+        .plot-grid-container {
+          padding-bottom: 14%;
+          padding-top: 2%;
+          padding-left: 2%;
+          padding-right: 6%;
+          
+        }
+
+        
+      }
+
+
+
+      @media (min-width: 1350px)  {
+
+        .plot-grid-container {
+                  padding-bottom: 14%;
+                  padding-top: 2%;
+                padding-left: 2%;
+                padding-right: 6%;
+                  
+                  display: grid;
+                  grid-template-columns: 50% 50%;
+                  grid-template-rows: 38% 7% 38% 7%;
+                }
+        .project-page-wrapper {
+          margin-right: 10%;
+        }
+
       }
 
 

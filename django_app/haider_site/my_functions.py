@@ -2,6 +2,7 @@ import os
 import csv
 import re
 import json
+import django
 import pandas as pd
 import openpyxl
 
@@ -68,7 +69,7 @@ def read_excel(file_name):
     sheet_obj = wb.active
     cell_obj = sheet_obj.cell(row = 2, column = 1)
         
-    #pdb.set_trace()
+    
     print(f'{nt} cell_obj -> {(cell_obj.value)} {nl}')
 
     print(f'{nt} cell_obj -> {type(cell_obj.value)} {nl}')
@@ -77,7 +78,7 @@ def read_excel(file_name):
     headers = []
 
     for col in sheet_obj.iter_cols():
-        # pdb.set_trace()
+      
         headers.append(col[0].value)
 
     row_num = 0
@@ -316,7 +317,7 @@ def post_process_dtypes(dtypes_values, headers, rows, timedelta_mode='auto'):
     for row in rows:
         modded_rows.append({})
 
-    date_pat1= r'(\d{1,2}(/|-|\\)\d{1,2}(/|-|\\)\d{1,2})|(\d{1,4}(/|-|\\)\d{1,2}(/|-|\\)\d{1,2})|(\d{1,2}(/|-|\\)\d{1,2}(/|-|\\)\d{1,4})'
+    date_pat1= r'((\d{1,2}(/|-|\\)\d{1,2}(/|-|\\)\d{4}))|((\d{1,4}(/|-|\\)\d{1,2}(/|-|\\)\d{1,2}))|((\d{1,2}(/|-|\\)\d{1,2}(/|-|\\)\d{1,2}))'
     #11-Mar-99
     date_word_pat1 = r'(\d+(/|-|\\)\w{3,8})(/|-|\\)\d{2,4}'
     #12-Mar
@@ -336,6 +337,9 @@ def post_process_dtypes(dtypes_values, headers, rows, timedelta_mode='auto'):
 
     col_indx = 0
     for col, dtype in dtypes_values.items():
+
+        # if col=='event_date':
+        #     pdb.set_trace()
 
         row_index = 0
         for row in rows:
@@ -362,23 +366,26 @@ def post_process_dtypes(dtypes_values, headers, rows, timedelta_mode='auto'):
                         new_val = None
 
             elif dtype =='date':
-                x2 = re.match(date_word_pat2, str(old_val))
-                x3 = re.match(date_word_pat3, str(old_val))
-                try:
-                    yourdate = dateutil.parser.parse(old_val)
-                    #12-Mar
-                    if x2:
-                        new_val = time(1,  yourdate.month, yourdate.day)
-                    
-                    #March-99
-                    elif x3:
-                        new_val = datetime(yourdate.year, yourdate.month, 1)
-                    
-                    else:
-                        new_val = yourdate
+                if 'datetime.datetime' in str(type(old_val)):
+                    new_val = old_val
+                else:    
+                    x2 = re.match(date_word_pat2, str(old_val))
+                    x3 = re.match(date_word_pat3, str(old_val))
+                    try:
+                        yourdate = dateutil.parser.parse(str(old_val))
+                        #12-Mar
+                        if x2:
+                            new_val = time(1,  yourdate.month, yourdate.day)
+                        
+                        #March-99
+                        elif x3:
+                            new_val = datetime(yourdate.year, yourdate.month, 1)
+                        
+                        else:
+                            new_val = yourdate
 
-                except:
-                    new_val = None
+                    except:
+                        new_val = None
 
 
 
@@ -443,7 +450,10 @@ def post_process_dtypes(dtypes_values, headers, rows, timedelta_mode='auto'):
             row_index += 1
 
         col_indx += 1
-        
+    
+
+   
+    
     return modded_rows, new_dtypes_values
           
 
@@ -524,7 +534,122 @@ def reverse_readable_dtype_value(value):
     return reverse_mapper[value]
 
 
+
+# ...........................
+def serialize_data(rows):
+    # This is a dtype_values agnostic method (serializing is based on individual cells)
+    #  seralize both original rows and modded ones
+    serialized_data = []
+
+    
+    for row in rows:
+        new_row = {}
+        for each_col, each_val in row.items():
+            this_dtype = str(type(each_val))
+            new_val = each_val
+
+            if 'datetime.timedelta' in this_dtype:
+                new_val = {'type': 'datetime.timedelta', 'days': each_val.days, 
+                            'seconds': each_val.seconds}
+
+            elif 'datetime.datetime' in this_dtype:
+                new_val = {'type': 'datetime.datetime', 
+                            'year': each_val.year,
+                            'month': each_val.month, 'day': each_val.day, 
+                            }
+                try:
+                    new_val['hour'] = each_col.hour
+                except Exception as e:
+                    print(e)
+                try:
+                    new_val['minute'] = each_col.minute
+                except Exception as e:
+                    print(e)
+                try:
+                    new_val['second'] = each_col.second
+                except Exception as e:
+                    print(e)
+            
+
+            new_row[each_col] = new_val
+        serialized_data.append(new_row)
+
+    serialized_data_json = json.dumps(serialized_data);
+    
+    return serialized_data_json
+
 # ...................................
+
+
+def deserialize_data(json_row_data):
+    des_nrows=json.loads(json_row_data)
+    new_deserialized_results = []
+
+    for des_row in des_nrows:
+        
+        new_row = {}
+        
+        for col, val in des_row.items():
+            
+            t = str(type(val))
+                        
+            if 'dict' in t:
+                if 'type' in val:
+                    if 'datetime.timedelta' in val['type']:
+                        nval = timedelta(days=val['days'], seconds=val['seconds'])
+                        new_row[col] = nval
+                    elif 'datetime.datetime' in val['type']:
+                        nval = datetime(year=val['year'], month=val['month'],
+                                        day=val['day'])
+                        new_row[col] = nval
+            else:
+                new_row[col] = val
+
+        new_deserialized_results.append(new_row) 
+
+    return new_deserialized_results
+
+
+
+# ..............................................
+
+def determine_allowed_xy(chart_type, modded_rows, headers, current_dtype_values):
+    allowed_x_names = []
+    allowed_y_names = []
+    
+    # 'datetime.timedelta' 
+    if chart_type == 'BAR-CHART':
+        # x can be categorical ('strings')
+        for col, dtype in current_dtype_values.items():
+            if 'string' in dtype or 'int' in dtype or 'datetime.datetime' in dtype:
+                allowed_x_names.append(col)
+            
+    if chart_type in ['LINE-CHART', 'MULTI-LINE-CHART']:
+        for col, dtype in current_dtype_values.items():
+            if 'string' in dtype or 'int' in dtype or 'datetime.datetime' in dtype:
+                allowed_x_names.append(col)
+
+            if 'float' in dtype:
+                allowed_x_names.append(col)
+
+    for col, dtype in current_dtype_values.items():
+        if dtype in ['int', 'float']:
+            allowed_y_names.append(col)
+            
+
+    return allowed_x_names, allowed_y_names
+
+# ................................
+
+def sort_dates(column_to_sort, modded_rows, headers, current_dtype_values):
+    sorted_modded_rows = []
+
+    sorted_modded_rows = sorted(modded_rows, key = lambda data: data[column_to_sort])
+
+
+    return sorted_modded_rows
+
+
 
 # >>>>>>>>> TEST THE PIPELINE <<<<<<<<<<<<<<
 

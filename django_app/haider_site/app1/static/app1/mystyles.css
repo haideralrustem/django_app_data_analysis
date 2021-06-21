@@ -5,6 +5,11 @@
     text-align: center;
 }
 
+html {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
 body {
     position: relative;
     

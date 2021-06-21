@@ -16,10 +16,12 @@
         Use this button to let the page automatically format the data based on 
         the prevalent values in under each column !
         </p>
+        
        </span>
-     
-    
+      
+   
 </div>
+<p class="format-success-text"> All data has been auto-formatted ! </p>
 
 
   <script>
@@ -27,14 +29,21 @@
       $('.format-choices-wrap .tooltiptext')
       
 
+      
       $(function() {
-        $('#detect-table-format-form button').hover(function() {
-            $('.format-choices-wrap .tooltiptext').css('opacity', '1');
-        }, function() {
-            // on mouseout, reset the background colour
-            $('.format-choices-wrap .tooltiptext').css('opacity', '0');
-        });
+        console.log($(window).width())
+        if ($(window).width() > 700) {
+          
+          $('#detect-table-format-form button').hover(function() {
+              $('.format-choices-wrap .tooltiptext').css('opacity', '1');
+          }, function() {
+              // on mouseout, reset the background colour
+              $('.format-choices-wrap .tooltiptext').css('opacity', '0');
+          });
+        }
        });
+      
+      
 
 
 
@@ -95,15 +104,17 @@
                   target_cells[row_num].style['background-color'] = '#81ecec';
                   setTimeout(() => {
                     target_cells[row_num].style['background-color'] = 'white';
-                  }, 500);
+                  }, 1000);
                 }
 
 
             }
 
-            
-
-            
+            $('.format-success-text').css("opacity", "1");
+            setTimeout(function(){
+              $('.format-success-text').css("opacity", "0");
+            }, 5000);
+                
             // $('span.update-success-msg').css("opacity", "1");
 
 
@@ -111,9 +122,6 @@
             //     $('span.update-success-msg').css("opacity", "0");
             // }, 3000);
             // console.log('\n >> : \n', response['status']);
-
-           
-            
             
         },
 

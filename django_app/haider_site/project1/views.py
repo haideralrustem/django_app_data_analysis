@@ -1,5 +1,6 @@
 
-from django.shortcuts import render
+from django.shortcuts import redirect, render
+import pandas as pd
 from .forms import UploadedDataFormHandler, GenericValueForm, GenericMultichoiceForm
 from django.http import JsonResponse
 from django.core import serializers
@@ -10,9 +11,11 @@ import my_functions
 
 from django.conf import settings
 import pdb
+import json
 
 import os
-from datetime import datetime
+
+from datetime import datetime, time, timedelta
 import time
 import string
 import csv
@@ -22,6 +25,8 @@ import csv
 
 # persistent vars
 persistent_data_state = {}
+
+prev_file_name = {'prev_file': ''}
 select_options =['Decimal number', 'Whole number', 'Text', 'Date', 'Time', 'Time period']
 
 # AJAX Reqs
@@ -76,7 +81,7 @@ def auto_detect_data(request):
     if request.method == 'POST' and request.is_ajax():
         detect_table_format = GenericValueForm(request.POST)
 
-        if detect_table_format.is_valid() and len(persistent_data_state) > 0:
+        if detect_table_format.is_valid() and len(persistent_data_state) > 2:
             text_key = detect_table_format.cleaned_data['text_key']
             text_value = detect_table_format.cleaned_data['text_value']
 
@@ -125,6 +130,7 @@ def auto_detect_data(request):
                                     }, status=400)
 # .........................
 
+# select_chart_type_form
 def change_col_dtype(request):
     print('\n\n\n change_col_dtype @  views.py has been hit \n\n\n')
     if request.method == 'POST' and request.is_ajax():
@@ -183,29 +189,101 @@ def change_col_dtype(request):
         else:
             return JsonResponse({'msg': 'error form was not valid', 
                                 }, status=400)
+# .....................................
+
+
+
+def select_chart_type(request):
+    
+    if request.method == 'POST' and request.is_ajax():
+        
+        # select_chart_type_form
+        select_chart_type_form = GenericValueForm(request.POST)
+
+        u_form = select_chart_type_form
+        
+        if u_form.is_valid():
+            print('\n\n select_chart_type_form \n\n', u_form.cleaned_data)
+            text_key = u_form.cleaned_data['text_key']
+            text_value = u_form.cleaned_data['text_value']
+            chart_type = text_value
+
+            # retrieve the original data
+            rows = persistent_data_state['rows']
+            headers = persistent_data_state['headers']
+            original_dtypes_values = persistent_data_state['original_dtypes_values']
+            str_rows = persistent_data_state['str_rows']
+            
+
+            # current rows (which could be modded) and dtypes
+            current_modded_rows = persistent_data_state['modded_rows']
+            current_dtypes_values = persistent_data_state['new_dtypes_values']
+
+            current_dtypes_values_readable = persistent_data_state['new_dtypes_values_readable'] 
+            
+            # put in sessions
+            serialized_rows = my_functions.serialize_data(rows)
+            serialized_modded_rows = my_functions.serialize_data(current_modded_rows)
+
+            
+            request.session['serialized_original_rows'] = serialized_rows
+            request.session['serialized_modded_rows'] = serialized_modded_rows
+            request.session['original_dtypes_values'] = original_dtypes_values
+            request.session['new_dtypes_values'] = current_dtypes_values
+            request.session['headers'] = headers
+            request.session['chrat_type'] = chart_type
+
+            
+            allowed_x_names, allowed_y_names = my_functions.determine_allowed_xy(
+                                                chart_type, current_modded_rows, 
+                                                headers, current_dtypes_values)
+
+        
+            return JsonResponse({                                    
+                    'msg': 'select CHART type posted successfully', 
+                                        'text_key': text_key,
+                                        'chart_type': chart_type,
+                                        'allowed_x_columns': json.dumps(allowed_x_names),
+                                        'allowed_y_columns': json.dumps(allowed_y_names),
+                                       
+                                        }, status=200) 
+        else:
+            return JsonResponse({'msg': 'error form was not valid', 
+                                }, status=400)
+
+
+# .............................
+
 
 
 
 # Create your views here.
 
 def data_file_upload(request):
+       
     
     if request.method == 'POST' and not request.is_ajax():  # file upload 
-        # pdb.set_trace()
+        
+
         y_names = []
         file_path = os.path.join(settings.BASE_DIR, '')
         rows=[]
         file_name = 'app1\\static\\csv_files\\data2.csv'
-
+        show_modal = 'false'
+        
         if 'uploaded_file' in request.FILES:
             uploaded_file = request.FILES['uploaded_file']
+           
+
         else:
             return render(request, 'project1/presets_config.html')
         # file_path = os.path.join(settings.BASE_DIR, file_name)
 
+
         # pipeline to open csv, save the data to a TabularDataSets model
+        
         dataset_name = "dataset_"+ str(time.time())
-                        
+                       
         headers, rows = my_functions.prepare_data(file_name=uploaded_file, dataset_name=dataset_name)
         original_dtypes_values = my_functions.detect_datatypes(headers, rows)
         original_dtypes_values_readable = my_functions.convert_to_readable_dtype_value(
@@ -223,8 +301,7 @@ def data_file_upload(request):
        
         new_dtypes_values_readable = my_functions.convert_to_readable_dtype_value(new_dtypes_values)
         
-                                                          
-        
+               
         # user presented with a choice
         # modded_rows2, new_dtypes_values2 = manual_change_data_type(original_dtypes_values, {'date': 'datetime.timedelta minutes'}
         #                         , headers, rows)       
@@ -239,9 +316,14 @@ def data_file_upload(request):
             
         # json_string_dict = my_functions.convert_rows_to_json(column_names=column_names, 
         #                                         list_of_rows=new_rows)
+        
         uploaded_data_form_handler = UploadedDataFormHandler(initial={'accept_value': 'false'})
+        
         change_dtype_form = GenericValueForm()
         detect_table_format = GenericValueForm()
+        select_chart_type_form =  GenericValueForm()
+        select_axis_form =  GenericValueForm()
+
 
         choices = [ch for ch in original_dtypes_values_readable.keys()]
         change_dtype_form_multi = GenericMultichoiceForm(custom_choices=choices)
@@ -258,8 +340,11 @@ def data_file_upload(request):
                     'uploaded_data_form_handler': uploaded_data_form_handler,
                     'detect_table_format': detect_table_format,
                     'change_dtype_form': change_dtype_form,
+                    'select_chart_type_form': select_chart_type_form,
                     'change_dtype_form_multi': change_dtype_form_multi,
-                    'show_modal': 'true'
+                    'select_axis_form': select_axis_form,
+                    'show_modal': show_modal,
+                    
                     }
 
         persistent_data_state['rows'] = rows
@@ -271,14 +356,31 @@ def data_file_upload(request):
         persistent_data_state['original_modded_rows'] = modded_rows
         persistent_data_state['new_dtypes_values'] = new_dtypes_values
         persistent_data_state['new_dtypes_values_readable'] = new_dtypes_values_readable
-        
 
+
+        # put in sessions
+        serialized_rows = my_functions.serialize_data(rows)
+        serialized_modded_rows = my_functions.serialize_data(modded_rows)
+
+        # you retrieve this from other view
+        desrialized_rows = my_functions.deserialize_data(serialized_rows)
+        desrialized_modded_rows = my_functions.deserialize_data(serialized_modded_rows)
+
+        request.session['serialized_original_rows'] = serialized_rows
+        request.session['original_dtypes_values'] = original_dtypes_values
+        request.session['headers'] = headers
+        request.session['new_dtypes_values'] = new_dtypes_values
+
+       
         return render(request, 'project1/presets_config.html', context)
 
     else:
         change_dtype_form = GenericValueForm()
-        context = {'uploaded_file': 'no file uploaded!, ERROR',
-                    'change_dtype_form': change_dtype_form}
+        
+
+        context = {'uploaded_file': 'no file uploaded yet',
+                    'change_dtype_form': change_dtype_form,
+                  }
         return render(request, 'project1/presets_config.html', context)
 
 
