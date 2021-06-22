@@ -17,5 +17,7 @@ urlpatterns = [
     path('/ajax/post/change_col_dtype', views.change_col_dtype, name="change_col_dtype"),
     # 
     path('/ajax/post/select_chart_type', views.select_chart_type, name="select_chart_type"),
+    
+    path('/ajax/post/generate_plot', views.generate_plot, name="generate_plot"),
   
 ]

@@ -643,13 +643,32 @@ def determine_allowed_xy(chart_type, modded_rows, headers, current_dtype_values)
 
 def sort_dates(column_to_sort, modded_rows, headers, current_dtype_values):
     sorted_modded_rows = []
-
+    
     sorted_modded_rows = sorted(modded_rows, key = lambda data: data[column_to_sort])
 
 
     return sorted_modded_rows
 
+# ...............
 
+def stringify_dates(modded_rows, current_dtype_values):
+    new_modded_rows = []
+    for mr in modded_rows:
+        new_mr = {}
+
+        for col, dtype in current_dtype_values.items():
+            if dtype == 'date':
+                new_val = mr[col]
+                if new_val:
+                    new_val = mr[col].strftime("%m-%d-%Y")
+                new_mr[col] = str(new_val)
+            else:
+                new_mr[col] = mr[col]
+
+        new_modded_rows.append(new_mr)        
+
+
+    return new_modded_rows
 
 # >>>>>>>>> TEST THE PIPELINE <<<<<<<<<<<<<<
 

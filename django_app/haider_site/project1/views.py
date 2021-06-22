@@ -231,7 +231,7 @@ def select_chart_type(request):
             request.session['original_dtypes_values'] = original_dtypes_values
             request.session['new_dtypes_values'] = current_dtypes_values
             request.session['headers'] = headers
-            request.session['chrat_type'] = chart_type
+            request.session['chart_type'] = chart_type
 
             
             allowed_x_names, allowed_y_names = my_functions.determine_allowed_xy(
@@ -251,6 +251,59 @@ def select_chart_type(request):
             return JsonResponse({'msg': 'error form was not valid', 
                                 }, status=400)
 
+
+# .............................................
+
+
+
+def generate_plot(request):
+
+    if request.method == 'POST' and request.is_ajax():
+        
+        # select_chart_type_form
+        select_axis_form = GenericValueForm(request.POST)
+
+        u_form = select_axis_form
+        
+        if u_form.is_valid():
+            print('\n\n select_axis_form \n\n', u_form.cleaned_data)
+            text_key = u_form.cleaned_data['text_key']
+            text_value = u_form.cleaned_data['text_value']
+
+            x_name = text_key
+            y_name = text_value
+
+
+            # retrieve the original data
+            rows = persistent_data_state['rows']
+            headers = persistent_data_state['headers']
+            original_dtypes_values = persistent_data_state['original_dtypes_values']
+            str_rows = persistent_data_state['str_rows']
+            
+
+            # current rows (which could be modded) and dtypes
+            current_modded_rows = persistent_data_state['modded_rows']
+            current_dtypes_values = persistent_data_state['new_dtypes_values']
+
+            current_dtypes_values_readable = persistent_data_state['new_dtypes_values_readable'] 
+            
+
+            request.session['x_name'] = x_name
+            request.session['y_name'] = y_name
+
+                        
+            return JsonResponse({                                    
+                    'msg': 'select X_NAME and Y_NAME posted successfully', 
+                                        'x_name': text_key,
+                                        'y_name': text_value,
+                                        'url_redirect': '/project1/viz'
+                                        # 'allowed_x_columns': json.dumps(allowed_x_names),
+                                        # 'allowed_y_columns': json.dumps(allowed_y_names),
+                                       
+                                        }, status=200) 
+        else:
+            return JsonResponse({'msg': 'error form was not valid', 
+                                }, status=400)
 
 # .............................
 
@@ -296,6 +349,7 @@ def data_file_upload(request):
                                                             original_dtypes_values, 
                                                             headers, rows)
         
+        
         str_rows = my_functions.stringfy_data(original_dtypes_values, headers, rows)
         str_modded_rows = my_functions.stringfy_data(original_dtypes_values, headers, modded_rows)
        
@@ -323,7 +377,7 @@ def data_file_upload(request):
         detect_table_format = GenericValueForm()
         select_chart_type_form =  GenericValueForm()
         select_axis_form =  GenericValueForm()
-
+        
 
         choices = [ch for ch in original_dtypes_values_readable.keys()]
         change_dtype_form_multi = GenericMultichoiceForm(custom_choices=choices)
@@ -388,19 +442,44 @@ def data_file_upload(request):
 
 
 def main_page_viz(request):  
-      
+    deliver_modded_rows = []
+
     file_path = os.path.join(settings.BASE_DIR, '')
     
+    # retrieval 
+    headers = persistent_data_state['headers']
+    original_dtypes_values = persistent_data_state['original_dtypes_values']
+    str_rows = persistent_data_state['str_rows']
+    
+    # current rows (which could be modded) and dtypes
+    current_modded_rows = persistent_data_state['modded_rows']
+    current_dtypes_values = persistent_data_state['new_dtypes_values']
+    chart_type = request.session['chart_type']
+    x_name = request.session['x_name']
+    #  deserialize y_name
+    y_name = request.session['y_name']
 
-    recieved_data = [
-        {'date': 2006, 'close':40, 'loss': 70 ,'profit': 71},
-        {'date': 2008 , 'close': 45, 'loss': 33 ,'profit': 31},
-        {'date': 2010, 'close': 48, 'loss': 22 ,'profit': 5},
-        {'date': 2012, 'close': 51, 'loss': 29 ,'profit': 30},
-        {'date': 2014, 'close': 53, 'loss': 39 ,'profit': 8},
-        {'date': 2016, 'close': 57, 'loss': 49 ,'profit': 10},
-        {'date': 2017, 'close': 62, 'loss': 51 ,'profit': 40}
-    ]
+    # if chart_type == 'MULTI-LINE-CHART':
+    #     y_name = json.loads(y_name)
+
+
+    deliver_modded_rows = current_modded_rows.copy()
+
+    for col, dtype in  current_dtypes_values.items():
+            if dtype=='date':
+                sorted_modded_rows = my_functions.sort_dates(
+                                                col, current_modded_rows, headers, 
+                                                current_dtypes_values)
+        
+                str_date_rows = my_functions.stringify_dates(sorted_modded_rows, 
+                                                            current_dtypes_values)
+                deliver_modded_rows = str_date_rows
+    
+
+    deliver_modded_rows = json.dumps(deliver_modded_rows)
+
+
+    recieved_data = []
 
 
     context = {
@@ -412,10 +491,13 @@ def main_page_viz(request):
             'json_string_dict': ''
 
         },
-        'recieved_data': recieved_data,
-        
-        
+        'recieved_data': deliver_modded_rows,
+        'chart_type': chart_type,
+        'x_name': x_name,
+        'y_name': y_name        
     }
+
+    
 
     # return render(request, 'project1/main_page.html', context)
     return render(request, 'project1/main_page.html', context)

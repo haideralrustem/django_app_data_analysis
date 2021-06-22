@@ -736,6 +736,14 @@ span.close:hover {
   font-weight: bold;
 }
 
+.checkbox-choice {
+  display: flex;
+  align-items: center;
+}
+
+
+
+
 /* ................ VIZ css styles ............ */
 
 #svg-container {

@@ -1,5 +1,6 @@
 {% load static %}
 <div class='plot-selector-container'>
+    <div class='axis-panel-title'>Select a Plot from Below:</div>
 
     <div class="plot-panel-flexible shadow-light">
 
@@ -79,7 +80,10 @@
 
 
             </div>
-            <button id="vizualize" class="btn btn-primary axis-generate-btn axis-choice-element">GENERATE PLOT</button>
+            <button id="vizualize" 
+                class="btn btn-primary axis-generate-btn axis-choice-element"
+                onclick="generate_plot_fire_ajax()">
+                GENERATE PLOT</button>
         </div>
 
     </div>
@@ -99,8 +103,8 @@
     {% csrf_token %}
     {{ select_axis_form.text_key }}
     {{ select_axis_form.text_value }}
-    <button class="axis-form-button hidden-submit-btn" type="submit" 
-            onclick="fire_ajax_select_axis(this)"></button>
+    <button class="axis-form-button hidden-submit-btn axis-choice-element" type="submit" 
+            onclick="stop_propag(this)"></button>
 </form>
 
 </div>
@@ -163,20 +167,13 @@
 
 <!-- button triggers -->
 <script>
+    var multi_line_selected = false;
+
     function stop_propag(clicked) {
         event.stopPropagation();
    }
 
-   function fire_ajax_select_axis(clicked){
-        event.stopPropagation();
-        // retrieve chosen axes
-        //let y_name = $().val();
-        //let x_name = $().val();
-        $('#select_axis_form #id_text_value').val('y_name');
-        $('#select_axis_form #id_text_key').val('x_name');
-
-        
-   }
+   
 
     function fire_ajax_select_chart(clicked_elem) {
         event.stopPropagation();
@@ -223,9 +220,50 @@
         $('#select_chart_type_form #id_text_value').val(class_id);
         $('#select_chart_type_form #id_text_key').val('Chart type');
 
-        console.log($('#select_chart_type_form #id_text_value').val());
-        console.log(btn_to_submit);
+        if (class_id === "MULTI-LINE-CHART") {
+            multi_line_selected = true;
+        }
+        else {
+            multi_line_selected = false;
+        }
+
+        
+
         btn_to_submit.click();
+    }
+
+
+
+    function generate_plot_fire_ajax() {
+        let x_val = $(".x-card form input[name='optradio']:checked")[0]
+
+        let y_val = null
+        let y_values = []
+
+        let x_name = ''
+        x_name = x_val.classList[0];
+
+        let y_name = ''
+
+        if (multi_line_selected===true){
+                $('.checkbox-choice input:checked').each(function() {
+                    y_values.push($(this).attr('name'));
+                });
+                y_name = JSON.stringify(y_values);
+            }
+        else {
+            y_val = $(".y-card form input[name='optradio']:checked")[0]
+            y_name = y_val.classList[0];
+            // y_name = JSON.stringify(y_name);
+            }     
+        
+        
+        // set values
+        $('#select_axis_form #id_text_value').val(y_name);
+        $('#select_axis_form #id_text_key').val(x_name);
+
+        // fire button to submit
+        $('#select_axis_form .axis-form-button').click();
     }
 
 // de-clicks
@@ -378,12 +416,23 @@ $(document).on('click','body *',function(event){
                 else {
                     checked = '';
                 }
-                let elm = `<label class="axis-choice-element">
+
+                let elm = '';
+                if (multi_line_selected===true){
+                    elm=`<div class="${y_col}-checkbox checkbox-choice axis-choice-element">
+                        <input class="${y_col} axis-choice-element"
+                        type="checkbox" id="${y_col}" name="${y_col}" value="${y_col}">
+                         <label class="axis-choice-element" for="${y_col}"> ${y_col} </label>
+                         </div>`
+                }
+                else {
+                    elm = `<label class="axis-choice-element">
                               <input class="${y_col} axis-choice-element" type="radio" name="optradio" ${checked}>
                               ${y_col}</input>
                             </label>`
+                }
+                                
                 $('.y-card form').append(elm);
-
                 ind ++;
             });
 
@@ -399,4 +448,36 @@ $(document).on('click','body *',function(event){
         }
       })
   });
+
+
+
+
+$("#select_axis_form").submit(function (e) {
+// preventing from page reload and default actions
+e.preventDefault();
+// serialize the data for sending the form data.
+var serializedData = $(this).serialize();
+// make POST ajax call
+$.ajax({
+    type: 'POST',
+    url: "{% url 'project1:generate_plot' %}",
+    data: serializedData,
+    success: function (response) { 
+        // go to main_viz
+        console.log('\n now we go to the Main Viz');
+        console.log('\n response from generate_plot: ', response);
+        let url_redirect = response['url_redirect'];
+        if (url_redirect) {
+            window.location.href = url_redirect;
+        }
+    },
+    error: function (response) {
+        // alert the error if any error occured
+        console.log('error occured! :\n', response);
+        alert(response['msg']);
+    }
+    })
+});
+
+
 </script>
