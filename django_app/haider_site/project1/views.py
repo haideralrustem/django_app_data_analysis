@@ -4,6 +4,8 @@ import pandas as pd
 from .forms import UploadedDataFormHandler, GenericValueForm, GenericMultichoiceForm
 from django.http import JsonResponse
 from django.core import serializers
+
+
 # import django.contrib.sessions
 
 # me
@@ -447,21 +449,20 @@ def main_page_viz(request):
     file_path = os.path.join(settings.BASE_DIR, '')
     
     # retrieval 
-    headers = persistent_data_state['headers']
-    original_dtypes_values = persistent_data_state['original_dtypes_values']
-    str_rows = persistent_data_state['str_rows']
     
-    # current rows (which could be modded) and dtypes
-    current_modded_rows = persistent_data_state['modded_rows']
-    current_dtypes_values = persistent_data_state['new_dtypes_values']
+    serialized_original_rows = request.session['serialized_original_rows']
+    serialized_modded_rows = request.session['serialized_modded_rows']
+    original_dtypes_values= request.session['original_dtypes_values']
+    current_dtypes_values = request.session['new_dtypes_values']
+    headers= request.session['headers']
     chart_type = request.session['chart_type']
     x_name = request.session['x_name']
-    #  deserialize y_name
-    y_name = request.session['y_name']
+    y_name = request.session['y_name'] #  deserialize y_name
 
     # if chart_type == 'MULTI-LINE-CHART':
-    #     y_name = json.loads(y_name)
+    #     y_name = json.dumps(y_name)
 
+    current_modded_rows = my_functions.deserialize_data(serialized_modded_rows)
 
     deliver_modded_rows = current_modded_rows.copy()
 
@@ -476,12 +477,14 @@ def main_page_viz(request):
                 deliver_modded_rows = str_date_rows
     
 
-    deliver_modded_rows = json.dumps(deliver_modded_rows)
+    json_recieved_data = json.dumps(deliver_modded_rows)
 
+    # json_recieved_data = my_functions.stringfy_data2(
+    #                             current_dtypes_values, 
+    #                             headers, 
+    #                             deliver_modded_rows)
 
-    recieved_data = []
-
-
+   
     context = {
         'data_array': [1, 2, 3, 4 , 5],
        
@@ -491,7 +494,8 @@ def main_page_viz(request):
             'json_string_dict': ''
 
         },
-        'recieved_data': deliver_modded_rows,
+        'deliver_modded_rows': deliver_modded_rows,
+        'json_recieved_data': json_recieved_data,
         'chart_type': chart_type,
         'x_name': x_name,
         'y_name': y_name        
@@ -503,6 +507,7 @@ def main_page_viz(request):
     return render(request, 'project1/main_page.html', context)
 
 
+# ...............
 
 def testing_page(request):
         

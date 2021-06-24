@@ -26,13 +26,15 @@
 
     <p>{{ file_path }}</p>
 
-    
-    <p>{{recieved_data}}</p>
+    {% for row in deliver_modded_rows %}
+    <p>{{ row }}</p>
+    {% endfor %}
+
     <p>{{chart_type}}</p>
     <p>{{x_name}}</p>
     <p>{{y_name}}</p>
 
-
+    <p>{{json_recieved_data}}</p>
 
     <div id="filtering">
         <button id="update-button">
@@ -44,19 +46,7 @@
     
 
     <div class="svg-wrap">
-        <div id='svg-container'></div>
-
-        {% for obj in recieved_data %}    
-        <div class="checkbox-wrapper">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                <label class="form-check-label" for="flexCheckDefault">
-                Default checkbox
-                </label>
-            </div>
-        </div>
-        {% endfor %}
-          
+        <div id='svg-container'></div>          
     </div>
 
 
@@ -75,22 +65,28 @@
         <div id="slider-max" class="slider"></div> -->
     </div>
     
-    
-    
-
-    <!-- Create a div where the graph will take place -->
-    <div id="chart"></div>
-    
-   
+       
   
 </div>
 
-
+<p id='hello-data'></p>
+<!-- <script id="hello-data" type="application/json">
+    deliver_modded_rows
+</script> -->
 
 <script>
+    
     // var received_data = '{{ debug_vars.json_string_dict|safe }}';
-    // var parsed_data = JSON.parse(received_data);
-    //console.log(data);
+    let parsed_data = null;
+   
+    parsed_data = JSON.parse('{{json_recieved_data|safe}}')
+    
+    console.log('parsed>>>>>>', parsed_data)
+           
+    
+    var chart_type = '{{chart_type|safe}}'
+    var x_name = '{{x_name|safe}}'
+    var y_name = '{{y_name|safe}}'
     
     var file_path = ',,';
 

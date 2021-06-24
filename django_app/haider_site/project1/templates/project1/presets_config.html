@@ -23,7 +23,8 @@
 <div class="loading-spinner"></div>
 
 <div class="project-page-wrapper">
-  
+    <div class="file-uploader-title"><p>Excel File Upload:</p></div>
+
     <div class="file-uploader">
         <form id="data-file-uploader" method="post" enctype="multipart/form-data">
             {% csrf_token %}
@@ -32,15 +33,8 @@
             <input
              class="blue-button"  type="submit" name="file-upload-submit" value="Upload File" />
         </form>
-        <div class="file-name-indicator">
-          <p>
-          {% if uploaded_file %}
-          {{ uploaded_file }}
-          {% endif %}
-          
-          </p>
-          
-        </div>
+
+        
 
         <span class="tooltiptext">
           <p>
@@ -50,6 +44,17 @@
          </span>
 
     </div>
+
+    {% if uploaded_file %}
+    <div class="file-name-indicator">
+      <p>
+       Currently viewing : {{ uploaded_file }}     
+      </p>
+    </div>
+    {% endif %}
+
+
+
     <p> Supported formats: xlsx/ xls / csv / txt</p>
     
     {% if uploaded_file == 'no file uploaded yet' %}
@@ -197,21 +202,21 @@
             </div>
             
         </div>
-      <hr class='shadow-divider'>
+      <hr class='shadow-divider' style="width: 73vw; margin-left: 1%;">
     </div>
 
 
     
 
     <script>
-        
+        var window_media_query_offset = 17;
         document.querySelector('p.flashes').style['background-color'] = '#55efc4';
         document.querySelector('p.flashes').style['font-style'] = 'italic';
         document.querySelector('p.flashes').style['font-weight'] = 'bold';
 
               setTimeout(()=>{
                 document.querySelector('p.flashes').style['background-color'] = 'white';
-                document.querySelector('p.flashes').style['font-style'] = 'initial';
+                // document.querySelector('p.flashes').style['font-style'] = 'initial';
                 
               }, 3000);
     
@@ -225,10 +230,10 @@
     <!-- ------------- -->
     
     {% if  uploaded_file and rows%}
-    <div  class="top-shadowed-border format-choices-outwrap">
+    <div  class=" format-choices-outwrap">
       {% include 'project1/format_choices.html' %}
     </div> 
-    <hr class='shadow-divider'>
+    <hr class='shadow-divider' style="width: 73vw; margin-left: 1%;">
 
     <div class="plot-selector-wrap">
       {% include 'project1/plot-selector.html' %}
@@ -258,16 +263,26 @@
 
     
 
-    <a href="{% url 'project1:main_page' %}" class="btn btn-primary">go to testing</a>
+    <!-- <a href="{% url 'project1:main_page' %}" class="btn btn-primary">go to testing</a> -->
     
 </div>
 
 
 
 
+
 <script>
+    
     window.addEventListener('resize', function(event) {
       $('#data-preview-table-onpage').width($('.dtype-change-row').width());
+      if(($(window).width() + window_media_query_offset < 768)) {
+                setTimeout(()=>{
+                  $('.selector-associated-panel').height("0px");
+                }, 0);
+           }
+      else {
+        $('.selector-associated-panel').height("auto");
+      }
     }, true); 
     // 
 
@@ -283,6 +298,8 @@
       // Do something
       e.stopPropagation();
     });
+
+
     
 </script>
 
@@ -363,6 +380,19 @@
   }
   
 </script>
+
+
+
+{% if uploaded_file %}
+<script>
+  $(document).ready(function (){
+            $('html, body').animate({
+                scrollTop: $(".help-text-title").offset().top
+            }, 2000);
+    });
+</script>
+{% endif %}
+
 
 
 <script>
@@ -465,6 +495,8 @@
     $('.loading-spinner').hide();
     $('.table-outer-wrap').css('opacity', '1');
   });
+
+ 
 
   // $(document)
   // .ajaxStart(function () {

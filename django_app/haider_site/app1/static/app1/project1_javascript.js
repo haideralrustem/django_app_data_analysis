@@ -1,5 +1,33 @@
 console.log('this is project1 js')
+var window_media_query_offset = 17;
 // var from_python_data = data;
+let y_names = []
+
+if(parsed_data) {
+    console.log(parsed_data)
+    
+    // console.log(`\nready_data:\n ${ready_data} \t ${typeof(ready_data)}`);
+   
+    console.log(`${chart_type}`);
+    console.log(`${x_name}`);
+    y_name = JSON.parse(y_name);
+    console.log(`${y_name}\t ${typeof(y_name)}`);
+
+    if (typeof(y_name) === 'object') {
+        y_name.forEach(e => {
+            if (e === null){
+                y_names.push(e);
+            }
+            else {
+                y_names.push(e);
+            }
+                        
+            
+        })
+    }
+
+    
+}
 
 
 
@@ -294,8 +322,11 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
         //line
         var valueline = d3.line()
 
-            .x( function(d) { return xScale(d[x_name]); })
-            .y( function(d) { return yScale(d[y_name]); });
+            .x( function(d) { return  xScale(d[x_name])})
+            .defined(function(d) { return d[x_name]})
+            .y( function(d) { return yScale(d[y_name])})
+            .defined(function(d){ return d[y_name]})
+            ;
             
             var line= svg.append("path")
             .datum(data)
@@ -327,20 +358,41 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
         
         if( data_circles === true) {
             var circles = svg.selectAll("myCircles")
-            .data(data)
+            .data(
+                data.filter(function(d) { return (d[x_name] != null && d[y_name] != null) })
+                )
             .enter()
             .append("circle")
                 .attr("class", "line-circles"+ " line-circles" + String(i) +
                         " line-element"+ String(i))
                 .attr("stroke", "none")
-                .attr("cx", function(d) { return xScale(d[x_name]) })
-                .attr("cy", function(d) { return yScale(d[y_name]) })
+                .attr("cx", function(d) { 
+                    if (d[x_name] !== null){return xScale(d[x_name])}
+                    else {
+                        return 1500
+                    }
+                     
+                })
+                
+                .attr("cy", function(d) { 
+                    if (d[y_name] !== null) { return yScale(d[y_name])}
+                     else {
+                         return 1500
+                     }
+                })
                 .attr("r", circle_radius)
                 .style("fill", current_color)
                 .style("opacity", 0)
                 .transition()     // adds animation
                 .duration(500)
-                .style("opacity", 0.3);;
+                .style("opacity", 0.3);
+
+                circles.filter(function(d) { 
+                    return d[x_name] === null; 
+                }).remove();
+                circles.filter(function(d) { 
+                    return d[y_name] === null; 
+                }).remove();
         }
 
     
@@ -405,7 +457,7 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
             
             let spawn_circle_data = {x_name: x_value, y_name: y_value}
            
-            svg.selectAll("myCirclesSpontanous")
+            let spawn_circs = svg.selectAll("myCirclesSpontanous")
             .data([spawn_circle_data])
             .enter().append("circle")
             .attr("class", "line-circles"+ " line-circles" + String(iteration_num) +
@@ -452,7 +504,7 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
 
             
             // labeling
-            svg.selectAll('text.spawn'+ String(i))
+            let text_spawn = svg.selectAll('text.spawn'+ String(i))
             .data([spawn_circle_data])
             .enter()
             .append('text')
@@ -702,7 +754,9 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
             
             .attr("d", d3.line()
               .x(function(d) { return xScale(d.x_value) })
+              .defined(function(d){return d.x_value})
               .y(function(d) { return yScale(d.y_value) })
+              .defined(function(d){ return d.y_value })
             )
             .style("opacity", 0.4)
             .transition()     // adds animation
@@ -721,7 +775,7 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
             .exit().remove();
             
 
-            svg.selectAll("myCircles")
+            let my_circles= svg.selectAll("myCircles")
             
             .data(dataFilter)
             .enter().append("circle")
@@ -739,6 +793,13 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
                 .transition()     // adds animation
                 .duration(500)
                 .style("opacity", 1);
+
+                my_circles.filter(function(d) { 
+                    return d.x_value === null; 
+                }).remove();
+                my_circles.filter(function(d) { 
+                    return d.y_value === null; 
+                }).remove();
                
                 
             if ( line_mouseover_animation === true ) {
@@ -781,7 +842,7 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
     }
 
 
-
+    // deprecated
     if (filtering) {
         // testing case
         d3.select("#update-button").on("click", function(d) {
@@ -1084,7 +1145,7 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
 
             let y_name = y_names[i];
                     
-            svg.selectAll('text.sec text.sec'+String(i))
+            let labels = svg.selectAll('text.sec text.sec'+String(i))
                     .data(data)
                     .enter()
                     .append('text')
@@ -1093,13 +1154,30 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
                         return 'sec data_point_'+ ind + '_' + i
                     })
                     
-                    .attr("x", function(d) {return xScale(d[x_name])-10 } )
-                    .attr("y", function(d) { return yScale(d[y_name])-15  } )
+                    .attr("x", function(d) { 
+                        if(d[x_name] !== null){ return xScale(d[x_name])-10 }
+                        
+                        
+                    } )
+                    .attr("y", function(d) { 
+                        if(d[y_name] !== null){
+                            return yScale(d[y_name])-15  
+                        }
+                       
+                    } )
                     
                     .text(function(d) {   
                             return ""
                     } )
+                    
                     ;
+                    labels.filter(function(d) { 
+                        return d[x_name] === null; 
+                    }).remove();
+                    labels.filter(function(d) { 
+                        return d[y_name] === null; 
+                    }).remove();
+
         } // end for
 }
 
@@ -1118,6 +1196,7 @@ function line_graph(data=[], x_title='x_title', y_title='y_title',
 
                 d3.selectAll("text.spawn")
                 .text("");
+
             }
            
 
@@ -2677,60 +2756,77 @@ function onMouseOut(d, i) {
 
 // ............................
 
+// nulls are easier to exclude in d3 js
+function replace_NaN_with_null(data){
+
+    let keys =[];
+    for (var key in data[0]) {
+        if (data[0].hasOwnProperty(key)) {
+            
+            keys.push(key);
+        }
+    }
+    let remapped = data.map(function(d) {
+        keys.forEach(key => {
+            if(isNaN(d[key])) {
+                d[key] = null;
+            }
+        });
+
+        return d
+    });
+    return remapped
+}
+
+
 var data1 = [
     {'date': 2006, 'close':40, 'loss': 70 ,'profit': 71},
     {'date': 2008 , 'close': 45, 'loss': 33 ,'profit': 31},
-    {'date': 2010, 'close': 48, 'loss': 22 ,'profit': 5},
+    {'date': 2010, 'close': NaN, 'loss': 22 ,'profit': 5},
     {'date': 2012, 'close': 51, 'loss': 29 ,'profit': 30},
     {'date': 2014, 'close': 53, 'loss': 39 ,'profit': 8},
-    {'date': 2016, 'close': 57, 'loss': 49 ,'profit': 10},
+    {'date': 2015, 'close': 57, 'loss': 49 ,'profit': 10},
     {'date': 2017, 'close': 62, 'loss': 51 ,'profit': 40}
 ]
 
+data1 = replace_NaN_with_null(data1)
 
-// const keys = Object.keys(parsed_data)
+console.log('rempa -> ', data1);
 
-// var i = 0;
-// for (var key in parsed_data) {
-//     if (parsed_data.hasOwnProperty(key)) {
-//         console.log(key, ' ---> ', parsed_data[key])
-//         console.log(i)
-//         i ++;
-//     }
-// }
 
-// const d1 = Object.values(parsed_data);
-// console.log(d1);
+
+
+
 
 //testing(data=data1);
 let svg_container = document.querySelector('#svg-container');
 
 if (svg_container) {
-    
-// line_graph(data=data1, x_title='xaxis', y_title='ytitle', graph_title='TITLEST',
-//             y_ticks=10, data_circles=true, line_mouseover_animation=true,
+    data1 = replace_NaN_with_null(data1)
+    line_graph(data=data1, x_title='xaxis', y_title='ytitle', graph_title='TITLEST',
+            y_ticks=10, data_circles=true, line_mouseover_animation=true,
 
-//             line_mousein_tuple=[{key: "stroke", value: 'orange'}], 
-//             line_mouseout_tuple=[{key: "stroke", value: 'rgb(70, 130, 180)'}],
-//             num_of_lines=1,
-//             x_name='date',
-//             y_names=['close', 'loss', 'profit'],
-//             x_axis_min=2005,
-//             x_axis_max=2018,
-//             y_axis_min=null,
-//             y_axis_max=100,
-//             line_stroke_width='4px',
-//             dtypes= {'date': 'int', 'close': 'int', 'loss': 'int', 'profit': 'int'},
-//             x_axis_added_length = 30,
-//             y_axis_added_length = 0,
-//             width=400,
-//             height=400,
-//             highlighting=true,
-//             filtering=true,
-//             highligh_style=[{key: "fill", value: "red"}],
-//             circle_radius=5 
+            line_mousein_tuple=[{key: "stroke", value: 'orange'}], 
+            line_mouseout_tuple=[{key: "stroke", value: 'rgb(70, 130, 180)'}],
+            num_of_lines=1,
+            x_name='date',
+            y_names=['close', 'loss'],
+            x_axis_min=2005,
+            x_axis_max=2018,
+            y_axis_min=null,
+            y_axis_max=100,
+            line_stroke_width='4px',
+            dtypes= {'date': 'int', 'close': 'int', 'loss': 'int', 'profit': 'int'},
+            x_axis_added_length = 30,
+            y_axis_added_length = 0,
+            width=400,
+            height=400,
+            highlighting=true,
+            filtering=true,
+            highligh_style=[{key: "fill", value: "red"}],
+            circle_radius=5 
 
-//             )
+            )
     }
 
 

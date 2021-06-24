@@ -445,6 +445,7 @@ def post_process_dtypes(dtypes_values, headers, rows, timedelta_mode='auto'):
 
             elif dtype == "string":
                 new_val = str(old_val)
+                # new_val = f"{new_val}"
                            
             modded_rows[row_index][col] = new_val
             row_index += 1
@@ -504,6 +505,23 @@ def stringfy_data(dtypes_values, headers, rows, timedelta_mode='auto', timedelta
     return modded_rows
 
 # .....................................
+
+def stringfy_data2(current_dtypes_values, headers, rows):
+    modded_rows = []
+    new_dtypes_values = current_dtypes_values.copy()
+
+    for row in rows:
+        new_row = {}
+        for col in headers:
+            new_row[col] = str(row[col])
+            
+            
+        modded_rows.append(new_row)
+
+    return modded_rows
+
+
+# .............................
 
 
 def convert_to_readable_dtype_value(dtypes_values):
@@ -661,7 +679,8 @@ def stringify_dates(modded_rows, current_dtype_values):
                 new_val = mr[col]
                 if new_val:
                     new_val = mr[col].strftime("%m-%d-%Y")
-                new_mr[col] = str(new_val)
+                    new_val = f"{new_val}"
+                new_mr[col] = new_val
             else:
                 new_mr[col] = mr[col]
 

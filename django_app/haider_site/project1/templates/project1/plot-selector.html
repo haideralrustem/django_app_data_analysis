@@ -109,7 +109,17 @@
 
 </div>
 
-
+<!-- loaders -->
+<script>
+    if(($(window).width() + window_media_query_offset < 768)) {
+                setTimeout(()=>{
+                  $('.selector-associated-panel').height("0px");
+                }, 0);
+           }
+      else {
+        $('.selector-associated-panel').height("auto");
+        }
+</script>
 
 <script>
     function img_text_hover(hovered_img) {
@@ -206,6 +216,10 @@
         let selector_panel = $('.selector-associated-panel');
         selector_panel.addClass('shown-axis-choice');
         selector_panel.removeClass('hidden-axis-choice');
+
+       if(($(window).width() + window_media_query_offset <= 768)) {
+                selector_panel.height("auto");
+           }
         
         // side panel more effects
         $('.axis-choice-box').addClass('flash-color');
@@ -337,10 +351,13 @@ $(document).on('click','body *',function(event){
         if (selector_panel.hasClass('shown-axis-choice')) {
         selector_panel.removeClass('shown-axis-choice');
         selector_panel.addClass('hidden-axis-choice');
+           if(($(window).width() + window_media_query_offset <= 768)) {
+                setTimeout(()=>{
+                    selector_panel.height("0px");
+                }, 700);
+           }
        }
-    }
-    
-    
+    }    
 
 })
 

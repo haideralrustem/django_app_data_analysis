@@ -19,10 +19,13 @@
         
        </span>
       
+     
+      
    
 </div>
 <p class="format-success-text"> All data has been auto-formatted ! </p>
-
+<button id="got-it-btn" class="btn btn-primary tooltip-creator" >
+  Next</button>
 
   <script>
       // on spawn
@@ -54,6 +57,16 @@
         text_value_field.val('auto-format');
       
     }
+
+    $(document).ready(function (){
+            $("#got-it-btn").click(function (){
+                $('html, body').animate({
+                    scrollTop: $(".axis-panel-title").offset().top
+                }, 2000);
+            });
+        });
+
+
 
     $("#detect-table-format-form").submit(function (e) {
     // preventing from page reload and default actions

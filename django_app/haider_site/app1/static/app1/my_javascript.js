@@ -2,6 +2,8 @@
 let footer = document.querySelector('.footer');
 footer.style.top = (window.screen.height) + "px";
 
+var window_media_query_offset = 17;
+
 let container = document.querySelector("body");
 console.log("this is main JS");
 
@@ -24,7 +26,7 @@ new ResizeSensor(container, function()
 
 //drop_menu_list   document.querySelectorAll('.profile-pic-wrap *');
 document.body.addEventListener("click", function(event) {
-    console.log('this is considered a body click!!');
+    
     
     let x = document.querySelectorAll('.profile-pic-wrap *');
     let nodeList = Array.from(x);
@@ -58,7 +60,7 @@ document.body.addEventListener("click", function(event) {
             drop_prof.style.boxShadow = 'none';
 
         } else {
-            console.log(" drop menu is NOT shown");
+            
         }
 
 
@@ -71,7 +73,7 @@ document.body.addEventListener("click", function(event) {
             hammies.forEach(elem => elem.classList.toggle("change"));
 
         } else {
-            console.log(" drop menu ml is NOT shown");
+           
         }
 
     }
