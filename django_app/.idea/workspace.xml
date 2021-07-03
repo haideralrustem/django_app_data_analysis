@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="b77a9b77-4a04-4777-929e-03ac81b148c5" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/haider_site/matplotlib_funcs.py" beforeDir="false" afterPath="$PROJECT_DIR$/haider_site/matplotlib_funcs.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="HTML File" />
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectId" id="1e7JQv4sB2CdyRE9SnKamA9JUWF" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="DefaultHtmlFileTemplate" value="HTML File" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/haider_site/media" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\xario\PycharmProjects\django_app\haider_site\media" />
+      <recent name="C:\Users\xario\PycharmProjects\django_app\haider_site\media\profile_pics" />
+      <recent name="C:\Users\xario\PycharmProjects\django_app\haider_site" />
+      <recent name="C:\Users\xario\PycharmProjects\django_app\haider_site\haider_site" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\xario\PycharmProjects\django_app\haider_site\media" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Python.matplotlib_funcs">
+    <configuration name="matplotlib_funcs" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="django_app" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/haider_site" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/haider_site/matplotlib_funcs.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="settings" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="django_app" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/haider_site/haider_site" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/haider_site/haider_site/settings.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="test (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="django_app" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/haider_site" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/haider_site/test.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="test" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="django_app" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/venv" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="C:\Users\xario\PycharmProjects\django_app\haider_site\test.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="urls" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="django_app" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/haider_site/haider_site" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/haider_site/haider_site/urls.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.matplotlib_funcs" />
+        <item itemvalue="Python.urls" />
+        <item itemvalue="Python.settings" />
+        <item itemvalue="Python.test (1)" />
+        <item itemvalue="Python.test" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="b77a9b77-4a04-4777-929e-03ac81b148c5" name="Default Changelist" comment="" />
+      <created>1593666684650</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1593666684650</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="UnknownFeatures">
+    <option featureType="com.intellij.fileTypeFactory" implementationName="*.css" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state width="1275" height="255" key="GridCell.Tab.0.bottom" timestamp="1624945956297">
+      <screen x="0" y="0" width="1296" height="824" />
+    </state>
+    <state width="1275" height="255" key="GridCell.Tab.0.bottom/0.0.1296.824/3240.889.1600.860@0.0.1296.824" timestamp="1624945956297" />
+    <state width="1580" height="255" key="GridCell.Tab.0.bottom/0.0.1296.824/3240.889.1600.860@3240.889.1600.860" timestamp="1624776769156" />
+    <state width="1275" height="255" key="GridCell.Tab.0.center" timestamp="1624945956297">
+      <screen x="0" y="0" width="1296" height="824" />
+    </state>
+    <state width="1275" height="255" key="GridCell.Tab.0.center/0.0.1296.824/3240.889.1600.860@0.0.1296.824" timestamp="1624945956297" />
+    <state width="1580" height="255" key="GridCell.Tab.0.center/0.0.1296.824/3240.889.1600.860@3240.889.1600.860" timestamp="1624776769155" />
+    <state width="1275" height="255" key="GridCell.Tab.0.left" timestamp="1624945956297">
+      <screen x="0" y="0" width="1296" height="824" />
+    </state>
+    <state width="1275" height="255" key="GridCell.Tab.0.left/0.0.1296.824/3240.889.1600.860@0.0.1296.824" timestamp="1624945956297" />
+    <state width="1580" height="255" key="GridCell.Tab.0.left/0.0.1296.824/3240.889.1600.860@3240.889.1600.860" timestamp="1624776769155" />
+    <state width="1275" height="255" key="GridCell.Tab.0.right" timestamp="1624945956297">
+      <screen x="0" y="0" width="1296" height="824" />
+    </state>
+    <state width="1275" height="255" key="GridCell.Tab.0.right/0.0.1296.824/3240.889.1600.860@0.0.1296.824" timestamp="1624945956297" />
+    <state width="1580" height="255" key="GridCell.Tab.0.right/0.0.1296.824/3240.889.1600.860@3240.889.1600.860" timestamp="1624776769155" />
+    <state x="3439" y="951" key="SettingsEditor" timestamp="1624759005631">
+      <screen x="3240" y="889" width="1600" height="860" />
+    </state>
+    <state x="161" y="59" key="SettingsEditor/0.0.1296.824/3240.889.1600.860@0.0.1296.824" timestamp="1624758684235" />
+    <state x="3439" y="951" key="SettingsEditor/0.0.1296.824/3240.889.1600.860@3240.889.1600.860" timestamp="1624759005631" />
+    <state x="359" y="241" key="com.intellij.ide.util.TipDialog" timestamp="1624808117313">
+      <screen x="0" y="0" width="1296" height="824" />
+    </state>
+    <state x="359" y="241" key="com.intellij.ide.util.TipDialog/0.0.1296.824/3240.784.1600.860@0.0.1296.824" timestamp="1624401781129" />
+    <state x="359" y="241" key="com.intellij.ide.util.TipDialog/0.0.1296.824/3240.889.1600.860@0.0.1296.824" timestamp="1624758600593" />
+    <state x="359" y="241" key="com.intellij.ide.util.TipDialog/0.0.1296.824/3240.889.1600.860@3240.889.1600.860" timestamp="1624808117313" />
+  </component>
+</project>
