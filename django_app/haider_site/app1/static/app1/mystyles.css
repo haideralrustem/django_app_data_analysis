@@ -5,6 +5,35 @@
     text-align: center;
 }
 
+
+@font-face {
+    font-family: "f1";
+    src: url('./Formula1-Regular.ttf')
+}
+
+@font-face {
+    font-family: "mitchaella";
+    src: url('./mitchaella-font/MitchaellaFreeModernUniqueRegular-EaE5j.ttf');
+}
+
+@font-face {
+    font-family: "aquire";
+    src: url('./aquire-font/Aquire-BW0ox.otf');
+    src: url('./aquire-font/AquireBold-8Ma60.otf');
+    src: url('./aquire-font/AquireLight-YzE0o.otf');
+}
+
+@font-face {
+    font-family: "valentine";
+    src: url('./valentine-font/Valentine-0WgWz.ttf');
+    src: url('./valentine-font/Valentine-4B4BK.otf');
+}
+
+.poppins-font {
+    font-family: Poppins, Helvetica, Arial, sans-serif;
+}
+
+
 html {
     max-width: 100%;
     overflow-x: hidden;
@@ -43,7 +72,7 @@ body {
 }
 
 .headers {
-    margin: 3%;
+    
 }
 
 .child-block {
@@ -290,7 +319,7 @@ nav {
     border: 1px ridge #06b7fc;
     box-shadow: 0px 0px 5px 1px #0000ff2e;
     border-radius: 7px;
-    transition: all 0.6s  ease-in-out;
+    transition: all 0.3s  ease-in-out;
 }
 
 .card-wrap:hover {
@@ -309,7 +338,7 @@ nav {
     width: 30%;
     height: 100%;
     margin-right: 2%;
-    transition: width 1s, height 1s, border 1s;
+    transition: width 0.4s, height 0.4s, border 0.4s;
 }
 
 .card-img-photo {
@@ -339,7 +368,7 @@ nav {
     /* border: 1px ridge #06b7fc; */
     box-shadow: 0px 0px 2px 1px #06b7fc;
     border-radius: 7px;
-    transition: width 1s, height 1s;
+    transition: width 0.4s, height 0.4s;
 }
 
 .card-wrap-vertical:hover {

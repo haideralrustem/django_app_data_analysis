@@ -214,6 +214,11 @@ p.flashes {
   cursor: pointer;
 }
 
+.intro-content1 {
+  margin-top: 10%;
+  margin-left: 1%;
+}
+
 .opacity-animated {
   transition: opacity 0.5s ease-in-out;
 }
@@ -917,7 +922,7 @@ span.close:hover {
 
 .image-preview {
   border: 1px solid #48dbfb;
-  margin-top: 3%;
+  margin-top: 0%;
   width: 95%;
   height: 65vw;
   max-height: 80vh;
@@ -1376,6 +1381,10 @@ path {
         .build-tools-img {
           width:240px;
           height: 120px; 
+        }
+
+        .intro-content1 {
+          margin-top: 5%;
         }
 
         .plot-grid-container {

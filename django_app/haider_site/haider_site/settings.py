@@ -48,7 +48,8 @@ INSTALLED_APPS = [
     # i added my apps:
     'app1.apps.App1Config',
     'my_users.apps.MyUsersConfig',
-    'project1.apps.Project1Config'
+    'project1.apps.Project1Config',
+    'project2.apps.Project2Config'
 ]
 
 MIDDLEWARE = [
@@ -67,7 +68,8 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            os.path.join(BASE_DIR, 'project1/templates/')
+            os.path.join(BASE_DIR, 'project1/templates/'),
+             os.path.join(BASE_DIR, 'project2/templates/')
         ],
         'APP_DIRS': True,
         'OPTIONS': {

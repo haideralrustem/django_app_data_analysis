@@ -2,7 +2,20 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b77a9b77-4a04-4777-929e-03ac81b148c5" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/haider_site/app1/static/app1/dragscroll-master/dragscroll-master/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/haider_site/app1/static/app1/dragscroll-master/dragscroll-master/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/haider_site/app1/static/app1/dragscroll-master/dragscroll-master/bower.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/haider_site/app1/static/app1/dragscroll-master/dragscroll-master/dragscroll.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/haider_site/app1/static/app1/dragscroll-master/dragscroll-master/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/haider_site/app1/static/app1/project1_styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/haider_site/app1/static/app1/project1_styles.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/haider_site/haider_site/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/haider_site/haider_site/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/haider_site/haider_site/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/haider_site/haider_site/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/haider_site/matplotlib_funcs.py" beforeDir="false" afterPath="$PROJECT_DIR$/haider_site/matplotlib_funcs.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/haider_site/project1/templates/project1/intro.html" beforeDir="false" afterPath="$PROJECT_DIR$/haider_site/project1/templates/project1/intro.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/haider_site/project1/templates/project1/plot-selector.html" beforeDir="false" afterPath="$PROJECT_DIR$/haider_site/project1/templates/project1/plot-selector.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/haider_site/project1/templates/project1/plot_viewer.html" beforeDir="false" afterPath="$PROJECT_DIR$/haider_site/project1/templates/project1/plot_viewer.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/haider_site/project1/templates/project1/presets_config.html" beforeDir="false" afterPath="$PROJECT_DIR$/haider_site/project1/templates/project1/presets_config.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,7 +57,7 @@
       <recent name="C:\Users\xario\PycharmProjects\django_app\haider_site\media" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.matplotlib_funcs">
+  <component name="RunManager" selected="Python.text_classification">
     <configuration name="matplotlib_funcs" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="django_app" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -108,7 +121,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="test" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="text_classification" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="django_app" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -116,11 +129,11 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/venv" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/haider_site" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="C:\Users\xario\PycharmProjects\django_app\haider_site\test.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/haider_site/text_classification.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -152,11 +165,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.text_classification" />
         <item itemvalue="Python.matplotlib_funcs" />
         <item itemvalue="Python.urls" />
         <item itemvalue="Python.settings" />
         <item itemvalue="Python.test (1)" />
-        <item itemvalue="Python.test" />
       </list>
     </recent_temporary>
   </component>
@@ -177,36 +190,52 @@
     <option featureType="com.intellij.fileTypeFactory" implementationName="*.css" />
   </component>
   <component name="WindowStateProjectService">
-    <state width="1275" height="255" key="GridCell.Tab.0.bottom" timestamp="1624945956297">
+    <state width="1275" height="282" key="GridCell.Tab.0.bottom" timestamp="1625552837353">
       <screen x="0" y="0" width="1296" height="824" />
     </state>
-    <state width="1275" height="255" key="GridCell.Tab.0.bottom/0.0.1296.824/3240.889.1600.860@0.0.1296.824" timestamp="1624945956297" />
+    <state width="1275" height="282" key="GridCell.Tab.0.bottom/0.0.1296.824/3240.889.1600.860@0.0.1296.824" timestamp="1625552837353" />
     <state width="1580" height="255" key="GridCell.Tab.0.bottom/0.0.1296.824/3240.889.1600.860@3240.889.1600.860" timestamp="1624776769156" />
-    <state width="1275" height="255" key="GridCell.Tab.0.center" timestamp="1624945956297">
+    <state width="1275" height="282" key="GridCell.Tab.0.center" timestamp="1625552837353">
       <screen x="0" y="0" width="1296" height="824" />
     </state>
-    <state width="1275" height="255" key="GridCell.Tab.0.center/0.0.1296.824/3240.889.1600.860@0.0.1296.824" timestamp="1624945956297" />
+    <state width="1275" height="282" key="GridCell.Tab.0.center/0.0.1296.824/3240.889.1600.860@0.0.1296.824" timestamp="1625552837353" />
     <state width="1580" height="255" key="GridCell.Tab.0.center/0.0.1296.824/3240.889.1600.860@3240.889.1600.860" timestamp="1624776769155" />
-    <state width="1275" height="255" key="GridCell.Tab.0.left" timestamp="1624945956297">
+    <state width="1275" height="282" key="GridCell.Tab.0.left" timestamp="1625552837353">
       <screen x="0" y="0" width="1296" height="824" />
     </state>
-    <state width="1275" height="255" key="GridCell.Tab.0.left/0.0.1296.824/3240.889.1600.860@0.0.1296.824" timestamp="1624945956297" />
+    <state width="1275" height="282" key="GridCell.Tab.0.left/0.0.1296.824/3240.889.1600.860@0.0.1296.824" timestamp="1625552837353" />
     <state width="1580" height="255" key="GridCell.Tab.0.left/0.0.1296.824/3240.889.1600.860@3240.889.1600.860" timestamp="1624776769155" />
-    <state width="1275" height="255" key="GridCell.Tab.0.right" timestamp="1624945956297">
+    <state width="1275" height="282" key="GridCell.Tab.0.right" timestamp="1625552837353">
       <screen x="0" y="0" width="1296" height="824" />
     </state>
-    <state width="1275" height="255" key="GridCell.Tab.0.right/0.0.1296.824/3240.889.1600.860@0.0.1296.824" timestamp="1624945956297" />
+    <state width="1275" height="282" key="GridCell.Tab.0.right/0.0.1296.824/3240.889.1600.860@0.0.1296.824" timestamp="1625552837353" />
     <state width="1580" height="255" key="GridCell.Tab.0.right/0.0.1296.824/3240.889.1600.860@3240.889.1600.860" timestamp="1624776769155" />
+    <state width="1275" height="305" key="GridCell.Tab.1.bottom" timestamp="1625512945774">
+      <screen x="0" y="0" width="1296" height="824" />
+    </state>
+    <state width="1275" height="305" key="GridCell.Tab.1.bottom/0.0.1296.824/3240.889.1600.860@0.0.1296.824" timestamp="1625512945774" />
+    <state width="1275" height="305" key="GridCell.Tab.1.center" timestamp="1625512945774">
+      <screen x="0" y="0" width="1296" height="824" />
+    </state>
+    <state width="1275" height="305" key="GridCell.Tab.1.center/0.0.1296.824/3240.889.1600.860@0.0.1296.824" timestamp="1625512945774" />
+    <state width="1275" height="305" key="GridCell.Tab.1.left" timestamp="1625512945774">
+      <screen x="0" y="0" width="1296" height="824" />
+    </state>
+    <state width="1275" height="305" key="GridCell.Tab.1.left/0.0.1296.824/3240.889.1600.860@0.0.1296.824" timestamp="1625512945774" />
+    <state width="1275" height="305" key="GridCell.Tab.1.right" timestamp="1625512945774">
+      <screen x="0" y="0" width="1296" height="824" />
+    </state>
+    <state width="1275" height="305" key="GridCell.Tab.1.right/0.0.1296.824/3240.889.1600.860@0.0.1296.824" timestamp="1625512945774" />
     <state x="3439" y="951" key="SettingsEditor" timestamp="1624759005631">
       <screen x="3240" y="889" width="1600" height="860" />
     </state>
     <state x="161" y="59" key="SettingsEditor/0.0.1296.824/3240.889.1600.860@0.0.1296.824" timestamp="1624758684235" />
     <state x="3439" y="951" key="SettingsEditor/0.0.1296.824/3240.889.1600.860@3240.889.1600.860" timestamp="1624759005631" />
-    <state x="359" y="241" key="com.intellij.ide.util.TipDialog" timestamp="1624808117313">
+    <state x="359" y="241" key="com.intellij.ide.util.TipDialog" timestamp="1625540816655">
       <screen x="0" y="0" width="1296" height="824" />
     </state>
     <state x="359" y="241" key="com.intellij.ide.util.TipDialog/0.0.1296.824/3240.784.1600.860@0.0.1296.824" timestamp="1624401781129" />
-    <state x="359" y="241" key="com.intellij.ide.util.TipDialog/0.0.1296.824/3240.889.1600.860@0.0.1296.824" timestamp="1624758600593" />
+    <state x="359" y="241" key="com.intellij.ide.util.TipDialog/0.0.1296.824/3240.889.1600.860@0.0.1296.824" timestamp="1625540816655" />
     <state x="359" y="241" key="com.intellij.ide.util.TipDialog/0.0.1296.824/3240.889.1600.860@3240.889.1600.860" timestamp="1624808117313" />
   </component>
 </project>

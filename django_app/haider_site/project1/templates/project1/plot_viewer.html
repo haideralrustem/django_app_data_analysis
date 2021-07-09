@@ -24,7 +24,7 @@
             <div class='rightside-modal-space movable'>
             </div>
 
-            <div class="image-preview">
+            <div class="image-preview dragscroll">
               <img id="main_graph" src='{% get_media_prefix %}generated_plot.png'> 
              
             </div>
@@ -52,7 +52,9 @@
   
   </div>
 
-
+ 
+<script src="{% static 'app1/dragscroll-master/dragscroll.js' %}">
+</script>
 
 <script>
   var original_w = 0;  // original width of the img

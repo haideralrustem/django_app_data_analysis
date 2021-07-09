@@ -17,8 +17,6 @@ from matplotlib.ticker import ScalarFormatter
 import seaborn as sns
 
 
-import sys
-# sys.path.append('C:\\Users\\halrustem\\Documents\\my Python modules')
 
 
 
@@ -103,8 +101,7 @@ def single_line_chart(rows, x_name, y_values, dtypes_values=None):
   ax.grid(b=True,  which='both', axis='both', linestyle='-',  linewidth=0.2)
   ax.legend(loc='lower right')
 
-  pdb.set_trace()
-
+  
   if dtypes_values[x_name] in ['int', 'float']:
     ax.get_xaxis().get_major_formatter().set_scientific(False)
 

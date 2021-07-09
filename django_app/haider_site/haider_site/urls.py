@@ -32,6 +32,8 @@ urlpatterns = [
     path('', include('my_users.urls', namespace='user_profile')),
     path('project1', include('project1.urls', namespace='project1')),
 
+    path('project2', include('project2.urls', namespace='project2')),
+
     path('login/', auth_views.LoginView.as_view(template_name='my_users/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(template_name='my_users/logout.html'), name='logout'),
 

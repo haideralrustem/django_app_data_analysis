@@ -3,6 +3,8 @@ cd haider_site;
 python manage.py runserver;
 
 
+venv/Scripts/Activate.ps1;cd haider_site;python manage.py runserver;
+
 
 
 
