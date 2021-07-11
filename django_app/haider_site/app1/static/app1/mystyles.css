@@ -34,6 +34,16 @@
 }
 
 
+.flash-shadow-bordered {
+    box-shadow: 2px 3px 29px 15px #00beff;
+  
+  }
+
+
+/* ........................... */
+
+
+
 html {
     max-width: 100%;
     overflow-x: hidden;

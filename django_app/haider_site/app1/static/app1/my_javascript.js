@@ -1,4 +1,17 @@
 //c:/Users/xario/PycharmProjects/django_app/venv/Scripts/Activate.ps1 ;  cd haider_site;  python manage.py runserver
+var mediaQuery320_400 = window.innerWidth >= 320 && window.innerWidth < 400;
+var mediaQuery400_600 = window.innerWidth >= 400 && window.innerWidth < 600;
+var mediaQuery600_800 = window.innerWidth >= 600 && window.innerWidth < 800;
+
+var mediaQuery800_1000 = window.innerWidth >= 800 && window.innerWidth < 1000;
+var mediaQuery1000_1100= window.innerWidth >= 1000  && window.innerWidth < 1100;
+var mediaQuery1100_1300 = window.innerWidth >= 1100  && window.innerWidth < 1300;
+var mediaQuery1300_ = window.innerWidth >= 1300;
+
+var allMediaQueries = [mediaQuery320_400, mediaQuery400_600, mediaQuery600_800, 
+                       mediaQuery800_1000, mediaQuery1000_1100, mediaQuery1100_1300, 
+                       mediaQuery1300_];
+
 let footer = document.querySelector('.footer');
 footer.style.top = (window.screen.height) + "px";
 
@@ -19,8 +32,16 @@ new ResizeSensor(container, function()
 // horizental-resizer
 
 
-
-    
+// utility
+function containsObject(obj, list) {
+    var i;
+    for (i = 0; i < list.length; i++) {
+        if (list[i] === obj) {
+            return true;
+        }
+    }
+    return false;
+}
 
 
 
