@@ -77,7 +77,7 @@ def multiline_chart(rows, dtypes_values, x_name, y_names):
   plt.ylabel(''.join([y + ", " for y in y_names]))
   plt.tight_layout()
   plt.savefig('./media/generated_plot.png')
-  plt.show()
+  # plt.show()
 
   plt.close()
   print('/////////////////////')

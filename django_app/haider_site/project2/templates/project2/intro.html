@@ -75,7 +75,10 @@
 
 
   <div class="text-analyzer-btn-wrap">
-  <button class="text-analyzer-btn oversized-button blue-button-rev hideme">START</button>
+  <button onclick="startButtonClick()" 
+  class="text-analyzer-btn oversized-button blue-button-rev hideme">
+    START</button>
+  <a id="start-text-analyzer" href="{% url 'project2:text_analyzer_main' %}" style="display: none;"></a>
   </div>
 </div>
 
@@ -313,17 +316,23 @@
   </script>
 
 <script>
+
+function startButtonClick() {
+  let selector = 'start-text-analyzer';
+  window.location = $('#'+ selector).attr('href');
+  
+}
     /* Every time the window is scrolled ... */
 let flashedAlready = [];
 $(window).scroll( function(){
   var top_of_window = $(window).scrollTop();
 
 
-  let incremental = 0.2; //0.1
+  let incremental = 0.05; //0.1
   let i=0;
   allMediaQueries.forEach((mq)=>{
     if(mq === true) {
-      incremental = incremental + (i * 0.05)
+      incremental = incremental + (i * 0.06)
     }
     i ++;
   });
@@ -354,11 +363,8 @@ $(window).scroll( function(){
             flashedAlready.push($(this).attr('id'));
           }
         
-
-          
-
       } 
-      incremental += 0.04
+      incremental += 0.06
 
   }); 
 

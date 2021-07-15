@@ -10,18 +10,28 @@ from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.linear_model import SGDClassifier
 from statistics import mean
+from nltk.tokenize import word_tokenize
 import numpy as np
 import nltk
+
 from nltk.sentiment import SentimentIntensityAnalyzer
+
+from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
+import  matplotlib.pyplot as plt
+import spacy
+from textstat.textstat import textstatistics,legacy_round
+
 from random import shuffle
 import pdb
 
 import sys
-sys.path.append('C:\\Users\\xario\\OneDrive\\Documents')
+
 import excel_helper_functions as ehf
 
 
-
+# To do list:
+# > Get all occurrences of a word, so clicking on it will highlight all
+# 
 
 def text_classification20():
 
@@ -59,6 +69,73 @@ def text_classification20():
 # .......................................
 
 
+def FleschReadabilityEase(text):
+
+    """"
+    90-100 -> easily understood by an average 11-year old
+    60-70 -> easily understood by 13-15-year-old students
+    0-30 -> best understood by university graduates
+    """
+    if len(text) > 0:
+        return 206.835 - (1.015 * len(text.split()) / len(text.split('.')) ) - 84.6 * (sum(list(map(lambda x: 1 if x in ["a","i","e","o","u","y","A","E","I","O","U","y"] else 0,text))) / len(text.split()))
+
+
+def convert_Flesch_percentage(score):
+
+    return (100 -score)
+
+
+
+# ...................................
+
+def word_frequency(text):
+    freq_data = []
+    text_words = word_tokenize(text)
+    data_analysis = nltk.FreqDist(text_words)
+    # Let's take the specific words only if their frequency is greater than 3.
+    filter_words = dict([(m, n) for m, n in data_analysis.items() if len(m) > 3])
+    for key in sorted(filter_words):
+        print("%s: %s" % (key, filter_words[key]))
+
+    data_analysis = nltk.FreqDist(filter_words)
+
+    new_dict = {}
+    for k,v in data_analysis.items():
+        new_dict[k] = v
+
+
+    return new_dict, len(text_words)
+# ..................................
+
+def generate_word_cloud(text):
+    wordcloud = WordCloud(background_color="white").generate(text)
+
+    # Display the generated image:
+    plt.imshow(wordcloud, interpolation='bilinear')
+    plt.axis("off")
+
+    plt.savefig('./media/word_cloud.png')
+    # plt.show()
+
+    plt.close()
+
+# ..................................
+
+def convert_to_data_array(freq_dict):
+    data_array = []
+
+    for k,v in freq_dict.items():
+        data_obj = {}
+        data_obj['word'] = k
+        data_obj['count'] = v
+        data_array.append(data_obj)
+
+    return data_array
+
+
+# .................................
+
+
 
 # ...................................
 
@@ -69,7 +146,16 @@ def sentiment_analysis():
 
 
 if __name__ == "__main__":
-    pass
+    text ="A frequency distribution records the number of times each outcome of an experiment has occurred. For example, a frequency distribution could be used to record the frequency of each word type in a document. Formally, a frequency distribution can be defined as a function mapping from each sample to the number of times that sample occurred as an outcome.Frequency distributions are generally constructed by running a number of experiments, and incrementing the count for a sample every time it is an outcome of an experiment."
+    d, wc = word_frequency(text)
+    f = convert_to_data_array(d)
+    # generate_word_cloud(text)
+    print(f)
+    print(wc)
+    print('...')
+    score = (FleschReadabilityEase(text))
+    pc = convert_Flesch_percentage(score)
+    print(pc)
 
 
 
