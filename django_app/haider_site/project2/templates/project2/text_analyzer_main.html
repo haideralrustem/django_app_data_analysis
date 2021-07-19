@@ -29,10 +29,20 @@
 
 
     <div class="txa-textarea-wrap">
-      <form>
+      <form id="u_form" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{u_form.text_value}}
+        
         <label for="txa_textarea"></label>
         <textarea class="txa_textarea" id="txa_textarea" ></textarea>
+        <button class='hidden-submit-btn' 
+                              id="analyze_text_submit" 
+                              type="submit">G</button>
       </form>
+
+      <div>
+        <button class="blue-button-rev" onclick="analyzeText(this)">ANALYZE TEXT</button>
+      </div>
     </div>
 
     <div class="txa-side-panel">
@@ -46,7 +56,11 @@
           </div>
           <div><p>Likely Topic</p></div>
           <div><p>Complexity?</p></div>
-          <div><p>Word Cloud</p></div>
+          <div>
+            <p>Word Cloud</p>
+            <img id="cloud_graph" src='{% get_media_prefix %}word_cloud.png'>
+
+          </div>
 
         </div>
       </div>
@@ -58,6 +72,78 @@
 
 
 
+<script>
+  $('#cloud_graph').removeClass('visible');
+  
+  
+
+
+
+function analyzeText(this_btn) {
+    let text = $('#txa_textarea').val();
+    $('#id_text_value').val(text);
+    $('#analyze_text_submit').click();  // that will submit your form
+  }
+
+
+
+</script>
+
+<script>
+
+$('#u_form').submit(function (e) {
+  // preventing from page reload and default actions
+  e.preventDefault();
+  let submitted_form = $(this);
+  // serialize the data for sending the form data.
+  var serializedData = $(this).serialize();
+
+  $('.loading-spinner').show();
+  // make POST ajax call
+  $.ajax({
+        type: 'POST',
+        url: "{% url 'project2:analyze_text' %}",
+        data: serializedData,
+        success: function (response) {
+            
+            // Response here can Contain the stringified changed data when
+            // you implement the change datatype POST
+              
+            // 1. clear the form.
+            //submitted_form.trigger('reset');
+
+            console.log('\n response on analyze_text', response)
+            console.log(response['text_value'])
+
+            // SUCCESS FEEDBACK
+            let word_cloud_url = response['word_cloud_url'];
+
+            // ->  Manipulate DOM to show data
+            let prev_src = "{% get_media_prefix %}" + word_cloud_url;
+            imageObject = document.getElementById("cloud_graph");
+            // imageObject.style.display = 'inline-block';
+            imageObject.src = prev_src;
+            
+            
+            $('#cloud_graph').addClass('visible');
+            
+          
+            $('.loading-spinner').hide();
+
+            
+            // -> trigger the GET Request here if needed            
+              
+          },
+          error: function (response) {
+              // alert the error if any error occured
+
+              console.log('>> error occured in analyze_text! :\n', response);
+              
+          }
+      });
+  });
+
+</script>
 
 <script>
     $(window).on ('load', function() {
@@ -72,6 +158,8 @@
   
    
   </script>
+
+  
   
   
   <script src="{% static 'app1/project2_javascript.js' %}"></script>

@@ -7,6 +7,7 @@ var window_media_query_offset = 17;
 
 
 
+
 function wordFreq(data) {
         // set the dimensions and margins of the graph
     var margin = {top: 20, right: 30, bottom: 40, left: 90},
@@ -18,6 +19,7 @@ function wordFreq(data) {
         .append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
+       
         .append("g")
         .attr("transform",
             "translate(" + margin.left + "," + margin.top + ")");
@@ -52,6 +54,8 @@ function wordFreq(data) {
         .attr("width", function(d) { return x(d.count); })
         .attr("height", y.bandwidth() )
         .attr("fill", "#69b3a2")
+
+ 
 
 }
 

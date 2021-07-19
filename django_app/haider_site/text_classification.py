@@ -13,6 +13,9 @@ from statistics import mean
 from nltk.tokenize import word_tokenize
 import numpy as np
 import nltk
+import time
+
+import collections
 
 from nltk.sentiment import SentimentIntensityAnalyzer
 
@@ -103,21 +106,26 @@ def word_frequency(text):
     for k,v in data_analysis.items():
         new_dict[k] = v
 
+    sorted_dict = dict(sorted(new_dict.items(), key=lambda item: item[1], reverse=True))
 
-    return new_dict, len(text_words)
+    return sorted_dict, len(text_words)
 # ..................................
 
 def generate_word_cloud(text):
     wordcloud = WordCloud(background_color="white").generate(text)
 
+    ts = str(time.time())
+    word_cloud_url = 'word_cloud' + ts + '.png'
+
     # Display the generated image:
     plt.imshow(wordcloud, interpolation='bilinear')
     plt.axis("off")
 
-    plt.savefig('./media/word_cloud.png')
+    plt.savefig(f'./media/{word_cloud_url}')
     # plt.show()
 
     plt.close()
+    return word_cloud_url
 
 # ..................................
 
@@ -147,6 +155,8 @@ def sentiment_analysis():
 
 if __name__ == "__main__":
     text ="A frequency distribution records the number of times each outcome of an experiment has occurred. For example, a frequency distribution could be used to record the frequency of each word type in a document. Formally, a frequency distribution can be defined as a function mapping from each sample to the number of times that sample occurred as an outcome.Frequency distributions are generally constructed by running a number of experiments, and incrementing the count for a sample every time it is an outcome of an experiment."
+
+    
     d, wc = word_frequency(text)
     f = convert_to_data_array(d)
     # generate_word_cloud(text)
@@ -156,6 +166,6 @@ if __name__ == "__main__":
     score = (FleschReadabilityEase(text))
     pc = convert_Flesch_percentage(score)
     print(pc)
-
+    print(d)
 
 

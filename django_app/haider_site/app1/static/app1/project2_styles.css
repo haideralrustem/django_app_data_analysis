@@ -5,6 +5,11 @@ font-family: "aquire";
 font-family: "valentine";
 .poppins-font {}
  */
+* {
+    margin:0;
+    padding: 0;
+}
+
 
 .hideme {
     opacity: 0;
@@ -32,7 +37,9 @@ font-family: "valentine";
     color: rgb(0, 64, 148);
   }
 
-  
+.hidden-submit-btn {
+    display: none;
+}
   
 
 .head-container {
