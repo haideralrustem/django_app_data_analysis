@@ -41,11 +41,13 @@ def analyze_text(request):
             # text analysis pipeline goes here:
             freq_dict, word_count = tc.word_frequency(text_value)
             frequency_graph_data = tc.convert_to_data_array(freq_dict)
+            
 
             score = tc.FleschReadabilityEase(text_value)
             percentage = tc.convert_Flesch_percentage(score)
             complexity_score = percentage
 
+            likely_topic =  tc.predict_likely_topic(text_value)
             
             word_cloud_url = tc.generate_word_cloud(text_value)
             # pdb.set_trace()
@@ -55,7 +57,10 @@ def analyze_text(request):
             return JsonResponse({                                    
             'msg': 'text_value posted successfully', 
                                 'text_value': text_value,
+                                'word_count': word_count,
+                                'frequency_graph_data': frequency_graph_data,
                                 'complexity_score': complexity_score,
+                                'likely_topic': likely_topic,
                                 'word_cloud_url': word_cloud_url
                                 }, status=200)
 

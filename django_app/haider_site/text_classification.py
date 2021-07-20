@@ -11,9 +11,11 @@ from sklearn.pipeline import Pipeline
 from sklearn.linear_model import SGDClassifier
 from statistics import mean
 from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
 import numpy as np
 import nltk
 import time
+import pickle as cPickle
 
 import collections
 
@@ -62,6 +64,11 @@ def text_classification20():
     _ = text_clf_svm.fit(twenty_train.data, twenty_train.target)
     # predicted_svm = text_clf_svm.predict(twenty_test.data)
 
+    pdb.set_trace()
+    # save the classifier
+    with open('./my_dumped_classifier.pkl', 'wb') as fid:
+        cPickle.dump(text_clf_svm, fid)
+
     text = [
         r"he rule of six inside private homes will be removed and work-from-home guidance abolished as 16 months of on-off restrictions on daily life end.The PM said he expected the final step would go ahead as planned on 19 July. This will be confirmed on 12 July after a review of the latest data. Further updates on school bubbles, travel and self-isolation will follow in the coming days, Mr Johnson told a Downing Street news conference. He said that even after the removal of the legal requirement to wear a face covering, he would continue to wear one himself in crowded places as a courtesy."]
 
@@ -70,7 +77,25 @@ def text_classification20():
     # print(np.mean(predicted_svm == twenty_test.target))
 
 # .......................................
+def predict_likely_topic(text):
+    likely_topic = 'none predicted'
+    twenty_train_topics = ['alt.atheism', 'computer-related topics/ graphics', 'computer-related topics/ Miscellaneous',
+                           'computer-related topics/ hardware',
+                           'computer-related topics/ hardware', 'computer-related topics/ ', 'Miscellaneous.for sale', 'recreational activities/ autos',
+                           'recreational activities/ motorcycles', 'recreational activities/ sport', 'recreational activities/ sport', 'Science/ crypt',
+                           'Science/ electronics', 'Science/ medical', 'Science/ space', 'Social/ religion',
+                           'Talk/ politics', 'Talk/ politics', 'Talk/ politics.Miscellaneous', 'Talk/ religion.Miscellaneous']
 
+
+    # load it again
+    with open('./my_dumped_classifier.pkl', 'rb') as fid:
+        text_clf_svm = cPickle.load(fid)
+
+        predicted_svm = text_clf_svm.predict([text])
+        print(twenty_train_topics[predicted_svm[0]])
+        likely_topic = twenty_train_topics[predicted_svm[0]]
+
+    return likely_topic
 
 def FleschReadabilityEase(text):
 
@@ -94,6 +119,9 @@ def convert_Flesch_percentage(score):
 def word_frequency(text):
     freq_data = []
     text_words = word_tokenize(text)
+    stop_words = set(stopwords.words('english'))
+    text_words = [w for w in text_words if not w.lower() in stop_words]
+
     data_analysis = nltk.FreqDist(text_words)
     # Let's take the specific words only if their frequency is greater than 3.
     filter_words = dict([(m, n) for m, n in data_analysis.items() if len(m) > 3])
@@ -168,4 +196,5 @@ if __name__ == "__main__":
     print(pc)
     print(d)
 
-
+    # text_classification20()
+    predict_likely_topic(text)

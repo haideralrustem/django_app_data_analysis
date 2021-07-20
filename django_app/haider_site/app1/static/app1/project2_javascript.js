@@ -66,4 +66,4 @@ let data= [{word: 'Hello', 'count': 10},
             {word: 'Ink', 'count': 60}]
 
 
-wordFreq(data);
+// wordFreq(data);

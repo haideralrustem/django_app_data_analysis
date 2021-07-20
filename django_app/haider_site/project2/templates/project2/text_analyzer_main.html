@@ -49,16 +49,16 @@
       <div class="txa-side-panel-content">
         <div class="txa-side-panel-title">Results:</div>
         <div class="txa-results-container">
-          <div><p>Word count</p></div>
+          <div class="word_count"><p>Word count</p></div>
           <div>
             <p>Frequency</p>
             <div id="my_dataviz"></div>
           </div>
-          <div><p>Likely Topic</p></div>
-          <div><p>Complexity?</p></div>
-          <div>
+          <div class="likely_topic"><p >Likely Topic</p></div>
+          <div class="complexity_score"><p >Complexity?</p></div>
+          <div class="word_cloud">
             <p>Word Cloud</p>
-            <img id="cloud_graph" src='{% get_media_prefix %}word_cloud.png'>
+            <img id="cloud_graph" src=''>
 
           </div>
 
@@ -68,6 +68,11 @@
 
   </div>
 
+</div>
+
+<div>
+  <a href="https://en.wikipedia.org/wiki/Usenet_newsgroup" target="_blank">Usenet newsgroup classification</a>
+  <a href="http://qwone.com/~jason/20Newsgroups/" target="_blank">The 20 Newsgroups data set Source</a>
 </div>
 
 
@@ -88,6 +93,11 @@ function analyzeText(this_btn) {
 
 
 </script>
+
+
+<script src="{% static 'app1/project2_javascript.js' %}"></script>
+
+
 
 <script>
 
@@ -117,6 +127,13 @@ $('#u_form').submit(function (e) {
 
             // SUCCESS FEEDBACK
             let word_cloud_url = response['word_cloud_url'];
+            let likely_topic = response['likely_topic'];
+            let complexity_score = response['complexity_score'];
+            let word_count = response['word_count'];
+            let frequency_graph_data = response['frequency_graph_data'];
+            let sliced_freq_graph_data = frequency_graph_data.slice(0, 6);
+
+            console.log(likely_topic)
 
             // ->  Manipulate DOM to show data
             let prev_src = "{% get_media_prefix %}" + word_cloud_url;
@@ -124,9 +141,16 @@ $('#u_form').submit(function (e) {
             // imageObject.style.display = 'inline-block';
             imageObject.src = prev_src;
             
+
             
             $('#cloud_graph').addClass('visible');
+
+            $('.likely_topic p').append(`<span> ${likely_topic} </span>`);
+            $('.complexity_score p').append(`<span> ${complexity_score} </span>`);
+            $('.word_count p').append(`<span> ${word_count} </span>`);
             
+            console.log('\n', sliced_freq_graph_data);
+            wordFreq(sliced_freq_graph_data);
           
             $('.loading-spinner').hide();
 
@@ -145,6 +169,22 @@ $('#u_form').submit(function (e) {
 
 </script>
 
+
+<!--  Scripts for Resizing window  -->
+<script>
+  window.addEventListener('resize', function(event) {
+  let panel_size = $('.txa-side-panel').width();
+  let scaling_factor = panel_size / 490;
+  console.log(scaling_factor);
+  $('#my_dataviz').css(
+    {"transform": `scale(${scaling_factor})`}
+  )
+  
+}, true);
+</script>
+
+
+
 <script>
     $(window).on ('load', function() {
       $('.loading-spinner').hide();
@@ -162,7 +202,7 @@ $('#u_form').submit(function (e) {
   
   
   
-  <script src="{% static 'app1/project2_javascript.js' %}"></script>
+  
   
   
   {% endblock children %}
