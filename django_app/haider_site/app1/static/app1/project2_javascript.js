@@ -8,17 +8,23 @@ var window_media_query_offset = 17;
 
 
 
-function wordFreq(data) {
+function wordFreq(data, w=460, h=400) {
         // set the dimensions and margins of the graph
-    var margin = {top: 20, right: 30, bottom: 40, left: 90},
-    width = 460 - margin.left - margin.right,
-    height = 400 - margin.top - margin.bottom;
+    var margin = {top: 10, right: 10, bottom: 80, left: 80},
+
+    width = w - margin.left - margin.right,
+    
+    height = h - margin.top - margin.bottom;
+    d3.select("#my_dataviz svg").remove();
 
     // append the svg object to the body of the page
     var svg = d3.select("#my_dataviz")
         .append("svg")
         .attr("width", width + margin.left + margin.right)
+        
         .attr("height", height + margin.top + margin.bottom)
+        
+        .attr("class", ".my_dataviz")
        
         .append("g")
         .attr("transform",

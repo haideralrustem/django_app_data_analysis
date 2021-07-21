@@ -78,6 +78,8 @@
 
 
 <script>
+  var global_data = [];
+
   $('#cloud_graph').removeClass('visible');
   
   
@@ -97,6 +99,45 @@ function analyzeText(this_btn) {
 
 <script src="{% static 'app1/project2_javascript.js' %}"></script>
 
+
+<script>
+  function adjustDatavizScale() {
+    setTimeout( ()=>{
+      let panel_size = $('.txa-side-panel').width();
+      let scaling_factor = panel_size / 550;
+      let panel_left = $('.txa-side-panel').offset()["left"];
+      left_val = panel_left + 15;
+            
+      if (window.innerWidth <= 1250) {
+        scaling_factor = panel_size / 500;
+        
+      }
+      if (window.innerWidth <= 1000) {
+        scaling_factor = panel_size / 500;
+        
+      }      
+      if (window.innerWidth <= 700) {
+        scaling_factor = panel_size / 520;
+        
+      }
+      // console.log('window.innerWidth -> ', window.innerWidth);
+      // console.log('panel_size -> ' , panel_size)
+      // console.log('left_val -> ', left_val);   
+      let aspect_ratio = 1.15 ;
+      let width = panel_size-132;
+      wordFreq(global_data, w=width, h=width/aspect_ratio);
+
+      
+    //   // console.log(scaling_factor);
+    //   $('#my_dataviz svg').css(
+    //   {"transform": `scale(${scaling_factor})`,
+        
+    //   }
+    //   )
+     } , 1000);
+    
+  }
+</script>
 
 
 <script>
@@ -132,6 +173,7 @@ $('#u_form').submit(function (e) {
             let word_count = response['word_count'];
             let frequency_graph_data = response['frequency_graph_data'];
             let sliced_freq_graph_data = frequency_graph_data.slice(0, 6);
+            global_data = sliced_freq_graph_data;
 
             console.log(likely_topic)
 
@@ -151,6 +193,7 @@ $('#u_form').submit(function (e) {
             
             console.log('\n', sliced_freq_graph_data);
             wordFreq(sliced_freq_graph_data);
+            adjustDatavizScale();
           
             $('.loading-spinner').hide();
 
@@ -172,15 +215,15 @@ $('#u_form').submit(function (e) {
 
 <!--  Scripts for Resizing window  -->
 <script>
-  window.addEventListener('resize', function(event) {
-  let panel_size = $('.txa-side-panel').width();
-  let scaling_factor = panel_size / 490;
-  console.log(scaling_factor);
-  $('#my_dataviz').css(
-    {"transform": `scale(${scaling_factor})`}
-  )
+
   
-}, true);
+
+  
+
+  window.addEventListener('resize', function(event) { // on resize
+    adjustDatavizScale();
+  }, true);
+
 </script>
 
 
