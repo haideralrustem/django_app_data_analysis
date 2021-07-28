@@ -57,7 +57,7 @@
           <div class="likely_topic"><p >Likely Topic</p></div>
           <div class="complexity_score"><p >Complexity?</p></div>
           <div class="word_cloud">
-            <p>Word Cloud</p>
+            <p>Word Cloud (have hover overs)</p>
             <img id="cloud_graph" src=''>
 
           </div>
@@ -107,26 +107,47 @@ function analyzeText(this_btn) {
       let scaling_factor = panel_size / 550;
       let panel_left = $('.txa-side-panel').offset()["left"];
       left_val = panel_left + 15;
+      let font_size = '14px';
+
+      let aspect_ratio = 1.15 ;
+      let width = panel_size-132;
+      let word_cloud_width = width+ 100
             
       if (window.innerWidth <= 1250) {
-        scaling_factor = panel_size / 500;
+        width = panel_size-60 ;
+        word_cloud_width = width+ 40
         
       }
       if (window.innerWidth <= 1000) {
-        scaling_factor = panel_size / 500;
+        width = panel_size-50 ;
+        word_cloud_width = width+ 30
         
       }      
-      if (window.innerWidth <= 700) {
-        scaling_factor = panel_size / 520;
+      if (window.innerWidth <= 800) {
+        width = panel_size-50;
+        word_cloud_width = width+ 20
         
       }
+
+      if (window.innerWidth <= 700) {
+        width = panel_size-40 ;
+        word_cloud_width = width+ 20
+        
+      }
+
+      if (window.innerWidth <= 480) {
+        width = panel_size-30 ;
+        word_cloud_width = width+ 20
+        
+      }
+
       // console.log('window.innerWidth -> ', window.innerWidth);
       // console.log('panel_size -> ' , panel_size)
       // console.log('left_val -> ', left_val);   
-      let aspect_ratio = 1.15 ;
-      let width = panel_size-132;
+      
+      $('#cloud_graph').width(word_cloud_width );
       wordFreq(global_data, w=width, h=width/aspect_ratio);
-
+      
       
     //   // console.log(scaling_factor);
     //   $('#my_dataviz svg').css(
@@ -134,7 +155,7 @@ function analyzeText(this_btn) {
         
     //   }
     //   )
-     } , 1000);
+     } , 350);
     
   }
 </script>

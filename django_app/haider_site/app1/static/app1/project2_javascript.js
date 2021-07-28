@@ -8,9 +8,9 @@ var window_media_query_offset = 17;
 
 
 
-function wordFreq(data, w=460, h=400) {
+function wordFreq(data, w=460, h=400, fontSize="14px") {
         // set the dimensions and margins of the graph
-    var margin = {top: 10, right: 10, bottom: 80, left: 80},
+    var margin = {top: 10, right: 10, bottom: 80, left: 100},
 
     width = w - margin.left - margin.right,
     
@@ -37,10 +37,11 @@ function wordFreq(data, w=460, h=400) {
         .range([ 0, width]);
         svg.append("g")
         .attr("transform", "translate(0," + height + ")")
-        .call(d3.axisBottom(x))
+        .call(d3.axisBottom(x).tickFormat(d3.format("d")).ticks((data.length)-1) )
         .selectAll("text")
         .attr("transform", "translate(-10,0)rotate(-45)")
-        .style("text-anchor", "end");
+        .style("text-anchor", "end")
+        .style("font-size", fontSize);
 
         // Y axis
         var y = d3.scaleBand()
@@ -49,6 +50,10 @@ function wordFreq(data, w=460, h=400) {
         .padding(.1);
         svg.append("g")
         .call(d3.axisLeft(y))
+        .selectAll("text")
+        .style("font-size", fontSize)
+        ;
+
 
         //Bars
         svg.selectAll("myRect")
