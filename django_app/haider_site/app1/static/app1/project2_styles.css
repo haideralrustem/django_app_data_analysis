@@ -258,9 +258,10 @@ p {
     position: relative;
     /* left: -40%; */
     left : 5%;
-    z-index: -1;
+    /* z-index: -1; */
     transition: all 0.2s ease-in;
 }
+
 
 .txa-side-panel.slides {
     left: 5%;
@@ -272,6 +273,14 @@ p {
 .txa-side-panel-title {
     font-family: "f1", sans-serif;
     font-size: 110%;
+}
+
+.tooltip-owner {
+    width: fit-content;
+}
+.tooltip-owner:hover {
+    font-weight: bold;
+    cursor: pointer;
 }
 
 #my_dataviz {

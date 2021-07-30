@@ -65,6 +65,7 @@ body {
 .not-invisible {
     opacity: initial;
 }
+
 .loading-spinner {
     display: block;
     position: fixed;
@@ -362,7 +363,7 @@ nav {
 }
 
 .card-text-content {
-    width: 100%;
+    /* width: 100%; */
 }
 
 
