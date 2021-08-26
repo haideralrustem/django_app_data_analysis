@@ -106,7 +106,7 @@ def FleschReadabilityEase(text):
     """
     if len(text) > 0:
         return 206.835 - (1.015 * len(text.split()) / len(text.split('.')) ) - 84.6 * (sum(list(map(lambda x: 1 if x in ["a","i","e","o","u","y","A","E","I","O","U","y"] else 0,text))) / len(text.split()))
-
+    
 
 def convert_Flesch_percentage(score):
 

@@ -37,6 +37,17 @@ def analyze_text(request):
         # save the data and after fetch the object in instance
         if u_form.is_valid():
             text_value = u_form.cleaned_data['text_value']   
+            if len(text_value) <= 0:
+                 return JsonResponse({                                    
+                                'msg': 'text_value length is zero', 
+                                'text_value': text_value,
+                                'word_count': 0,
+                                'frequency_graph_data': None,
+                                'complexity_score': None,
+                                'likely_topic': None,
+                                'word_cloud_url': None
+                                }, status=400)
+                            
             
             # text analysis pipeline goes here:
             freq_dict, word_count = tc.word_frequency(text_value)

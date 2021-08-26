@@ -179,8 +179,9 @@ font-family: "valentine";
 }
 
 p {
-    font-family: "valentine", sans-serif;
-    font-size: 115%;
+    
+    font-family: "Georgia", serif;
+    /* font-size: 100%; */
 }
 .tutorial-card p {
     font-size: 140%;
@@ -188,7 +189,7 @@ p {
 .tcard-title {
     font-weight: bold;
     /* font-size: 140%; */
-    font-family: "valentine", sans-serif;
+    font-family: "valentine", serif;
 }
 .tcard-title-brand {
     font-family: "f1",  sans-serif;
@@ -227,30 +228,50 @@ p {
 }
 
 .txa {
-    font-family: "valentine", sans-serif;
+    font-family:  "Didot", serif;
 }
 .txa-textarea-wrap {
     width: fit-content;
+    position: relative;
     
 }
+
+.text-area-highlight-wrap {
+    position: relative;
+    height: 26vw;
+    width: 42vw;
+}
+
 .txa_textarea {
+    position: absolute;
+    left: 0;
+    top:0;
+
     height: 26vw;
     width: 42vw;
     margin: 0% 0 0 3%;
+
+    resize: none;
+
+    font-weight: 490;
+
     box-shadow: 0px 0px 8px 0px #00bfff9f;
     border: 2px solid  transparent;
     border-radius: 16px;
-    padding: 2%;    
+    padding: 2%;   
+    overflow-y: scroll;
+    opacity: 0.75;
 }
 
 .txa_textarea:focus {
     border: 2px solid  #05c9facb;
     outline: none;
-        
+    
+    overflow-y: scroll;   
 }
 
 .txa-side-panel {
-    width: 37vw;
+    width: 30vw;
     height: auto;
     box-shadow: 0px 0px 6px 2px #00bfff;
     margin: 18px 1% 1% 1%;
@@ -260,6 +281,11 @@ p {
     left : 5%;
     /* z-index: -1; */
     transition: all 0.2s ease-in;
+}
+
+.txa-side-panel p {
+    margin-bottom: 1px;
+    font-family: "valentine", sans-serif;
 }
 
 
@@ -292,13 +318,112 @@ p {
 
 #my_dataviz svg{
     
+}
 
+#word_cloud_text {
+    margin-bottom: 0;
 }
 
 #cloud_graph {
     position: relative;
     left: -4px;
 }
+
+.emphasis-text {
+    color: blue;
+    font-size: 105%;
+    font-weight: bold;
+}
+
+#analyze-btn {
+    font-family: "f1", serif;
+    padding: 1px 5px 1px 5px;
+    border-radius: 5px;
+}
+
+.alert-tooltip {
+    display:inline-block;
+    position:relative;
+    left: 10%;
+    top: 15vw;
+    border-bottom:1px dotted #666;
+    text-align:left;
+    color:#ffffff;
+    background-color:#009cdc;
+    font-weight:normal;
+    font-size:14px;
+    border-radius:8px;
+    box-shadow:0 1px 8px rgba(0,0,0,0.5);
+    padding: 1px 10px;
+    visibility: hidden;
+    opacity: 0;
+    width: auto;
+    transition: 0.6s all ease-in-out;
+}
+
+.alert-tooltip.show {
+    /* visibility: visible;  */
+    opacity: 1;
+}
+.alert-tooltip.visible {
+    visibility: visible;
+}
+
+
+.alert-tooltip i {
+    position:absolute;
+    top:100%;
+    left:30%;
+    margin-left:-15px;
+    width:30px;
+    height:15px;
+    overflow:hidden;    
+}
+
+.alert-tooltip i::after {
+    content:'';
+    position:absolute;
+    width:15px;
+    height:15px;
+    left:50%;
+    transform:translate(-50%,-50%) rotate(45deg);
+    background-color:#009cdc;
+    box-shadow:0 1px 8px rgba(0,0,0,0.5);
+}
+
+
+.plot-word {
+    cursor: pointer;
+    transition: 0.7s background-color ease-in-out;
+}
+
+.plot-word:hover {
+    fill: #3cbefa ;
+}
+
+.plot-word-selected {
+    stroke: #26ecd2 ;
+    
+}
+
+.highlighted-textarea-word {
+    background-color: chartreuse;
+    border: 2px solid rgb(28, 0, 190);
+}
+
+.highlight-overlay {
+    position: absolute;
+    z-index: -1;
+    left: 0;
+    top:0;
+    color: transparent;
+
+
+    overflow-y: scroll;
+    /* background-color: rgb(0, 255, 234); */
+    opacity: 1;
+}
+
 
 
 
@@ -323,14 +448,24 @@ p {
     .switches-display {
         display: block;
     }
+
     .txa_textarea {
         width: 60vw;
         height: 30vw;
         
+        overflow-y: scroll;
     }
+    
+    .text-area-highlight-wrap {
+        width: 60vw;
+        height: 30vw;
+    }
+
     .txa-side-panel {
         width: 75vw;
     }
+
+    
 
     #my_dataviz {
         left: 3px;
@@ -360,7 +495,11 @@ p {
     .txa_textarea {
         width: 60vw;
         height: 30vw;
-        
+        overflow-y: scroll;     
+    }
+    .text-area-highlight-wrap {
+        width: 60vw;
+        height: 30vw;
     }
 
     .txa-side-panel {
@@ -389,7 +528,12 @@ p {
     .txa_textarea {
         width: 60vw;
         height: 30vw;
+        overflow-y: scroll;
         
+    }
+    .text-area-highlight-wrap {
+        width: 60vw;
+        height: 30vw;
     }
 
     .txa-side-panel {

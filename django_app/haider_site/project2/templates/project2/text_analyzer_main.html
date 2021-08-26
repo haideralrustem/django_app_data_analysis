@@ -19,65 +19,89 @@
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
 
-<script src="{% static 'app1/jquery-ui-1.12.1.custom/jquery-ui.js' %}"></script>
-
 <div class="loading-spinner"></div>
 
 
 
-<div class='txa txa-outer-wrap'>
 
-  <div class="txa-twin-wrapper switches-display">
+<div id="text-analyzer-wapper">
+  <div class='txa txa-outer-wrap'>
+
+    <div class="txa-twin-wrapper switches-display">
 
 
-    <div class="txa-textarea-wrap">
-      <form id="u_form" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{u_form.text_value}}
-        
-        <label for="txa_textarea"></label>
-        <textarea class="txa_textarea" id="txa_textarea" ></textarea>
-        <button class='hidden-submit-btn' 
-                              id="analyze_text_submit" 
-                              type="submit">G</button>
-      </form>
+      <div class="txa-textarea-wrap">
 
-      <div>
-        <button class="blue-button-rev" onclick="analyzeText(this)">ANALYZE TEXT</button>
+        <div class="alert-tooltip">
+          Please enter or paste some text in this area
+          <i></i>
+        </div>
+
+        <form id="u_form" method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          {{u_form.text_value}}
+          
+          <label for="txa_textarea"></label>
+          <!-- <div contentEditable="true" class="txa_textarea" id="txa_textarea" ></div> -->
+
+
+          <div class="text-area-highlight-wrap">
+            <div class='highlight-overlay'></div>
+            <textarea class="txa_textarea" id="txa_textarea"></textarea>
+          </div>
+          
+          
+          <button class='hidden-submit-btn' 
+                                id="analyze_text_submit" 
+                                type="submit">G</button>
+        </form>
+
+        <div id="analyze-btn-wrap">
+          <button id="analyze-btn" class="blue-button-rev" 
+          onclick="analyzeText(this)">ANALYZE TEXT</button>
+        </div>
+
+
       </div>
-    </div>
 
-    <div class="txa-side-panel">
-      <div class="txa-side-panel-content">
-        <div class="txa-side-panel-title">Results:</div>
-        <div class="txa-results-container">
-          <div class="word_count"><p class="tooltip-owner">Word count</p></div>
-          <div>
-            <p class="tooltip-owner">Frequency</p>
-            <div id="my_dataviz"></div>
+      <div class="txa-side-panel">
+        <div class="txa-side-panel-content">
+          <div class="txa-side-panel-title">Results:</div>
+          <div class="txa-results-container">
+            <div class="word_count"><p class="tooltip-owner">Word count: </p></div>
+            <div>
+              <p class="tooltip-owner">Frequency: </p>
+              <div id="my_dataviz"></div>
+            </div>
+            <div class="likely_topic">
+              <p class="tooltip-owner" title="Most likely topic for the text.">Likely Topic: </p>
+            </div>
+            <div class="complexity_score">
+              <p class="tooltip-owner"  title="The higher the score, the more complex the text is (Using the Flesch Reading Formula).">
+                Complexity?</p>
+            </div>
+            <div class="word_cloud">
+              <p id="word_cloud_text" class="tooltip-owner"
+              title="Word Cloud is a visualization that summarizes the most frequent words that occur in a text. The bigger the word, the most frequent it is.">
+                Word Cloud (have hover overs)
+              </p>
+              <img id="cloud_graph" src=''>
+
+            </div>
+
           </div>
-          <div class="likely_topic"><p class="tooltip-owner">Likely Topic</p></div>
-          <div class="complexity_score"><p class="tooltip-owner">Complexity?</p></div>
-          <div class="word_cloud">
-            <p id="word_cloud_text" class="tooltip-owner"
-            title="Word Cloud (have hover overs)!">
-              Word Cloud (have hover overs)
-            </p>
-            <img id="cloud_graph" src=''>
-
-          </div>
-
         </div>
       </div>
+
     </div>
 
   </div>
 
-</div>
+  <div>
+    <a href="https://en.wikipedia.org/wiki/Usenet_newsgroup" target="_blank">Usenet newsgroup classification</a>
+    <a href="http://qwone.com/~jason/20Newsgroups/" target="_blank">The 20 Newsgroups data set Source</a>
+  </div>
 
-<div>
-  <a href="https://en.wikipedia.org/wiki/Usenet_newsgroup" target="_blank">Usenet newsgroup classification</a>
-  <a href="http://qwone.com/~jason/20Newsgroups/" target="_blank">The 20 Newsgroups data set Source</a>
 </div>
 
 
@@ -109,11 +133,13 @@ function analyzeText(this_btn) {
   $( function() {
     $( ".tooltip-owner" ).tooltip();
   } );
-  </script>
+</script>
+
+
 
 <script>
   function adjustDatavizScale() {
-    setTimeout( ()=>{
+    setTimeout( ()=> {
       let panel_size = $('.txa-side-panel').width();
       let scaling_factor = panel_size / 550;
       let panel_left = $('.txa-side-panel').offset()["left"];
@@ -127,7 +153,6 @@ function analyzeText(this_btn) {
       if (window.innerWidth <= 1250) {
         width = panel_size-60 ;
         word_cloud_width = width+ 40
-        
       }
       if (window.innerWidth <= 1000) {
         width = panel_size-50 ;
@@ -171,6 +196,13 @@ function analyzeText(this_btn) {
   }
 </script>
 
+
+<!-- script for highlighting -->
+<script>
+  let t_text = $('#txa_textarea').val();
+  let t_font_size = $('#txa_textarea').css("font-size");
+
+</script>
 
 <script>
 
@@ -219,13 +251,18 @@ $('#u_form').submit(function (e) {
             
             $('#cloud_graph').addClass('visible');
 
-            $('.likely_topic p').append(`<span> ${likely_topic} </span>`);
-            $('.complexity_score p').append(`<span> ${complexity_score} </span>`);
-            $('.word_count p').append(`<span> ${word_count} </span>`);
+            $('.likely_topic p').append(`<span class='emphasis-text'> ${likely_topic} </span>`);
+            $('.complexity_score p').append(`<span class='emphasis-text'> ${complexity_score.toFixed(1)}% </span>`);
+
+            $('.word_count p').append(`<span class='emphasis-text'> ${word_count} </span>`);
             
             console.log('\n', sliced_freq_graph_data);
+
             wordFreq(sliced_freq_graph_data);
             adjustDatavizScale();
+
+
+            initiateTextAreaOverlayProps();
           
             $('.loading-spinner').hide();
 
@@ -237,6 +274,36 @@ $('#u_form').submit(function (e) {
               // alert the error if any error occured
 
               console.log('>> error occured in analyze_text! :\n', response);
+              console.log(response["responseJSON"]);
+              console.log(response["responseJSON"]["text_value"]);
+              console.log(response["responseJSON"]["msg"]);
+              console.log(typeof(response["responseJSON"]["text_value"]));
+              console.log((response["responseJSON"]["text_value"].length));
+
+              let text_val = response["responseJSON"]["text_value"];
+
+              console.log(text_val.length);
+
+              if (text_val.length == 0) {
+                
+                $('.alert-tooltip').addClass('visible');
+                $('.alert-tooltip').addClass('show');
+
+
+                setTimeout(function(){
+                  $('.alert-tooltip').removeClass('show');
+                }
+                , 2000)
+
+                setTimeout(function(){
+                  $('.alert-tooltip').removeClass('visible');
+                }
+                , 3000)
+
+
+              }
+
+              $('.loading-spinner').hide();
               
           }
       });
@@ -246,17 +313,15 @@ $('#u_form').submit(function (e) {
 
 
 <!--  Scripts for Resizing window  -->
-<script>
-
-  
-
-  
+<script> 
 
   window.addEventListener('resize', function(event) { // on resize
     adjustDatavizScale();
   }, true);
 
 </script>
+
+
 
 
 
@@ -272,7 +337,7 @@ $('#u_form').submit(function (e) {
     });
   
    
-  </script>
+</script>
 
   
   
