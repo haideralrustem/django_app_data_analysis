@@ -127,14 +127,14 @@ function initiateTextAreaOverlayProps() {
     //set css
     //margin: 0% 0 0 3%;
 
-    let selectedWord = 'Seahawks';
+    let selectedWord = 'vaccination';
     
     let re = new RegExp(selectedWord, "g");
 
     let highlightedSelectedWord = `<span class="highlighted-textarea-word">${selectedWord}</span>`
     
-    $(".highlight-overlay").width ($('#txa_textarea').width());
-    $(".highlight-overlay").height ($('#txa_textarea').height());
+    // $(".highlight-overlay").width ($('#txa_textarea').width());
+    // $(".highlight-overlay").height ($('#txa_textarea').height());
 
 
     let fs = $("#txa_textarea").css("font-size");
@@ -143,10 +143,9 @@ function initiateTextAreaOverlayProps() {
     let border = $("#txa_textarea").css("border");
     
     $(".highlight-overlay").css(
-        {"margin": margin, 
-        "padding": padding,
+        {
         "font-size": fs,
-        "border": border,
+        // "border": border,
         });
 
     let tx =  $("#txa_textarea").val().replace(/\n/g, "<br />");
@@ -166,6 +165,8 @@ function initiateTextAreaOverlayProps() {
              
     });
 
+    
+
     // responisveness
     // color coding
 
@@ -173,6 +174,22 @@ function initiateTextAreaOverlayProps() {
 
 function adjustTextAreaOverlay() {
 
+}
+
+
+window.addEventListener('resize', function(event) {
+    // textAreaOverlayOnResize();    
+    }, true);
+
+
+// ........................
+
+
+function textAreaOverlayOnResize() {
+    let highlightOverly = document.querySelector('.highlight-overlay');
+    let textArea = document.querySelector('.txa_textarea');
+
+    highlightOverly.style.width = textArea.offsetWidth + "px";
 }
 
 

@@ -250,17 +250,19 @@ p {
     height: 26vw;
     width: 42vw;
     margin: 0% 0 0 3%;
+    border: 2px solid  transparent;
+    border-radius: 16px;
+    padding: 2%;  
 
     resize: none;
 
     font-weight: 490;
 
     box-shadow: 0px 0px 8px 0px #00bfff9f;
-    border: 2px solid  transparent;
-    border-radius: 16px;
-    padding: 2%;   
+     
     overflow-y: scroll;
-    opacity: 0.75;
+    opacity: 1;
+    background-color: transparent;
 }
 
 .txa_textarea:focus {
@@ -407,8 +409,9 @@ p {
 }
 
 .highlighted-textarea-word {
-    background-color: chartreuse;
-    border: 2px solid rgb(28, 0, 190);
+    background-color: rgb(193, 248, 137);
+    border: 2px solid rgb(193, 248, 137);
+    border-radius: 4px;
 }
 
 .highlight-overlay {
@@ -418,6 +421,12 @@ p {
     top:0;
     color: transparent;
 
+    width: 60vw;
+    height: 30vw;
+
+    border: 2px solid  transparent;
+    border-radius: 16px;
+    padding: 2%;  
 
     overflow-y: scroll;
     /* background-color: rgb(0, 255, 234); */
@@ -454,6 +463,15 @@ p {
         height: 30vw;
         
         overflow-y: scroll;
+    }
+
+    .highlight-overlay {
+        width: 60vw;
+        height: 30vw;
+        margin: 0% 0 0 3%;
+        border: 2px solid  transparent;
+        border-radius: 16px;
+        padding: 2%;
     }
     
     .text-area-highlight-wrap {
@@ -497,6 +515,16 @@ p {
         height: 30vw;
         overflow-y: scroll;     
     }
+
+    .highlight-overlay {
+        width: 60vw;
+        height: 30vw;
+        margin: 0% 0 0 3%;
+        border: 2px solid  transparent;
+        border-radius: 16px;
+        padding: 2%;
+    }
+
     .text-area-highlight-wrap {
         width: 60vw;
         height: 30vw;
@@ -531,6 +559,16 @@ p {
         overflow-y: scroll;
         
     }
+
+    .highlight-overlay {
+        width: 60vw;
+        height: 30vw;
+        margin: 0% 0 0 3%;
+        border: 2px solid  transparent;
+        border-radius: 16px;
+        padding: 2%;
+    }
+
     .text-area-highlight-wrap {
         width: 60vw;
         height: 30vw;
@@ -562,6 +600,20 @@ p {
     #my_dataviz {
         left: 6px;
     }
+
+    /* .txa_textarea {
+        
+    }
+     */
+
+    .highlight-overlay {
+        height: 26vw;
+        width: 42vw;
+        margin: 0% 0 0 3%;
+        border: 2px solid  transparent;
+        border-radius: 16px;
+        padding: 2%;  
+    }
 }
 
 @media only screen and (min-width: 1000px)and (max-width:1200px){
@@ -578,6 +630,15 @@ p {
         left: 5%;
         opacity: 1;
     }
+
+    .highlight-overlay {
+        height: 26vw;
+        width: 42vw;
+        margin: 0% 0 0 3%;
+        border: 2px solid  transparent;
+        border-radius: 16px;
+        padding: 2%;  
+    }
     
     
 }
@@ -588,6 +649,15 @@ p {
     }
     .visor-div{
         width: 60%;
+    }
+
+    .highlight-overlay {
+        height: 26vw;
+        width: 42vw;
+        margin: 0% 0 0 3%;
+        border: 2px solid  transparent;
+        border-radius: 16px;
+        padding: 2%;
     }
 }
 
@@ -602,6 +672,15 @@ p {
 
     #my_dataviz svg{
          
+    }
+
+    .highlight-overlay {
+        height: 26vw;
+        width: 42vw;
+        margin: 0% 0 0 3%;
+        border: 2px solid  transparent;
+        border-radius: 16px;
+        padding: 2%;
     }
 
     
