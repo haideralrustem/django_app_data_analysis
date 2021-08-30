@@ -403,16 +403,74 @@ p {
     fill: #3cbefa ;
 }
 
-.plot-word-selected {
-    stroke: #26ecd2 ;
+
+.plot-word-selected0 {
+    stroke: #10ac84 ;
+}
+.plot-word-selected1 {
+    stroke: #54a0ff ;
+}
+.plot-word-selected2 {
+    stroke: #ff9f43 ;
     
 }
+.plot-word-selected3 {
+    stroke: #7d5fff ;
+    
+}
+.plot-word-selected4 {
+    stroke: #c56cf0 ;
+    
+}
+.plot-word-selected5 {
+    stroke: #ffb8b8 ;
+    
+}
+.plot-word-selected6 {
+    stroke: #D6A2E8 ;
+}
 
-.highlighted-textarea-word {
-    background-color: rgb(193, 248, 137);
-    border: 2px solid rgb(193, 248, 137);
+
+
+
+.highlighted-textarea-word0 {
+    background-color: #10ac84;
+    /* border: 2px solid #10ac84; */
     border-radius: 4px;
 }
+
+.highlighted-textarea-word1 {
+    background-color: #54a0ff;
+    /* border: 2px solid #54a0ff; */
+    border-radius: 4px;
+}
+.highlighted-textarea-word2 {
+    background-color: #ff9f43;
+    /* border: 2px solid #ff9f43; */
+    border-radius: 4px;
+}
+.highlighted-textarea-word3 {
+    background-color: #7d5fff;
+    /* border: 2px solid #7d5fff; */
+    border-radius: 4px;
+}
+.highlighted-textarea-word4 {
+    background-color: #c56cf0 ;
+    /* border: 2px solid #c56cf0 ; */
+    border-radius: 4px;
+}
+.highlighted-textarea-word5 {
+    background-color: #ffb8b8;
+    /* border: 2px solid #ffb8b8; */
+    border-radius: 4px;
+}
+
+.highlighted-textarea-word6 {
+    background-color: #D6A2E8;
+    /* border: 2px solid #D6A2E8; */
+    border-radius: 4px;
+}
+
 
 .highlight-overlay {
     position: absolute;

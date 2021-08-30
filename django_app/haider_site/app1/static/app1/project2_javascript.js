@@ -3,7 +3,14 @@ var window_media_query_offset = 17;
 
 // let parsed_data = null;
 // parsed_data = JSON.parse('{{json_recieved_data|safe}}')
-    
+
+var colorsArray = ["#10ac84", "#54a0ff", "#ff9f43", 
+                       "#7d5fff", "#c56cf0", "#ffb8b8",
+                       "#6D214F", 
+                        ];
+
+var selectedWords = [];
+var selectedColors = [];
 
 
 function wordFreq(data, w=460, h=400, fontSize="14px") {
@@ -15,6 +22,8 @@ function wordFreq(data, w=460, h=400, fontSize="14px") {
     height = h - margin.top - margin.bottom;
 
     let max_ticks = data[0]['count'];
+
+    
 
     d3.select("#my_dataviz svg").remove();
 
@@ -70,31 +79,49 @@ function wordFreq(data, w=460, h=400, fontSize="14px") {
         .attr("y", function(d) { return y(d.word); })
         .attr("width", function(d) { return x(d.count); })
         .attr("height", y.bandwidth() )
-        .attr("fill", "#69b3a2")
+        
+        .attr("fill", function (d, i){ return colorsArray[i]; });
         
 
         document.querySelectorAll('.plot-word').forEach(
-            function(item) {
+            function(item, i) {
+            
             item.addEventListener('click', function(event) {
                 event.stopPropagation();
               //handle click
-              clickPlotWord(this);
+              clickPlotWord(this, i);
             })
           });
 
 
-          function clickPlotWord(clickedItem) {
+          function clickPlotWord(clickedItem, colorNumber) {
             console.log('clicked item => ', clickedItem.innerHTML);
-            if ($(clickedItem).hasClass('plot-word-selected')){
-                $(clickedItem).removeClass('plot-word-selected');
+            if ($(clickedItem).hasClass('plot-word-selected'+colorNumber)){
+                $(clickedItem).removeClass('plot-word-selected'+colorNumber);
+                
                 // unhighlight text
+                if ( selectedWords.includes(selectedWord)) {
+                    const index = selectedWords.indexOf(selectedWord);
+                    array.splice(index, 1);
+                }
+                if ( selectedColors.includes(colorNumber)) {
+                    const index = selectedColors.indexOf(colorNumber);
+                    array.splice(index, 1);
+                }
 
             }
             else {
-                $(clickedItem).addClass('plot-word-selected');
+                $(clickedItem).addClass('plot-word-selected'+colorNumber);
                 // highlight text
-                highlightWordsTextArea(clickedItem.innerHTML);
-
+                //highlightWordsTextArea(clickedItem.innerHTML);
+                let selectedWord = clickedItem.innerHTML;
+                if ( ! selectedWords.includes(selectedWord)) {
+                    selectedWords.push(selectedWord);
+                }
+                if ( ! selectedColors.includes(colorNumber)) {
+                    selectedColors.push(colorNumber);
+                }
+                initiateTextAreaOverlayProps(selectedWords, selectedColors);
             }
            
 
@@ -104,53 +131,40 @@ function wordFreq(data, w=460, h=400, fontSize="14px") {
 
 }
 
-function highlightWords() {
-    $(".highlight-overlay").width ($('#txa_textarea').width());
-    $(".highlight-overlay").height ($('#txa_textarea').height());
-    let highlight_overlay = document.querySelector('.highlight-overlay');
 
-    let txtarea = document.querySelector('#txa_textarea');
-    let coords_offset = getOffset(highlight_overlay);
-    
-    console.log(coords_offset);
-    console.log(getOffset(txtarea));
-    highlight_overlay
 
-    initiateTextAreaOverlayProps();
-  }
 
 // set the values of overlay so that its identitcal to the textarea
-function initiateTextAreaOverlayProps() {
+function initiateTextAreaOverlayProps(selectedWords, selectedColors) {
     console.log("  initiateTextAreaOverlayProps() was called ! \n");
     // set text
 
     //set css
     //margin: 0% 0 0 3%;
 
-    let selectedWord = 'vaccination';
+    // selectedWord = 'vaccination';
     
-    let re = new RegExp(selectedWord, "g");
-
-    let highlightedSelectedWord = `<span class="highlighted-textarea-word">${selectedWord}</span>`
     
-    // $(".highlight-overlay").width ($('#txa_textarea').width());
-    // $(".highlight-overlay").height ($('#txa_textarea').height());
-
-
-    let fs = $("#txa_textarea").css("font-size");
-    let margin = $("#txa_textarea").css("margin");
-    let padding = $("#txa_textarea").css("padding");
-    let border = $("#txa_textarea").css("border");
-    
-    $(".highlight-overlay").css(
-        {
-        "font-size": fs,
-        // "border": border,
-        });
 
     let tx =  $("#txa_textarea").val().replace(/\n/g, "<br />");
 
-    tx = tx.replace(re, highlightedSelectedWord);
+    selectedWords.forEach(function(selectedWord, i) {
+        let re = new RegExp(selectedWord, "g");
+        let colorNumber = selectedColors[i];
+        let highlightedSelectedWord = `<span class="highlighted-textarea-word${colorNumber}">${selectedWord}</span>`
+        let fs = $("#txa_textarea").css("font-size");
+        let margin = $("#txa_textarea").css("margin");
+        let padding = $("#txa_textarea").css("padding");
+        let border = $("#txa_textarea").css("border");
+    
+        $(".highlight-overlay").css(
+            {
+            "font-size": fs,
+            // "border": border,
+            });
+
+        tx = tx.replace(re, highlightedSelectedWord);
+    });   
 
     console.log(tx);
 
@@ -172,9 +186,30 @@ function initiateTextAreaOverlayProps() {
 
 }
 
+function finalHighlighter(listOfSelectedWords) {
+
+    listOfSelectedWords
+}
+
 function adjustTextAreaOverlay() {
 
 }
+
+
+function highlightWords() {
+    $(".highlight-overlay").width ($('#txa_textarea').width());
+    $(".highlight-overlay").height ($('#txa_textarea').height());
+    let highlight_overlay = document.querySelector('.highlight-overlay');
+
+    let txtarea = document.querySelector('#txa_textarea');
+    let coords_offset = getOffset(highlight_overlay);
+    
+    console.log(coords_offset);
+    console.log(getOffset(txtarea));
+    highlight_overlay
+
+    initiateTextAreaOverlayProps();
+  }
 
 
 window.addEventListener('resize', function(event) {
@@ -219,13 +254,21 @@ function dehighlightWordsTextArea(highlightedWord) {
 
 // a function when body clicks occur and we need to have a de-click
 function declicker(){
+
+    
+
     document.getElementById('text-analyzer-wapper').addEventListener('click',
         function(){
             document.querySelectorAll('.plot-word').forEach(
                 function(item) {
-                    if ($(item).hasClass('plot-word-selected')){
-                        $(item).removeClass('plot-word-selected');
-                    }
+
+                    colorsArray.forEach(function(color, index){
+
+                        if ($(item).hasClass('plot-word-selected'+index)){
+                            $(item).removeClass('plot-word-selected'+index);
+                        }
+                    });
+                   
             });
         }
         
@@ -234,7 +277,7 @@ function declicker(){
 }
 
 // execute function calls
-initiateTextAreaOverlayProps();
+//initiateTextAreaOverlayProps();
 
 declicker();
 

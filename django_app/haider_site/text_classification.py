@@ -79,7 +79,7 @@ def text_classification20():
 # .......................................
 def predict_likely_topic(text):
     likely_topic = 'none predicted'
-    twenty_train_topics = ['alt.atheism', 'computer-related topics/ graphics', 'computer-related topics/ Miscellaneous',
+    twenty_train_topics = ['Atheism', 'computer-related topics/ graphics', 'computer-related topics/ Miscellaneous',
                            'computer-related topics/ hardware',
                            'computer-related topics/ hardware', 'computer-related topics/ ', 'Miscellaneous.for sale', 'recreational activities/ autos',
                            'recreational activities/ motorcycles', 'recreational activities/ sport', 'recreational activities/ sport', 'Science/ crypt',
