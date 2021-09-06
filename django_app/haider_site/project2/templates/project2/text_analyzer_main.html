@@ -26,6 +26,10 @@
 
 <div id="text-analyzer-wapper">
   <div class='txa txa-outer-wrap'>
+    <div class="guide-text">
+        To start analyzaing text, write or copy/paste 
+        a piece of text in the area below then click on the analyze text button:
+    </div>
 
     <div class="txa-twin-wrapper switches-display">
 
@@ -59,6 +63,11 @@
         <div id="analyze-btn-wrap">
           <button id="analyze-btn" class="blue-button-rev" 
           onclick="analyzeText(this)">ANALYZE TEXT</button>
+
+          <button id="clear-btn" disabled
+          class="red-button-rev"
+          onclick="clearAnalysis(this)">CLEAR ALL</button>
+
         </div>
 
 
@@ -74,7 +83,7 @@
               <div id="my_dataviz"></div>
             </div>
             <div class="likely_topic">
-              <p class="tooltip-owner" title="Most likely topic for the text.">Likely Topic: </p>
+              <p class="tooltip-owner" title="Most likely general theme of the text.">General Subject: </p>
             </div>
             <div class="complexity_score">
               <p class="tooltip-owner"  title="The higher the score, the more complex the text is (Using the Flesch Reading Formula).">
@@ -118,8 +127,20 @@
 function analyzeText(this_btn) {
     let text = $('#txa_textarea').val();
     $('#id_text_value').val(text);
+    
+        
     $('#analyze_text_submit').click();  // that will submit your form
   }
+
+function clearAnalysis(this_btn) {
+    $('.txa-side-panel').removeClass('slides');
+    $('#id_text_value').val('');
+    let tx = '';
+    $("#txa_textarea").val(tx)
+    $('.highlight-overlay').html(tx);
+    // $('#clear-btn').attr('disabled', 'false');
+    this_btn.disabled = 'true';
+}
 
 
 
@@ -133,6 +154,23 @@ function analyzeText(this_btn) {
   $( function() {
     $( ".tooltip-owner" ).tooltip();
   } );
+  
+</script>
+
+
+<!-- flashing -->
+<script>
+$('.guide-text').addClass('flash-shadow-bordered ');
+
+setTimeout(()=>{ $('.highlight-overlay').addClass('flash-shadow-bordered ');}, 
+1200);
+
+setTimeout(()=>{ $('.guide-text').removeClass('flash-shadow-bordered ');}, 
+                              1200);
+
+setTimeout(()=>{ $('.highlight-overlay').removeClass('flash-shadow-bordered ');}, 
+2500);
+
 </script>
 
 
@@ -247,9 +285,13 @@ $('#u_form').submit(function (e) {
             // imageObject.style.display = 'inline-block';
             imageObject.src = prev_src;
             
+            $('.txa-side-panel').removeClass('slides');
+            $('.txa-side-panel').addClass('slides');
 
-            
+            $('#cloud_graph').removeClass('visible');
             $('#cloud_graph').addClass('visible');
+
+            $('span.emphasis-text').remove();
 
             $('.likely_topic p').append(`<span class='emphasis-text'> ${likely_topic} </span>`);
             $('.complexity_score p').append(`<span class='emphasis-text'> ${complexity_score.toFixed(1)}% </span>`);
@@ -261,6 +303,8 @@ $('#u_form').submit(function (e) {
             wordFreq(sliced_freq_graph_data);
             adjustDatavizScale();
 
+
+            $('#clear-btn').removeAttr('disabled');
           
             $('.loading-spinner').hide();
 

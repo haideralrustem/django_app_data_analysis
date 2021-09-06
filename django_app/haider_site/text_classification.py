@@ -9,6 +9,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.linear_model import SGDClassifier
+from sklearn.naive_bayes import MultinomialNB
 from statistics import mean
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
@@ -58,13 +59,12 @@ def text_classification20():
 
     text_clf_svm = Pipeline([('vect', CountVectorizer(stop_words='english')),
                              ('tfidf', TfidfTransformer()),
-                             ('clf-svm', SGDClassifier(loss='hinge', penalty='l2',
-                                                       alpha=1e-3, random_state=42)),
+                             ('clf', MultinomialNB()),
                              ])
     _ = text_clf_svm.fit(twenty_train.data, twenty_train.target)
     # predicted_svm = text_clf_svm.predict(twenty_test.data)
 
-    pdb.set_trace()
+    
     # save the classifier
     with open('./my_dumped_classifier.pkl', 'wb') as fid:
         cPickle.dump(text_clf_svm, fid)
@@ -79,12 +79,13 @@ def text_classification20():
 # .......................................
 def predict_likely_topic(text):
     likely_topic = 'none predicted'
-    twenty_train_topics = ['Atheism', 'computer-related topics/ graphics', 'computer-related topics/ Miscellaneous',
-                           'computer-related topics/ hardware',
-                           'computer-related topics/ hardware', 'computer-related topics/ ', 'Miscellaneous.for sale', 'recreational activities/ autos',
-                           'recreational activities/ motorcycles', 'recreational activities/ sport', 'recreational activities/ sport', 'Science/ crypt',
-                           'Science/ electronics', 'Science/ medical', 'Science/ space', 'Social/ religion',
-                           'Talk/ politics', 'Talk/ politics', 'Talk/ politics.Miscellaneous', 'Talk/ religion.Miscellaneous']
+    twenty_train_topics = ['Atheism', 'computer-related topics', 'computer-related topics',
+                           'computer-related topics',
+                           'computer-related topics', 'computer-related topics ', 'Entertainment', 'recreational activities/ autos',
+                           'recreational activities/Entertainment', 'recreational activities/Entertainment/sport', 'Recreational activities/Entertainment',
+                           'Science/Computers',
+                           'Science', 'Medical', 'Science/ space', 'Social',
+                           'Talk/ politics', 'Talk/ Politics', 'Talk/Politics', 'Talk/ religion.Miscellaneous']
 
 
     # load it again
@@ -196,5 +197,5 @@ if __name__ == "__main__":
     print(pc)
     print(d)
 
-    # text_classification20()
+    text_classification20()
     predict_likely_topic(text)

@@ -13,6 +13,8 @@ var selectedWords = [];
 var selectedColors = [];
 
 
+
+
 function wordFreq(data, w=460, h=400, fontSize="14px") {
         // set the dimensions and margins of the graph
     var margin = {top: 10, right: 10, bottom: 80, left: 100},
@@ -151,7 +153,7 @@ function initiateTextAreaOverlayProps(selectedWords, selectedColors) {
     selectedWords.forEach(function(selectedWord, i) {
         let re = new RegExp(selectedWord, "g");
         let colorNumber = selectedColors[i];
-        let highlightedSelectedWord = `<span class="highlighted-textarea-word${colorNumber}">${selectedWord}</span>`
+        let highlightedSelectedWord = `<span class="highlighter highlighted-textarea-word${colorNumber}">${selectedWord}</span>`
         let fs = $("#txa_textarea").css("font-size");
         let margin = $("#txa_textarea").css("margin");
         let padding = $("#txa_textarea").css("padding");
@@ -185,6 +187,32 @@ function initiateTextAreaOverlayProps(selectedWords, selectedColors) {
     // color coding
 
 }
+
+
+function removeOverlay() {
+   
+    let classNumbers = [0, 1, 2, 3, 4, 5, 6]
+    let classSelector = `.highlighter`;
+
+    
+
+    $( classSelector ).each(function( index ) {
+        let elem = $(this);
+
+        classNumbers.forEach(function(classNumber, i) {
+        
+            let classForRemoval = `highlighted-textarea-word${classNumber}`
+            
+            $(elem).removeClass(classForRemoval);
+        });
+      
+    });
+
+    selectedWords = [];
+    selectedColors = [];
+
+}   
+
 
 function finalHighlighter(listOfSelectedWords) {
 
@@ -247,18 +275,16 @@ function highlightWordsTextArea(highlightedWord) {
     textArea.nodeValue  = newText;
 }
 
-function dehighlightWordsTextArea(highlightedWord) {
-    let textArea = document.getElementById("txa_textarea");
-}   
 
 
 // a function when body clicks occur and we need to have a de-click
 function declicker(){
 
     
-
     document.getElementById('text-analyzer-wapper').addEventListener('click',
         function(){
+
+            // (1)
             document.querySelectorAll('.plot-word').forEach(
                 function(item) {
 
@@ -270,6 +296,13 @@ function declicker(){
                     });
                    
             });
+
+            // 2 -
+            removeOverlay()
+
+            // 3 - 
+
+
         }
         
     );  
