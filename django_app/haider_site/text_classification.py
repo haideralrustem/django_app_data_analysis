@@ -105,9 +105,14 @@ def FleschReadabilityEase(text):
     60-70 -> easily understood by 13-15-year-old students
     0-30 -> best understood by university graduates
     """
+
+    words = len(text.split())
+    if (words) > 0 and (words) < 4:
+        return 95
     if len(text) > 0:
         return 206.835 - (1.015 * len(text.split()) / len(text.split('.')) ) - 84.6 * (sum(list(map(lambda x: 1 if x in ["a","i","e","o","u","y","A","E","I","O","U","y"] else 0,text))) / len(text.split()))
-    
+
+
 
 def convert_Flesch_percentage(score):
 
@@ -119,13 +124,18 @@ def convert_Flesch_percentage(score):
 
 def word_frequency(text):
     freq_data = []
-    text_words = word_tokenize(text)
+    tokenizer = nltk.RegexpTokenizer(r"\w+")
+    # text_words = word_tokenize(text)
+    # text_words = word_tokenize(text)
+    text_words = []
+    text_words = tokenizer.tokenize(text)
+    
     stop_words = set(stopwords.words('english'))
     text_words = [w for w in text_words if not w.lower() in stop_words]
 
     data_analysis = nltk.FreqDist(text_words)
     # Let's take the specific words only if their frequency is greater than 3.
-    filter_words = dict([(m, n) for m, n in data_analysis.items() if len(m) > 3])
+    filter_words = dict([(m, n) for m, n in data_analysis.items() if len(m) > 0])
     for key in sorted(filter_words):
         print("%s: %s" % (key, filter_words[key]))
 
@@ -137,10 +147,13 @@ def word_frequency(text):
 
     sorted_dict = dict(sorted(new_dict.items(), key=lambda item: item[1], reverse=True))
 
+    
+
     return sorted_dict, len(text_words)
 # ..................................
 
 def generate_word_cloud(text):
+
     wordcloud = WordCloud(background_color="white").generate(text)
 
     ts = str(time.time())

@@ -47,8 +47,9 @@ def analyze_text(request):
                                 'likely_topic': None,
                                 'word_cloud_url': None
                                 }, status=400)
-                            
             
+            text_value = text_value + ' '
+
             # text analysis pipeline goes here:
             freq_dict, word_count = tc.word_frequency(text_value)
             frequency_graph_data = tc.convert_to_data_array(freq_dict)
@@ -61,8 +62,7 @@ def analyze_text(request):
             likely_topic =  tc.predict_likely_topic(text_value)
             
             word_cloud_url = tc.generate_word_cloud(text_value)
-            # pdb.set_trace()
-
+            
             # json_recieved_data = json.dumps(deliver_modded_rows)
 
             return JsonResponse({                                    
