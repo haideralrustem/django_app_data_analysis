@@ -159,6 +159,7 @@ def generate_word_cloud(text):
 
     ts = str(time.time())
     word_cloud_url = 'word_cloud' + ts + '.png'
+    word_cloud_url = 'word_cloud' + '.png'
 
     # Display the generated image:
     plt.imshow(wordcloud, interpolation='bilinear')

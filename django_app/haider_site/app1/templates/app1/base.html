@@ -48,11 +48,11 @@
             
             
             <ul class="nav_links my_navbar centering hamburger">
-                <li ><a>ITEM</a></li>
-                <li><a>ITEM</a></li>
-                <li><a>ITEM</a></li>
-                <li><a>ITEM</a></li>
-                <li><a>ITEM</a></li>
+                <li ><a href="{% url 'project1:intro' %}">Project Simple Grapher</a></li>
+                <li><a href="{% url 'project2:intro' %}">Project Text Analyzer</a></li>
+
+                <li><a href="{% url 'app1:app1-about' %}">About</a></li>
+                
             </ul>
 
             </div>
@@ -111,10 +111,10 @@
             
             
                 <ul id="drop_menu_list" class="drop_menu_list" >
-                    <li ><a>ITEM ITEM ITEM</a></li>
-                    <li><a>ITEM ITEM ITEM</a></li>
-                    <li><a>ITEM ITEM ITEM</a></li>
-                    <li><a>ITEM ITEM ITEM</a></li>
+                    <li ><a href="{% url 'project1:intro' %}">Project Simple Grapher</a></li>
+                    <li><a href="{% url 'project2:intro' %}">Project Text Analyzer</a></li>
+                    <li><a href="https://haideralrustem.github.io/" target="_blank">About</a></li>
+                    
                 </ul>
 
             </div>
@@ -159,22 +159,22 @@
         
         <div class="footer-row-wrap">
             <div id='first-footer-row' class="my-row footer-row"> 
-                <div class="footer-item footer-button"><a>Home</a></div>
+                <div class="footer-item footer-button"><a href="{% url 'app1:app1-home' %}">Home</a></div>
                 <div class="footer-item footer-button"><a href="{% url 'app1:app1-about' %}">About</a></div>
-                <div class="footer-item footer-button"><a href="{% url 'my_users:post_userform' %}">Contact</a></div>
-                <div class="footer-item footer-button"><a>Contact</a></div>
+                <div class="footer-item footer-button"><a href="https://haideralrustem.github.io/#/contact" target="_blank">Contact</a></div>
+                <div class="footer-item footer-button" style="width:30%"><a href="https://haideralrustem.github.io/" target="_blank">Landing Page</a></div>
             </div>
             
 
             <div id="second-footer-row" class="my-row footer-row">
                 <div class="footer-item footer-icon">
-                    <img class="social-media-icon" src="{% get_media_prefix %}linkedin1.png">
+                    <img data-url="https://www.linkedin.com/in/haider-al-rustem-32010515a/" class="social-media-icon" src="{% get_media_prefix %}linkedin1.png" onclick="routeToUrl(this)">
                 </div> 
                 <div class="footer-item footer-icon">
-                    <img class="social-media-icon" src="{% get_media_prefix %}facebook_logo2.png">
+                    <img data-url="https://www.facebook.com/hydar.ali.92" class="social-media-icon" src="{% get_media_prefix %}facebook_logo2.png" onclick="routeToUrl(this)">
                 </div>
                 <div class="footer-item footer-icon">
-                    <img class="social-media-icon" src="{% get_media_prefix %}github1.png">
+                    <img data-url="https://github.com/haideralrustem" class="social-media-icon" src="{% get_media_prefix %}github1.png" onclick="routeToUrl(this)">
                 </div>
             </div>
 
@@ -237,4 +237,15 @@
 <script src="{% static 'app1/ElementQueries.js' %}"></script>
 <script src="{% static 'app1/my_javascript.js' %}"></script>
 
+
+<script>
+
+function routeToUrl(clickedImg) {
+    let urlRoute = clickedImg.getAttribute('data-url');
+    //window.location.href = urlRoute;
+    window.open(urlRoute,
+    '_blank' // <- This is what makes it open in a new window.
+);
+}
+</script>
 </html>

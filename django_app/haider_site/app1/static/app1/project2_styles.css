@@ -613,6 +613,14 @@ p {
         left: 3px;
     }
 
+    .tutorial-card  {
+        display: block;
+    }
+    .tcard-side-img {
+        width: 98%;
+        margin-top: 1%;
+    }
+
    
 }
 
@@ -661,6 +669,14 @@ p {
         left: 4px;
     }
 
+    .tutorial-card  {
+        display: block;
+    }
+    .tcard-side-img {
+        width: 98%;
+        margin-top: 1%;
+    }
+
 }
 
 
@@ -705,6 +721,14 @@ p {
         left: 6px;
     }
     #my_dataviz svg{
+    }
+
+    .tutorial-card  {
+        display: block;
+    }
+    .tcard-side-img {
+        width: 98%;
+        margin-top: 1%;
     }
 
 }
