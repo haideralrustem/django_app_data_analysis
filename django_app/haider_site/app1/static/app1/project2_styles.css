@@ -202,7 +202,7 @@ p {
     /* font-size: 100%; */
 }
 .tutorial-card p {
-    font-size: 140%;
+    font-size: 130%;
 }
 .tcard-title {
     font-weight: bold;
@@ -215,7 +215,7 @@ p {
     /* font-size: 120%; */
 }
 .tcard-side-img {
-    width: 30%;
+    width: 55%;
     margin-left: 2%;
     border: 1px ;
     border-radius: 10px;
@@ -253,6 +253,8 @@ p {
     padding: 1% 2%;
     border-radius: 10px;
     transition: 1s all ease-in-out;
+    font-family: "valentine";
+    font-weight: bold;
 }
 
 .txa {
@@ -456,21 +458,21 @@ p {
 
 
 .plot-word-selected0 {
-    stroke: #10ac84 ;
+    stroke: #3de2b9 ;
 }
 .plot-word-selected1 {
-    stroke: #54a0ff ;
+    stroke: #69aafa ;
 }
 .plot-word-selected2 {
-    stroke: #ff9f43 ;
+    stroke: #fca95b ;
     
 }
 .plot-word-selected3 {
-    stroke: #7d5fff ;
+    stroke: #8d74fd ;
     
 }
 .plot-word-selected4 {
-    stroke: #c56cf0 ;
+    stroke: #cf86f3 ;
     
 }
 .plot-word-selected5 {
@@ -485,23 +487,23 @@ p {
 
 
 .highlighted-textarea-word0 {
-    background-color: #10ac84;
+    background-color: #48ceac;
     /* border: 2px solid #10ac84; */
     border-radius: 4px;
 }
 
 .highlighted-textarea-word1 {
-    background-color: #54a0ff;
+    background-color: #6aabfa;
     /* border: 2px solid #54a0ff; */
     border-radius: 4px;
 }
 .highlighted-textarea-word2 {
-    background-color: #ff9f43;
+    background-color: #fdab5e;
     /* border: 2px solid #ff9f43; */
     border-radius: 4px;
 }
 .highlighted-textarea-word3 {
-    background-color: #7d5fff;
+    background-color: #9b89ee;
     /* border: 2px solid #7d5fff; */
     border-radius: 4px;
 }
@@ -543,13 +545,25 @@ p {
     opacity: 1;
 }
 
+.info-text {
+    border: 1px solid #2db6ec;
+    border-radius: 5px;
+    width: 80%;
+    margin-left: 5%;
+    margin-top: 10%;
+    padding: 9px 13px;
+}
 
+
+/* ............................................... */
 
 
 /* ................................................ */
 /*               Media Query  Queries                      */
 /* ................................................ */
 
+
+/* ................................................ */
 
 @media only screen and (min-width: 320px) and (max-width: 400px){
     .head-text {

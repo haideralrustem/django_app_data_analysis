@@ -150,6 +150,7 @@ def word_frequency(text):
     
 
     return sorted_dict, len(text_words)
+    
 # ..................................
 
 def generate_word_cloud(text):

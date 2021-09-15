@@ -77,7 +77,8 @@
         <div class="txa-side-panel-content">
           <div class="txa-side-panel-title">Results:</div>
           <div class="txa-results-container">
-            <div class="word_count"><p class="tooltip-owner">Word count: </p></div>
+            <div class="word_count"><p title="Number of words"
+              class="tooltip-owner">Word count: </p></div>
             <div>
               <p class="tooltip-owner">Frequency: </p>
               <div id="my_dataviz"></div>
@@ -94,7 +95,9 @@
               title="Word Cloud is a visualization that summarizes the most frequent words that occur in a text. The bigger the word, the most frequent it is.">
                 Word Cloud (have hover overs)
               </p>
-              <img id="cloud_graph" src=''>
+              <img id="cloud_graph" src='' 
+              class="tooltip-owner"
+              title="Word Cloud is a visualization that summarizes the most frequent words that occur in a text. The bigger the word, the most frequent it is.">
 
             </div>
 
@@ -106,9 +109,27 @@
 
   </div>
 
+  <hr>
+  
   <div>
-    <a href="https://en.wikipedia.org/wiki/Usenet_newsgroup" target="_blank">Usenet newsgroup classification</a>
-    <a href="http://qwone.com/~jason/20Newsgroups/" target="_blank">The 20 Newsgroups data set Source</a>
+
+    <div class="info-text">
+      
+      <p>The Text Analyzer employs the help of NLTK
+        <a href="https://www.nltk.org/" target="_blank">(Natural Language Toolkit)</a>
+        , which is a Natural Langauge Processing (NLP) library written in the Python 
+        programming language.
+       </p>
+       <p>
+         Text Analyzer also uses a Machine Learning model to try to guess the general Subject
+         of the entered text. The predictive model was trained using 
+         <a href="http://qwone.com/~jason/20Newsgroups/" target="_blank">The 20 Newsgroups data set</a>
+         , which is a dataset consisting of approximately 20,000 articles from different news 
+         categories.
+       </p>
+      
+    </div>
+
   </div>
 
 </div>

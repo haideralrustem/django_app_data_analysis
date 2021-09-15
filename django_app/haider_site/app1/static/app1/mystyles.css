@@ -290,6 +290,17 @@ nav {
 
 
 /*...........  child block at home.html .................... */
+.home-title {
+    padding-top: 30px;
+    font-family: "Helvetica", monospace;
+    border-bottom: 1px solid #1f77b4;
+    margin-bottom: 18px;
+    padding-bottom: 10px;
+    
+}
+.home-subtitle {
+    margin-bottom: 5px;
+}
 
 .home-wrap {
     margin-left: 3%;
@@ -321,7 +332,17 @@ nav {
     max-width: 100%;
     max-height: 15.5vw;
     margin-bottom: 3%;
-    margin-top: 3%;
+    margin-top: 5%;
+}
+.card-container a {
+    text-decoration: none;
+    color: black;
+}
+
+.tcard-title-brand {
+    font-family: "f1",  sans-serif;
+    font-weight: bold;
+    color: #00458f;
 }
 
 .card-wrap {
