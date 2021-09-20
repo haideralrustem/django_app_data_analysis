@@ -57,7 +57,7 @@
 
             </div>
 
-            <div class="centering hamburger nav-right-wrap">
+            <div class="centering hamburger nav-right-wrap" style="display: none;">
                 <div>
                 {% if user.is_authenticated %}
                     <a class="cta" href="{% url 'logout' %}"><button class="nav-button">Logout</button></a>
@@ -192,21 +192,35 @@
 
         <div class="site-map">
             <div class="site-map-column">
-                <p class="site-map-column-title">Title</p>
-                <p class="site-map-column-subtitle">Site Map1</p>
-                <p class="site-map-column-subtitle">Site Map1</p>
-                <p class="site-map-column-subtitle">Site Map1</p>
+                <p class="site-map-column-title">Analytical Projects</p>
+                <p class="site-map-column-subtitle">
+                    <a href="{% url 'project1:intro' %}">Simple Grapher</a>
+                </p>
+                <p class="site-map-column-subtitle">
+                    <a href="{% url 'project2:intro' %}">Text Analyzer</a>
+                </p>
+                
             </div>
 
+             <div class="site-map-column">
+                <p class="site-map-column-title">Other Works</p>
+                <p class="site-map-column-subtitle">
+                    <a href="https://play.google.com/store/apps/details?id=com.haideralrustem1990.repark" target="_blank">
+                        Re-Park App
+                    </a>
+                </p>
+                <p class="site-map-column-subtitle">
+                    <a href="https://public.tableau.com/profile/haider.al.rustem#!/?newProfile=&activeTab=0" target="_blank">
+                        Tableau portfolio
+                    </a>
+                </p>
+            </div>
+
+            <!--
             <div class="site-map-column">
                 <p class="site-map-column-title">Title</p>
                 <p class="site-map-column-subtitle">Site Map1</p>
-            </div>
-
-            <div class="site-map-column">
-                <p class="site-map-column-title">Title</p>
-                <p class="site-map-column-subtitle">Site Map1</p>
-            </div>
+            </div> -->
         </div>
 
         <div id="block-side-end" class="footer-side-end">

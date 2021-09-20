@@ -233,6 +233,29 @@ function update_profile_info(element) {
 }
 
 
+function spawnWelcomeText() {
+
+    setTimeout( function() {
+        let e = document.querySelector(".welcome-text");
+        e.style.opacity = "1";
+    }
+        , 500);
+}
+
+
+function navigateToUrl(elementClicked) {
+    let url = elementClicked.getAttribute('data-url');
+    window.open(
+        url,
+        '_blank' // <- This is what makes it open in a new window.
+      );
+}
+
+
+
+spawnWelcomeText();
+
+
 
 
 // 

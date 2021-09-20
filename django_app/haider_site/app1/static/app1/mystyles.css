@@ -374,7 +374,47 @@ nav {
     background-size: cover;
     width: auto;
     height: 55vh;
+
+    position: relative;
     
+}
+
+.welcome-text {
+    color: white;
+    font-family: "Montserrat", san-serif;
+    font-size: 30px;
+    position: absolute;
+    top: 6%;
+    left: 4%;
+    font-style: italic;
+    opacity: 0;
+    transition: 0.4s opacity ease-in-out;
+}
+
+.built-by-python-img {
+    
+}
+
+.django-logo {
+    width: 100px;
+    height: 100px;
+}
+
+
+.built-by-python {
+    position: relative;
+    left: 80%;
+    top: 47%;
+    width: 120px;
+    height: 120px;
+
+    cursor: pointer;
+}
+
+.built-by-python-text {
+    color: white;
+    font-family: "Montserrat", san-serif;
+    font-size: 20px;
 }
 
 .about-me-wrap {
@@ -869,7 +909,9 @@ div.alert {
 .site-map-column {
     margin: 0 1%;
     text-align: center;
-    border: 1px solid grey;
+    border: 1px solid rgb(116 169 254);
+    padding: 1px 3px 1px 3px;
+    border-radius: 10px;
 }
 
 .site-map-column p {
@@ -882,7 +924,9 @@ div.alert {
     font-style: italic;
 }
 
-site-map-column-subtitle {}
+.site-map-column-subtitle a {
+    color: #034791;
+}
 
 
 /* .site-map-column p {
@@ -939,6 +983,26 @@ site-map-column-subtitle {}
     .my_navbar li {
         font-size: 14px;
     }
+
+
+    /* .................... */
+    .welcome-text {
+        font-size: 18px;
+    }
+    .built-by-python {
+        top: 55%;
+        left: 65%;
+    }
+    .django-logo {
+        width: 50px;
+        height: 50px;
+    }
+    .built-by-python-text {
+        font-size: 16px;
+    }
+
+
+    /* ........................ */
 
 
     .card-wrap {
@@ -1063,6 +1127,9 @@ site-map-column-subtitle {}
     }
 }
 
+
+
+
 @media only screen and (min-width: 480px) and (max-width: 560px) {
     body {
         min-height: 300px;
@@ -1096,6 +1163,33 @@ site-map-column-subtitle {}
     .my_navbar li {
         font-size: 14px;
     }
+
+
+
+    /* .................... */
+
+
+    .welcome-text {
+        font-size: 18px;
+    }
+    .built-by-python {
+        top: 38%;
+        left: 75%;
+        
+    }
+    .django-logo {
+        width: 50px;
+        height: 50px;
+    }
+    .built-by-python-text {
+        font-size: 16px;
+    }
+
+
+    /* ........................ */
+
+
+
     .card-img {
         /* height: 137px;
         width: 216px; */
@@ -1209,6 +1303,26 @@ site-map-column-subtitle {}
         font-size: 14px;
     }
 
+    /* ........................... */
+    
+    .welcome-text {
+        font-size: 20px;
+    }
+    .built-by-python {
+        top: 38%;
+        left: 75%;
+        
+    }
+    .django-logo {
+        width: 50px;
+        height: 50px;
+    }
+    .built-by-python-text {
+        font-size: 16px;
+    }
+
+    /* ..................... */
+
     /* ----- profile ----- */
 
     .profile-content-wrap {
@@ -1304,6 +1418,27 @@ site-map-column-subtitle {}
     /* --------  */
 
 
+    /* ........................... */
+    
+    .welcome-text {
+        font-size: 20px;
+    }
+    .built-by-python {
+        top: 64%;
+        left: 82%;
+        
+    }
+    .django-logo {
+        width: 50px;
+        height: 50px;
+    }
+    .built-by-python-text {
+        font-size: 16px;
+    }
+
+    /* ..................... */
+
+
     .footer {
         height: 380px;
         
@@ -1372,6 +1507,24 @@ site-map-column-subtitle {}
         margin-left: 1%;
     }
 
+    /* ........................... */
+    
+    .welcome-text {
+        font-size: 30px;
+    }
+    .built-by-python {
+        top: 68%;
+        left: 83%;
+    }
+    .django-logo {
+        width: 50px;
+        height: 50px;
+    }
+    .built-by-python-text {
+        font-size: 16px;
+    }
+
+    /* ..................... */
     /* --------  */
 
 
@@ -1419,6 +1572,27 @@ site-map-column-subtitle {}
         margin-left: 9%;
         margin-right: 9%;
     }
+
+
+    /* .............. */
+   
+    .built-by-python {
+        top: 64%;
+        left: 82%;
+        
+    }
+    .django-logo {
+        width: 50px;
+        height: 50px;
+    }
+    .built-by-python-text {
+        font-size: 16px;
+    }
+
+
+    /* .................. */
+
+
 
     /* ------ profile ----- */
     
